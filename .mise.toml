@@ -1,0 +1,29 @@
+# -- Configure MISE requirements
+[tools]
+helm = "3.17"
+kind = "0.20"
+kubectl = "1.32"
+node = "lts"
+tilt = "0.34"
+
+# -- Configure MISE environment
+[env]
+HELM_CACHE_HOME = "{{ config_root }}/.misenv/helm/cache"
+HELM_CONFIG_HOME = "{{ config_root }}/.misenv/helm/config"
+HELM_DATA_HOME = "{{ config_root }}/.misenv/helm/data"
+KREW_ROOT = "{{ config_root }}/.misenv/krew"
+KUBECONFIG = "{{ config_root }}/.misenv/kubeconfig"
+
+# -- Configure MISE tasks
+[tasks.setup]
+description = "Create a local Kubernetes cluster"
+run = "kind get clusters | grep -q 'argocd-dev' || kind create cluster --name argocd-dev --image kindest/node:v1.32.3"
+
+[tasks.teardown]
+description = "Delete the local Kubernetes cluster"
+run = "kind delete cluster --name argocd-dev"
+
+[tasks.dev]
+description = "Start the development environment"
+depends = ["setup"]
+run = "tilt up"
