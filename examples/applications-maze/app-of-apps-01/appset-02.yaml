@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: appset-02
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://github.com/chezmoi-sh/argocd-extension-application-map.git
+        revision: main
+        directories:
+          - path: examples/applications-maze/argocd-example-apps/*
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/chezmoi-sh/argocd-extension-application-map.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: appset-01
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: guestbook-app-02
+            path: examples/applications-maze/argocd-example-apps/guestbook
+            namespace: guestbook-app-02
+          - name: guestbook-app-03
+            path: examples/applications-maze/argocd-example-apps/guestbook
+            namespace: guestbook-app-03
+          - name: app-of-apps-02
+            path: examples/applications-maze/app-of-apps-02
+            namespace: argocd
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/chezmoi-sh/argocd-extension-application-map.git
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

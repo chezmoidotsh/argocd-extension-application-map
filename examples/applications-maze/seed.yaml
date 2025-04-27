@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: app-of-apps-01
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chezmoi-sh/argocd-extension-application-map
+    targetRevision: main
+    path: examples/applications-maze/app-of-apps-01
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
