@@ -18,6 +18,7 @@ const useApplications = (interval: number = 5000) => {
           namespace: item.metadata.namespace,
           health: { status: item.status.health.status },
           sync: { status: item.status.sync.status },
+          creationTimestamp: item.metadata.creationTimestamp,
           resources: item.status.resources?.
             filter((resource: any) => resource.kind === 'Application' || resource.kind === 'ApplicationSet').
             map((resource: any): Application => ({

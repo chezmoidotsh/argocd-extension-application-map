@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import Dagre from '@dagrejs/dagre';
 import { MultiDirectedGraph } from "graphology";
 import { Application } from "../types";
-
+import moment from 'moment';
 const DEFAULT_NODE_PROPERTIES = {
     // Default position
     position: { x: -1000, y: -1000 },
@@ -13,10 +13,10 @@ const DEFAULT_NODE_PROPERTIES = {
     height: 52,
 
     // Disable all interactions
-    // selectable: false,
-    // draggable: false,
-    // connectable: false,
-    // deletable: false,
+    selectable: false,
+    draggable: false,
+    connectable: false,
+    deletable: false,
 
     // TODO: Handle directional edges
     sourcePosition: Position.Right,
@@ -46,6 +46,16 @@ const ApplicationMap: React.FC<{applications: Application[]}> = ({applications, 
                     },
                 });
             }
+            graph.updateNodeAttributes(appId, attr => ({
+                ...attr,
+                reactflow: {
+                    ...attr.reactflow,
+                    data: {
+                        ...attr.reactflow.data,
+                        age: app.creationTimestamp ? moment(app.creationTimestamp).fromNow() : undefined,
+                    },
+                }
+            }));
 
             app.resources?.forEach(resource => {
                 const resourceId = `${resource.namespace}/${resource.name}`;

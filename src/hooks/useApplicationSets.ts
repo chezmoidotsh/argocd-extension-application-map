@@ -11,11 +11,12 @@ const useApplicationSets = (interval: number = 5000) => {
         return response.json();
       })
       .then(data => {
-        console.log(`ApplicationSets: ${JSON.stringify(data.items)}`);
+        console.log(`ApplicationSets:`, data.items);
         const applicationSets = (data.items || []).map((item: any): Application => ({
           kind: 'ApplicationSet',
           name: item.metadata.name,
           namespace: item.metadata.namespace,
+          creationTimestamp: item.metadata.creationTimestamp,
           resources: item.status.resources?.
             filter((resource: any) => resource.kind === 'Application' || resource.kind === 'ApplicationSet').
             map((resource: any): Application => ({

@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export type ApplicationHealthStatus = 'Healthy' | 'Suspended' | 'Progressing' | 'Missing' | 'Degraded' | 'Unknown';
 export type ApplicationSyncStatus = 'Synced' | 'Syncing' | 'OutOfSync' | 'Unknown';
 
@@ -12,6 +14,7 @@ export interface Application {
     sync?: { 
         status: ApplicationSyncStatus;
     };
+    creationTimestamp?: number;
 
     resources?: Array<Application>;
 }
