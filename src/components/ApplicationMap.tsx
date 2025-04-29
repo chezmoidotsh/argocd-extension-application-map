@@ -4,6 +4,8 @@ import Dagre from '@dagrejs/dagre';
 import { MultiDirectedGraph } from "graphology";
 import { Application } from "../types";
 import moment from 'moment';
+import ArgoApplicationNode from "./ArgoApplicationNode";
+
 const DEFAULT_NODE_PROPERTIES = {
     // Default position
     position: { x: -1000, y: -1000 },
@@ -13,7 +15,7 @@ const DEFAULT_NODE_PROPERTIES = {
     height: 52,
 
     // Disable all interactions
-    selectable: false,
+    selectable: true,
     draggable: false,
     connectable: false,
     deletable: false,
@@ -42,7 +44,7 @@ const ApplicationMap: React.FC<{applications: Application[]}> = ({applications, 
                         ...DEFAULT_NODE_PROPERTIES,
 
                         id: appId,
-                        data: { label: appId },
+                        data: { label: appId, kind: app.kind },
                     },
                 });
             }
@@ -66,7 +68,7 @@ const ApplicationMap: React.FC<{applications: Application[]}> = ({applications, 
                             ...DEFAULT_NODE_PROPERTIES,
 
                             id: resourceId,
-                            data: { label: resourceId },
+                            data: { label: resourceId, kind: resource.kind },
                         },
                     }); }
                 graph.addEdge(appId, resourceId);
@@ -75,16 +77,19 @@ const ApplicationMap: React.FC<{applications: Application[]}> = ({applications, 
 
         // Generate the Nodes and Edges
         const nodes: Node[] = graph.mapNodes((node, attr) => {
-            const type = attr.reactflow?.type ?? (
-                graph.inDegree(node) > 0 && graph.outDegree(node) > 0 ? 'default' :
-                graph.inDegree(node) > 0 ? 'output' :
-                graph.outDegree(node) > 0 ? 'input' :
-                'orphan'
-            );
-
+            const type = 'application'; // Forcer le type pour les applications
             return {
                 ...attr.reactflow,
                 type,
+                data: {
+                    ...attr.reactflow.data,
+                    name: attr.name,
+                    namespace: attr.namespace,
+                    syncStatus: attr.sync?.status,
+                    syncStatusColor: attr.sync?.status === 'Synced' ? '#18be94' : '#f4b740',
+                    healthStatus: attr.health?.status,
+                    age: attr.reactflow.data.age,
+                }
             }
         });
         const edges: Edge[] = graph.mapEdges((id, attributes, source, target) => ({
@@ -95,7 +100,7 @@ const ApplicationMap: React.FC<{applications: Application[]}> = ({applications, 
             style: {
                 stroke: '#b1b1b1',
                 strokeWidth: 2,
-                strokeDasharray: '5,5'
+                strokeDasharray: '4,4'
             },
             markerEnd: {
                 type: MarkerType.ArrowClosed,
@@ -124,7 +129,7 @@ const ApplicationMap: React.FC<{applications: Application[]}> = ({applications, 
         console.log('Edges:', edges);
     }, [applications]);
 
-    return <ReactFlow {...props} nodes={nodes} edges={edges} />;
+    return <ReactFlow {...props} nodes={nodes} edges={edges} nodeTypes={{ application: ArgoApplicationNode }} />;
 }
 
 export default ApplicationMap;

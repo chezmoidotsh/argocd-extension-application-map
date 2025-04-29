@@ -11,7 +11,7 @@ const useApplications = (interval: number = 5000) => {
         return response.json();
       })
       .then(data => {
-        console.log(`Applications: ${data.items.length}`);
+        console.log(`Applications:`, data.items);
         const applications = (data.items || []).map((item: any): Application => ({
           kind: 'Application',
           name: item.metadata.name,
