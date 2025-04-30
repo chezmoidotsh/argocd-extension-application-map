@@ -1,42 +1,27 @@
-import { useState, useEffect } from 'react';
-import { Application } from '../types';
+import { useState, useEffect } from "react";
+import { Application, ArgoCDApplication } from "../types";
+import { convertArgoCDApplicationToApplication } from "../utils/converters";
 
 const useApplications = (interval: number = 5000) => {
   const [applications, setApplications] = useState<Application[]>([]);
-  
+
   const fetchApplications = () =>
-    fetch('/api/v1/applications')
-      .then(response => {
-        if (!response.ok) { throw new Error(`Failed to fetch applications: ${response.statusText}`) }
-        return response.json();
+    fetch("/api/v1/applications")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch applications: ${response.statusText}`,
+          );
+        }
+        return response.json() as Promise<{ items: ArgoCDApplication[] }>;
       })
-      .then(data => {
-        console.log(`Applications:`, data.items);
-        const applications = (data.items || []).map((item: any): Application => ({
-          kind: 'Application',
-          name: item.metadata.name,
-          namespace: item.metadata.namespace,
-          health: { status: item.status.health.status },
-          sync: { status: item.status.sync.status },
-          creationTimestamp: item.metadata.creationTimestamp,
-          resources: item.status.resources?.
-            filter((resource: any) => resource.kind === 'Application' || resource.kind === 'ApplicationSet').
-            map((resource: any): Application => ({
-              kind: resource.kind,
-              name: resource.name,
-              namespace: resource.namespace,
-              health: {
-                status: resource.health?.status,
-                message: resource.health?.message,
-              },
-              sync: {
-                status: resource.sync?.status,
-              },
-            }))
-        }));
-        setApplications(applications);
+      .then((data) => {
+        console.debug(`Applications:`, data.items);
+        setApplications(
+          (data.items || []).map(convertArgoCDApplicationToApplication),
+        );
       })
-      .catch(error => console.error('Error fetching applications:', error));
+      .catch((error) => console.error("Error fetching applications:", error));
 
   useEffect(() => {
     fetchApplications();
@@ -47,4 +32,4 @@ const useApplications = (interval: number = 5000) => {
   return applications;
 };
 
-export default useApplications; 
+export default useApplications;
