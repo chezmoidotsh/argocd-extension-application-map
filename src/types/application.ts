@@ -61,6 +61,4 @@ export interface Application {
   spec?: ApplicationSpec;
   /** Application status */
   status: ApplicationStatus;
-  /** Resources managed by the application */
-  resources?: Array<Application>;
 }

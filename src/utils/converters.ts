@@ -46,23 +46,6 @@ export function convertArgoCDApplicationToApplication(
         (argoApp.status.health?.status as HealthStatus) ?? HealthStatus.Unknown,
       sync: (argoApp.status.sync?.status as SyncStatus) ?? SyncStatus.Unknown,
     },
-    resources: argoApp.status.resources
-      .filter(
-        (resource) =>
-          resource.kind === "Application" || resource.kind === "ApplicationSet",
-      )
-      .map((resource) => ({
-        kind: resource.kind as ApplicationKind,
-        metadata: {
-          name: resource.name,
-          namespace: resource.namespace,
-        },
-        status: {
-          health:
-            (resource.health?.status as HealthStatus) ?? HealthStatus.Unknown,
-          sync: (resource.status as SyncStatus) ?? SyncStatus.Unknown,
-        },
-      })),
   };
 
   return app;
@@ -89,23 +72,6 @@ export function convertArgoCDApplicationSetToApplication(
       health: undefined,
       sync: undefined,
     },
-    resources: argoAppSet.status.resources
-      .filter(
-        (resource) =>
-          resource.kind === "Application" || resource.kind === "ApplicationSet",
-      )
-      .map((resource) => ({
-        kind: resource.kind as ApplicationKind,
-        metadata: {
-          name: resource.name,
-          namespace: resource.namespace,
-        },
-        status: {
-          health:
-            (resource.health?.status as HealthStatus) ?? HealthStatus.Unknown,
-          sync: (resource.status as SyncStatus) ?? SyncStatus.Unknown,
-        },
-      })),
   };
 
   return app;

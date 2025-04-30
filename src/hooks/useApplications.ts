@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
-import { Application, ArgoCDApplication } from "../types";
-import { convertArgoCDApplicationToApplication } from "../utils/converters";
+import { ArgoCDApplication } from "../types";
 
 const useApplications = (interval: number = 5000) => {
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [applications, setApplications] = useState<ArgoCDApplication[]>([]);
 
   const fetchApplications = () =>
     fetch("/api/v1/applications")
@@ -16,10 +15,7 @@ const useApplications = (interval: number = 5000) => {
         return response.json() as Promise<{ items: ArgoCDApplication[] }>;
       })
       .then((data) => {
-        console.debug(`Applications:`, data.items);
-        setApplications(
-          (data.items || []).map(convertArgoCDApplicationToApplication),
-        );
+        setApplications(data.items);
       })
       .catch((error) => console.error("Error fetching applications:", error));
 

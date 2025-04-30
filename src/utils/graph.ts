@@ -1,7 +1,18 @@
-import { Node, Edge, Position } from "reactflow";
+import { Node as ReactFlowNode, Edge, Position } from "@xyflow/react";
 import Dagre, { GraphLabel } from "@dagrejs/dagre";
-import { Application } from "../types";
+import {
+  Application,
+  ApplicationKind,
+  ArgoCDApplication,
+  ArgoCDApplicationSet,
+  HealthStatus,
+  SyncStatus,
+} from "../types";
 import { MultiDirectedGraph } from "graphology";
+import {
+  convertArgoCDApplicationSetToApplication,
+  convertArgoCDApplicationToApplication,
+} from "./converters";
 
 /**
  * Constants defining different graph layout directions and their corresponding node positions
@@ -69,20 +80,24 @@ function deepMerge<T extends Record<string, any>>(
   return result;
 }
 
+type Node = Omit<ReactFlowNode, "data"> & { data: Application };
+
 /**
  * Converts a list of ArgoCD applications into a ReactFlow graph
  * @param applications List of ArgoCD applications to visualize
+ * @param applicationSets List of ArgoCD application sets to visualize
  * @param opts Layout options for Dagre including rank direction and node dimensions
  * @returns An object containing the graph nodes and edges with calculated positions
  */
 export function generateGraph(
-  applications: Application[],
+  applications: ArgoCDApplication[],
+  applicationSets: ArgoCDApplicationSet[],
   opts: Omit<GraphLabel, "rankdir"> & {
     rankdir: RankDirectionType;
     nodeSize: { width: number; height: number };
   },
 ): {
-  nodes: Node<Application>[];
+  nodes: Node[];
   edges: Edge[];
 } {
   const defaultProps = {
@@ -93,10 +108,12 @@ export function generateGraph(
     targetPosition: opts.rankdir.targetPosition,
   };
 
-  console.debug(`Generating graph from applications:`, applications);
   // Generate the graph from the application list
-  const graph = new MultiDirectedGraph<Node<Application>>();
-  for (const app of applications) {
+  const graph = new MultiDirectedGraph<Node>();
+
+  // Add the applications to the graph
+  console.log("applications", applications);
+  applications.forEach((app) => {
     if (!app?.metadata?.namespace || !app?.metadata?.name) {
       throw new Error(
         `Application has missing metadata: ${JSON.stringify(app)}`,
@@ -105,43 +122,100 @@ export function generateGraph(
 
     const sourceId = `${app.metadata.namespace}/${app.metadata.name}`;
     if (!graph.hasNode(sourceId)) {
-      graph.addNode(sourceId, { id: sourceId, data: app, ...defaultProps });
+      graph.addNode(sourceId, {
+        id: sourceId,
+        data: convertArgoCDApplicationToApplication(app),
+        ...defaultProps,
+      });
     } else {
-      graph.updateNodeAttribute(
-        sourceId,
-        "data",
-        (old: Application | undefined) => deepMerge(old || app, app),
+      // NOTE: if the node already exists, it has been created from application resources
+      // so it probably missing some information... so we completly override it with the
+      // application definition
+      graph.updateNodeAttribute(sourceId, "data", (_) =>
+        convertArgoCDApplicationToApplication(app),
       );
     }
 
-    if (app.resources?.length) {
-      for (const resource of app.resources) {
-        if (!resource?.metadata?.namespace || !resource?.metadata?.name) {
+    app.status.resources
+      ?.filter(
+        (resource) =>
+          resource.kind === "Application" || resource.kind === "ApplicationSet",
+      )
+      .forEach((resource) => {
+        if (!resource?.namespace || !resource?.name) {
           throw new Error(
             `Resource has missing metadata: ${JSON.stringify(resource)}`,
           );
         }
 
-        const targetId = `${resource.metadata.namespace}/${resource.metadata.name}`;
+        const targetId = `${resource.namespace}/${resource.name}`;
         if (!graph.hasNode(targetId)) {
           graph.addNode(targetId, {
             id: targetId,
-            data: resource,
+            data: {
+              kind: resource.kind as ApplicationKind,
+              metadata: {
+                name: resource.name,
+                namespace: resource.namespace,
+              },
+              status: {
+                health: resource.health?.status as HealthStatus,
+                sync: resource.status as SyncStatus,
+              },
+            },
             ...defaultProps,
           });
-        } else {
-          graph.updateNodeAttribute(
-            targetId,
-            "data",
-            (old: Application | undefined) =>
-              deepMerge(old || resource, resource),
-          );
         }
-
         graph.addEdge(sourceId, targetId);
-      }
+      });
+  });
+
+  // Add the application sets to the graph
+  console.log("applicationSets", applicationSets);
+  applicationSets.forEach((appSet) => {
+    if (!appSet?.metadata?.namespace || !appSet?.metadata?.name) {
+      throw new Error(
+        `ApplicationSet has missing metadata: ${JSON.stringify(appSet)}`,
+      );
     }
-  }
+
+    const sourceId = `${appSet.metadata.namespace}/${appSet.metadata.name}`;
+    // NOTE: the only case when an ApplicationSet didn't exist in the graph is when
+    // the resources has been created outside of an Application.
+    if (!graph.hasNode(sourceId)) {
+      graph.addNode(sourceId, {
+        id: sourceId,
+        data: convertArgoCDApplicationSetToApplication(appSet),
+        ...defaultProps,
+      });
+    } else {
+      graph.updateNodeAttribute(sourceId, "data", (old) => ({
+        metadata: {
+          annotations: appSet.metadata.annotations,
+          labels: appSet.metadata.labels,
+          ...old?.metadata,
+        },
+        ...old,
+      }));
+    }
+
+    appSet.status.resources?.forEach((resource) => {
+      if (!resource?.namespace || !resource?.name) {
+        throw new Error(
+          `Resource has missing metadata: ${JSON.stringify(resource)}`,
+        );
+      }
+
+      const targetId = `${resource.namespace}/${resource.name}`;
+      if (!graph.hasNode(targetId)) {
+        // NOTE: this should not happen but sometimes occurs when the ReplicaSet
+        // has been removed and the resource list isn't updated.
+        return;
+      }
+
+      graph.addEdge(sourceId, targetId);
+    });
+  });
 
   // Apply the dagre layout
   const dagreGraph = new Dagre.graphlib.Graph()
@@ -160,7 +234,7 @@ export function generateGraph(
   Dagre.layout(dagreGraph);
 
   // Generate the final nodes and edges
-  const nodes = graph.mapNodes((node, attributes): Node<Application> => {
+  const nodes = graph.mapNodes((node, attributes): Node => {
     const dagreeNode = dagreGraph.node(node);
     return {
       ...attributes,
@@ -178,6 +252,5 @@ export function generateGraph(
     };
   });
 
-  console.debug(`Generated graph:`, { nodes, edges });
   return { nodes, edges };
 }
