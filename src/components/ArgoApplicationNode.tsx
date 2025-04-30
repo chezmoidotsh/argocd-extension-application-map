@@ -1,41 +1,77 @@
 import React from "react";
 import HealthStatusIcon from "./HealthStatusIcon";
 import SyncStatusIcon from "./SyncStatusIcon";
-import { Position, Handle } from "@xyflow/react";
-import { Application } from "../types/application";
-interface ArgoApplicationNodeProps {
+import { Handle, NodeProps } from "@xyflow/react";
+import { Application } from "../types";
+
+/**
+ * Props for the ArgoApplicationNode component
+ * @extends Omit<NodeProps, "data"> - Inherits all NodeProps except for the data property
+ */
+interface ArgoApplicationNodeProps extends Omit<NodeProps, "data"> {
+  /** The ArgoCD application data to display */
   data: Application;
-  sourcePosition?: Position;
-  targetPosition?: Position;
 }
 
-const handleStyle = { opacity: 0, pointerEvents: "none" as const };
-
+/**
+ * ArgoApplicationNode component displays an ArgoCD application or application set in a node format
+ * with health and sync status indicators.
+ *
+ * @component
+ * @example
+ * ```tsx
+ * <ArgoApplicationNode
+ *   data={applicationData}
+ *   width={200}
+ *   height={100}
+ *   sourcePosition="right"
+ *   targetPosition="left"
+ * />
+ * ```
+ */
 const ArgoApplicationNode: React.FC<ArgoApplicationNodeProps> = ({
   data,
-  sourcePosition = Position.Right,
-  targetPosition = Position.Left,
+  width,
+  height,
+  sourcePosition,
+  targetPosition,
+  ...props
 }) => {
-  const isAppSet = data.kind === "ApplicationSet";
-  console.log(data);
+  const nodeTitle = `Kind: ${data.kind}\nNamespace: ${data.metadata.namespace}\nName: ${data.metadata.name}`;
+  const iconClass =
+    data.kind === "ApplicationSet"
+      ? "argo-icon-catalog"
+      : "argo-icon-application";
+
   return (
     <div
       className="application-resource-tree__node application-resource-tree__node--application"
-      title={`Kind: ${data.kind}\nNamespace: ${data.metadata.namespace}\nName: ${data.metadata.name}`}
-      style={{ width: 282, height: 52 }}
+      title={nodeTitle}
+      style={{ width, height }}
+      {...props}
     >
-      <Handle type="target" position={targetPosition} style={handleStyle} />
-      <Handle type="source" position={sourcePosition} style={handleStyle} />
+      <Handle
+        type="source"
+        position={sourcePosition}
+        style={{ opacity: 0, pointerEvents: "none" }}
+      />
+      <Handle
+        type="target"
+        position={targetPosition}
+        style={{ opacity: 0, pointerEvents: "none" }}
+      />
+
       <div className="application-resource-tree__node-kind-icon">
         <i
-          title={isAppSet ? "ApplicationSet" : "Application"}
-          className={`icon ${isAppSet ? "argo-icon-catalog" : "argo-icon-application"}`}
-        ></i>
-        <br />
+          title={data.kind}
+          className={`icon ${iconClass}`}
+          aria-label={`${data.kind} icon`}
+        />
         <div className="application-resource-tree__node-kind">
-          {isAppSet ? "appset" : "application"}
+          {data.kind.toLowerCase()}
         </div>
       </div>
+
       <div className="application-resource-tree__node-content">
         <div className="application-resource-tree__node-title application-resource-tree__direction-left">
           {data.metadata.name}
@@ -44,13 +80,6 @@ const ArgoApplicationNode: React.FC<ArgoApplicationNodeProps> = ({
           <HealthStatusIcon status={data.status?.health} />
           <SyncStatusIcon status={data.status?.sync} />
         </div>
-      </div>
-      <div className="application-resource-tree__node-labels">
-        <span title={`Application was created ${data.status?.reconciledAt}`}>
-          <time className="application-resource-tree__node-label">
-            {data.status?.reconciledAt}
-          </time>
-        </span>
       </div>
     </div>
   );
