@@ -1,45 +1,59 @@
 import React from "react";
+import { SyncStatus } from "../types";
 
-interface SyncStatusIconProps {
-  status?: string;
-}
+/**
+ * Type definition for all sync status configurations
+ */
+type SyncStatusesType = {
+  [K in SyncStatus]: {
+    readonly color: string;
+    readonly icon: string;
+    readonly title?: string;
+  };
+};
 
-const SyncStatusIcon: React.FC<SyncStatusIconProps> = ({ status }) => {
-  if (status === "OutOfSync") {
-    return (
-      <i
-        qe-id="utils-sync-status-title"
-        title="OutOfSync"
-        className="fa fa-arrow-up utils-sync-status-icon"
-        style={{ color: "#f4b740", marginRight: 4 }}
-      ></i>
-    );
-  }
+/**
+ * Configuration mapping for all sync statuses
+ * @type {SyncStatusesType}
+ */
+const SyncStatuses: SyncStatusesType = {
+  [SyncStatus.Synced]: {
+    color: "#18be94",
+    icon: "fa-check-circle",
+    title: "Synced",
+  },
+  [SyncStatus.OutOfSync]: {
+    color: "#f4c030",
+    icon: "fa-arrow-alt-circle-up",
+    title: "OutOfSync",
+  },
+  [SyncStatus.Unknown]: {
+    color: "#ccd6dd",
+    icon: "fa-circle-notch fa-spin",
+  },
+} as const;
 
-  let color = "#b1b1b1";
-  let icon = "fa-check-circle";
-  let title = status;
-
-  if (status === "Synced") {
-    color = "#18be94";
-    title = "Synced";
-  } else if (status === "Unknown") {
-    color = "#b1b1b1";
-    title = "Unknown";
-  } else if (status === "Syncing") {
-    color = "#0dadea";
-    icon = "fa-sync fa-spin";
-    title = "Syncing";
-  }
-
+/**
+ * SyncStatusIcon component displays an icon representing the sync status of an application
+ * @component
+ * @param {Object} props - Component props
+ * @param {SyncStatus} [props.status] - The sync status to display
+ * @returns {JSX.Element} A Font Awesome icon with appropriate styling
+ * @example
+ * <SyncStatusIcon status={SyncStatus.Synced} />
+ */
+const SyncStatusIcon: React.FC<{ status?: SyncStatus }> = ({ status }) => {
   return (
     <i
       qe-id="utils-sync-status-title"
-      title={title}
-      className={`fa ${icon} utils-sync-status-icon`}
-      style={{ color, marginRight: 4 }}
+      title={SyncStatuses[status ?? SyncStatus.Unknown].title}
+      className={`fa ${SyncStatuses[status ?? SyncStatus.Unknown].icon} utils-sync-status-icon`}
+      style={{
+        color: SyncStatuses[status ?? SyncStatus.Unknown].color,
+        marginRight: 4,
+      }}
     ></i>
   );
 };
 
-export default SyncStatusIcon; 
+export default SyncStatusIcon;

@@ -15,8 +15,10 @@ export type ApplicationKind = "Application" | "ApplicationSet";
  */
 export enum HealthStatus {
   Healthy = "Healthy",
+  Suspended = "Suspended",
   Degraded = "Degraded",
   Progressing = "Progressing",
+  Missing = "Missing",
   Unknown = "Unknown",
 }
 

@@ -1,48 +1,74 @@
 import React from "react";
+import { HealthStatus } from "../types/application";
 
-interface HealthStatusIconProps {
-  status?: string;
-}
+/**
+ * Type definition for all health status configurations
+ */
+type HealthStatusesType = {
+  [K in HealthStatus]: {
+    readonly color: string;
+    readonly icon: string;
+    readonly title?: string;
+  };
+};
 
-const HealthStatusIcon: React.FC<HealthStatusIconProps> = ({ status }) => {
-  if (status === "Progressing") {
-    return (
-      <i
-        qe-id="utils-health-status-title"
-        title="Progressing"
-        className="fa fa fa-circle-notch fa-spin utils-health-status-icon"
-        style={{ color: "#0dadea", marginRight: 4 }}
-      ></i>
-    );
-  }
-  if (status === "Degraded") {
-    return (
-      <i
-        qe-id="utils-health-status-title"
-        title="Degraded"
-        className="fa fa-heart-broken utils-health-status-icon"
-        style={{ color: "#e96d76", marginRight: 4 }}
-      ></i>
-    );
-  }
-  if (status === "Healthy") {
-    return (
-      <i
-        qe-id="utils-health-status-title"
-        title="Healthy"
-        className="fa fa-heart utils-health-status-icon"
-        style={{ color: "#18be94", marginRight: 4 }}
-      ></i>
-    );
-  }
+/**
+ * Configuration mapping for all health statuses
+ * @type {HealthStatusesType}
+ */
+const HealthStatuses: HealthStatusesType = {
+  [HealthStatus.Healthy]: {
+    color: "#18be94",
+    icon: "fa-heart",
+    title: "Healthy",
+  },
+  [HealthStatus.Suspended]: {
+    color: "#766f94",
+    icon: "fa-pause-circle",
+    title: "Suspended",
+  },
+  [HealthStatus.Degraded]: {
+    color: "#e96d76",
+    icon: "fa-heart-broken",
+    title: "Degraded",
+  },
+  [HealthStatus.Progressing]: {
+    color: "#0dadea",
+    icon: "fa-circle-notch fa-spin",
+    title: "Progressing",
+  },
+  [HealthStatus.Missing]: {
+    color: "#f4c030",
+    icon: "fa-ghost",
+    title: "Missing",
+  },
+  [HealthStatus.Unknown]: {
+    color: "#ccd6dd",
+    icon: "fa-question-circle",
+  },
+};
+
+/**
+ * HealthStatusIcon component displays an icon representing the health status of an application
+ * @component
+ * @param {Object} props - Component props
+ * @param {HealthStatus} [props.status] - The health status to display
+ * @returns {JSX.Element} A Font Awesome icon with appropriate styling
+ * @example
+ * <HealthStatusIcon status={HealthStatus.Healthy} />
+ */
+const HealthStatusIcon: React.FC<{ status?: HealthStatus }> = ({ status }) => {
   return (
     <i
       qe-id="utils-health-status-title"
-      title={status}
-      className="fa fa-heart utils-health-status-icon"
-      style={{ color: "#b1b1b1", marginRight: 4 }}
+      title={HealthStatuses[status ?? HealthStatus.Unknown].title}
+      className={`fa ${HealthStatuses[status ?? HealthStatus.Unknown].icon} utils-health-status-icon`}
+      style={{
+        color: HealthStatuses[status ?? HealthStatus.Unknown].color,
+        marginRight: 4,
+      }}
     ></i>
   );
 };
 
-export default HealthStatusIcon; 
+export default HealthStatusIcon;
