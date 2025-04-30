@@ -5,21 +5,21 @@ import {
   MarkerType,
 } from "@xyflow/react";
 import { useEffect } from "react";
-import { Application } from "../types";
+import { ArgoCDApplicationSet, ArgoCDApplication } from "../types";
 import ApplicationNode from "./ArgoApplicationNode";
 import { generateGraph, RankDirection } from "../utils/graph";
 
-const ApplicationMap: React.FC<{ applications: Application[] }> = ({
-  applications,
-  ...props
-}) => {
+const ApplicationMap: React.FC<{
+  applications: ArgoCDApplication[];
+  applicationSets: ArgoCDApplicationSet[];
+}> = ({ applications, applicationSets, ...props }) => {
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
 
   useEffect(() => {
-    if (!applications?.length) return;
+    if (!applications?.length || !applicationSets?.length) return;
 
-    const { nodes, edges } = generateGraph(applications, {
+    const { nodes, edges } = generateGraph(applications, applicationSets, {
       rankdir: RankDirection.LR,
       nodeSize: { width: 282, height: 52 },
     });
@@ -53,7 +53,7 @@ const ApplicationMap: React.FC<{ applications: Application[] }> = ({
 
     console.log("Nodes:", layoutedNodes);
     console.log("Edges:", layoutedEdges);
-  }, [applications]);
+  }, [applications, applicationSets]);
 
   return (
     <ReactFlow

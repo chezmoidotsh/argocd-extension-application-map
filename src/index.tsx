@@ -18,7 +18,10 @@ const Extension: React.FC = () => {
     <div style={{ padding: "20px", height: "800px" }}>
       <h2>Application Map</h2>
       <ReactFlowProvider>
-        <ApplicationMap applications={[...applications, ...applicationSets]}>
+        <ApplicationMap
+          applications={applications}
+          applicationSets={applicationSets}
+        >
           <Background />
           <MiniMap />
           <Controls />
