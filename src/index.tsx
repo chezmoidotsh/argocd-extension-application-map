@@ -21,7 +21,13 @@ const Extension: React.FC = () => {
   if (!applications?.length && !applicationSets?.length) return <EmptyState />;
 
   return (
-    <div style={{ padding: "1em", height: "800px" }}>
+    <div style={{ 
+      padding: "1em", 
+      height: "calc(100vh - 100px)",
+      width: "100%",
+      boxSizing: "border-box",
+      overflow: "hidden"
+    }}>
       <ReactFlowProvider>
         <ApplicationMap
           applications={applications}
