@@ -3,6 +3,7 @@ import { ArgoCDApplication } from "../types";
 
 const useApplications = (interval: number = 5000) => {
   const [applications, setApplications] = useState<ArgoCDApplication[]>([]);
+  const [error, setError] = useState<Error | null>(null);
 
   const fetchApplications = () =>
     fetch("/api/v1/applications")
@@ -16,8 +17,11 @@ const useApplications = (interval: number = 5000) => {
       })
       .then((data) => {
         setApplications(data.items);
+        setError(null);
       })
-      .catch((error) => console.error("Error fetching applications:", error));
+      .catch((error) => {
+        setError(error);
+      });
 
   useEffect(() => {
     fetchApplications();
@@ -25,7 +29,7 @@ const useApplications = (interval: number = 5000) => {
     // return () => clearInterval(intervalId);
   }, []);
 
-  return applications;
+  return { data: applications, error };
 };
 
 export default useApplications;

@@ -5,6 +5,7 @@ const useApplicationSets = (interval: number = 5000) => {
   const [applicationSets, setApplicationSets] = useState<
     ArgoCDApplicationSet[]
   >([]);
+  const [error, setError] = useState<Error | null>(null);
 
   const fetchApplicationSets = () =>
     fetch("/api/v1/applicationsets")
@@ -18,10 +19,11 @@ const useApplicationSets = (interval: number = 5000) => {
       })
       .then((data) => {
         setApplicationSets(data.items);
+        setError(null);
       })
-      .catch((error) =>
-        console.error("Error fetching application sets:", error),
-      );
+      .catch((error) => {
+        setError(error);
+      });
 
   useEffect(() => {
     fetchApplicationSets();
@@ -29,7 +31,7 @@ const useApplicationSets = (interval: number = 5000) => {
     // return () => clearInterval(intervalId);
   }, []);
 
-  return applicationSets;
+  return { data: applicationSets, error };
 };
 
 export default useApplicationSets;

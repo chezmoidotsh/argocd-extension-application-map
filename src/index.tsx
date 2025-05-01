@@ -10,29 +10,28 @@ import {
 import "@xyflow/react/dist/style.css";
 import ApplicationMap from "./components/ApplicationMap";
 import EmptyState from "./components/EmptyState";
+import ErrorState from "./components/ErrorState";
 
 const Extension: React.FC = () => {
-  const applications = useApplications();
-  const applicationSets = useApplicationSets();
+  const { data: applications, error: applicationsError } = useApplications();
+  const { data: applicationSets, error: applicationSetsError } = useApplicationSets();
+
+  if (applicationsError) return <ErrorState error={applicationsError} />;
+  if (applicationSetsError) return <ErrorState error={applicationSetsError} />;
+  if (!applications?.length && !applicationSets?.length) return <EmptyState />;
 
   return (
-    <div style={{ padding: "20px", height: "800px" }}>
-      {!applications?.length && !applicationSets?.length ? (
-        <EmptyState />
-      ) : (
-        <>
-          <ReactFlowProvider>
-            <ApplicationMap
-              applications={applications}
-              applicationSets={applicationSets}
-            >
-              <Background />
-              <MiniMap />
-              <Controls />
-            </ApplicationMap>
-          </ReactFlowProvider>
-        </>
-      )}
+    <div style={{ padding: "1em", height: "800px" }}>
+      <ReactFlowProvider>
+        <ApplicationMap
+          applications={applications}
+          applicationSets={applicationSets}
+        >
+          <Background />
+          <MiniMap />
+          <Controls />
+        </ApplicationMap>
+      </ReactFlowProvider>
     </div>
   );
 };
@@ -43,6 +42,6 @@ const Extension: React.FC = () => {
     Extension,
     "Application Map",
     "/map",
-    "fa-sitemap",
+    "fa-light fa-sitemap",
   );
 })(window);
