@@ -25,12 +25,11 @@ const Extension: React.FC = () => {
 
   return (
     <div className="argocd-application-map__container">
-      <ReactFlowProvider>
+      <ReactFlowProvider fitView>
         <ApplicationMap
           applications={applications}
           applicationSets={applicationSets}
         >
-          <Background />
           <MiniMap 
             position="top-right"
             pannable={true}
