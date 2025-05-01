@@ -31,7 +31,12 @@ const Extension: React.FC = () => {
           applicationSets={applicationSets}
         >
           <Background />
-          <MiniMap />
+          <MiniMap 
+            position="top-right"
+            pannable={true}
+            zoomable={true}
+            aria-label="ArgoCD Application Map Mini Map"
+          />
           <MapNavigationControls 
             aria-label="ArgoCD Application Map Navigation Controls"
           />
