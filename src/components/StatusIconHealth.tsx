@@ -49,15 +49,15 @@ const HealthStatuses: HealthStatusesType = {
 };
 
 /**
- * HealthStatusIcon component displays an icon representing the health status of an application
+ * StatusIconHealth component displays an icon representing the health status of an application
  * @component
  * @param {Object} props - Component props
  * @param {HealthStatus} [props.status] - The health status to display
  * @returns {JSX.Element} A Font Awesome icon with appropriate styling
  * @example
- * <HealthStatusIcon status={HealthStatus.Healthy} />
+ * <StatusIconHealth status={HealthStatus.Healthy} />
  */
-const HealthStatusIcon: React.FC<{ status?: HealthStatus }> = ({ status }) => {
+const StatusIconHealth: React.FC<{ status?: HealthStatus }> = ({ status }) => {
   return (
     <i
       qe-id="utils-health-status-title"
@@ -71,4 +71,4 @@ const HealthStatusIcon: React.FC<{ status?: HealthStatus }> = ({ status }) => {
   );
 };
 
-export default HealthStatusIcon;
+export default StatusIconHealth;

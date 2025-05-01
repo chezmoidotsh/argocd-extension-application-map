@@ -50,36 +50,6 @@ export const RankDirection = {
 export type RankDirectionType =
   (typeof RankDirection)[keyof typeof RankDirection];
 
-/**
- * Recursively merges two objects, only replacing values that are not undefined
- * @param target The target object to merge into
- * @param source The source object containing new values
- * @returns The merged object
- */
-function deepMerge<T extends Record<string, any>>(
-  target: T,
-  source: Partial<T>,
-): T {
-  const result = { ...target };
-
-  for (const key in source) {
-    if (source[key] !== undefined) {
-      if (
-        typeof source[key] === "object" &&
-        source[key] !== null &&
-        typeof target[key] === "object" &&
-        target[key] !== null
-      ) {
-        result[key] = deepMerge(target[key], source[key] as any);
-      } else {
-        result[key] = source[key] as any;
-      }
-    }
-  }
-
-  return result;
-}
-
 type Node = Omit<ReactFlowNode, "data"> & { data: Application };
 
 /**

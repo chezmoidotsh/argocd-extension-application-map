@@ -1,26 +1,26 @@
 import React from "react";
-import HealthStatusIcon from "./HealthStatusIcon";
-import SyncStatusIcon from "./SyncStatusIcon";
+import StatusIconHealth from "./StatusIconHealth";
+import StatusIconSync from "./StatusIconSync";
 import { Handle, NodeProps } from "@xyflow/react";
 import { Application } from "../types";
 
 /**
- * Props for the ArgoApplicationNode component
+ * Props for the ApplicationNode component
  * @extends Omit<NodeProps, "data"> - Inherits all NodeProps except for the data property
  */
-interface ArgoApplicationNodeProps extends Omit<NodeProps, "data"> {
+interface ApplicationNodeProps extends Omit<NodeProps, "data"> {
   /** The ArgoCD application data to display */
   data: Application;
 }
 
 /**
- * ArgoApplicationNode component displays an ArgoCD application or application set in a node format
+ * ApplicationNode component displays an ArgoCD application or application set in a node format
  * with health and sync status indicators.
  *
  * @component
  * @example
  * ```tsx
- * <ArgoApplicationNode
+ * <ApplicationNode
  *   data={applicationData}
  *   width={200}
  *   height={100}
@@ -29,7 +29,7 @@ interface ArgoApplicationNodeProps extends Omit<NodeProps, "data"> {
  * />
  * ```
  */
-const ArgoApplicationNode: React.FC<ArgoApplicationNodeProps> = ({
+const ApplicationNode: React.FC<ApplicationNodeProps> = ({
   data,
   width,
   height,
@@ -77,12 +77,12 @@ const ArgoApplicationNode: React.FC<ArgoApplicationNodeProps> = ({
           {data.metadata.name}
         </div>
         <div className="application-resource-tree__node-status-icon">
-          <HealthStatusIcon status={data.status?.health} />
-          <SyncStatusIcon status={data.status?.sync} />
+          <StatusIconHealth status={data.status?.health} />
+          <StatusIconSync status={data.status?.sync} />
         </div>
       </div>
     </div>
   );
 };
 
-export default ArgoApplicationNode;
+export default ApplicationNode;
