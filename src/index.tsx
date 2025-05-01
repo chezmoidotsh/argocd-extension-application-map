@@ -9,6 +9,7 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import ApplicationMap from "./components/ApplicationMap";
+import EmptyState from "./components/EmptyState";
 
 const Extension: React.FC = () => {
   const applications = useApplications();
@@ -16,17 +17,22 @@ const Extension: React.FC = () => {
 
   return (
     <div style={{ padding: "20px", height: "800px" }}>
-      <h2>Application Map</h2>
-      <ReactFlowProvider>
-        <ApplicationMap
-          applications={applications}
-          applicationSets={applicationSets}
-        >
-          <Background />
-          <MiniMap />
-          <Controls />
-        </ApplicationMap>
-      </ReactFlowProvider>
+      {!applications?.length && !applicationSets?.length ? (
+        <EmptyState />
+      ) : (
+        <>
+          <ReactFlowProvider>
+            <ApplicationMap
+              applications={applications}
+              applicationSets={applicationSets}
+            >
+              <Background />
+              <MiniMap />
+              <Controls />
+            </ApplicationMap>
+          </ReactFlowProvider>
+        </>
+      )}
     </div>
   );
 };
