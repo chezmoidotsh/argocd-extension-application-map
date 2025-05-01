@@ -61,6 +61,7 @@ const ApplicationMap: React.FC<{
       nodes={nodes}
       edges={edges}
       nodeTypes={{ application: ApplicationNode }}
+      style={{ width: '100%', height: '100%' }}
     />
   );
 };

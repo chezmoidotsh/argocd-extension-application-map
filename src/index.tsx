@@ -8,9 +8,12 @@ import {
   Background,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import "./styles/ApplicationMap.css";
+import "./styles/CustomControls.css";
 import ApplicationMap from "./components/ApplicationMap";
 import EmptyState from "./components/EmptyState";
 import ErrorState from "./components/ErrorState";
+import MapNavigationControls from "./components/MapNavigationControls";
 
 const Extension: React.FC = () => {
   const { data: applications, error: applicationsError } = useApplications();
@@ -21,13 +24,7 @@ const Extension: React.FC = () => {
   if (!applications?.length && !applicationSets?.length) return <EmptyState />;
 
   return (
-    <div style={{ 
-      padding: "1em", 
-      height: "calc(100vh - 100px)",
-      width: "100%",
-      boxSizing: "border-box",
-      overflow: "hidden"
-    }}>
+    <div className="argocd-application-map__container">
       <ReactFlowProvider>
         <ApplicationMap
           applications={applications}
@@ -35,7 +32,9 @@ const Extension: React.FC = () => {
         >
           <Background />
           <MiniMap />
-          <Controls />
+          <MapNavigationControls 
+            aria-label="ArgoCD Application Map Navigation Controls"
+          />
         </ApplicationMap>
       </ReactFlowProvider>
     </div>
