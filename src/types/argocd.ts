@@ -169,15 +169,6 @@ export interface Metadata {
 }
 
 /**
- * Interface for source configuration
- */
-export interface SourceConfig {
-  repoURL: string;
-  path: string;
-  targetRevision: string;
-}
-
-/**
  * Interface for destination configuration
  */
 export interface DestinationConfig {
@@ -197,7 +188,7 @@ export interface AutomatedSyncPolicy {
  * Interface for sync policy
  */
 export interface SyncPolicy {
-  automated: AutomatedSyncPolicy;
+  automated?: AutomatedSyncPolicy;
 }
 
 /**

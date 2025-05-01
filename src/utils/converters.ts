@@ -1,10 +1,5 @@
 import { ArgoCDApplication, ArgoCDApplicationSet } from "../types/argocd";
-import {
-  Application,
-  ApplicationKind,
-  HealthStatus,
-  SyncStatus,
-} from "../types/application";
+import { Application, HealthStatus, SyncStatus } from "../types/application";
 
 /**
  * Converts an ArgoCDApplication to an Application
@@ -24,18 +19,13 @@ export function convertArgoCDApplicationToApplication(
       labels: argoApp.metadata.labels,
     },
     spec: {
-      source: {
-        repoURL: argoApp.spec.source.repoURL,
-        path: argoApp.spec.source.path,
-        targetRevision: argoApp.spec.source.targetRevision,
-      },
       destination: {
         server: argoApp.spec.destination.server,
         namespace: argoApp.spec.destination.namespace,
       },
       project: argoApp.spec.project,
       syncPolicy: {
-        automated: {
+        automated: argoApp.spec.syncPolicy.automated && {
           prune: argoApp.spec.syncPolicy.automated.prune,
           selfHeal: argoApp.spec.syncPolicy.automated.selfHeal,
         },

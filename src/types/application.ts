@@ -1,9 +1,4 @@
-import {
-  Metadata,
-  SourceConfig,
-  DestinationConfig,
-  SyncPolicy,
-} from "./argocd";
+import { Metadata, DestinationConfig, SyncPolicy } from "./argocd";
 
 /**
  * Type representing the possible application kinds
@@ -35,7 +30,6 @@ export enum SyncStatus {
  * Interface for application specification
  */
 export interface ApplicationSpec {
-  source: SourceConfig;
   destination: DestinationConfig;
   project: string;
   syncPolicy: SyncPolicy;
