@@ -57,14 +57,15 @@ const HealthStatuses: HealthStatusesType = {
  * @example
  * <StatusIconHealth status={HealthStatus.Healthy} />
  */
-const StatusIconHealth: React.FC<{ status?: HealthStatus }> = ({ status }) => {
+const StatusIconHealth: React.FC<{ status?: HealthStatus }> = ({ status: rawStatus }) => {
+  const status = rawStatus && HealthStatuses[rawStatus] ? rawStatus : HealthStatus.Unknown;
   return (
     <i
       qe-id="utils-health-status-title"
-      title={HealthStatuses[status ?? HealthStatus.Unknown].title}
-      className={`fa ${HealthStatuses[status ?? HealthStatus.Unknown].icon} utils-health-status-icon`}
+      title={HealthStatuses[status].title}
+      className={`fa ${HealthStatuses[status].icon} utils-health-status-icon`}
       style={{
-        color: HealthStatuses[status ?? HealthStatus.Unknown].color,
+        color: HealthStatuses[status].color,
         marginRight: 4,
       }}
     ></i>

@@ -42,14 +42,15 @@ const SyncStatuses: SyncStatusesType = {
  * @example
  * <StatusIconSync status={SyncStatus.Synced} />
  */
-const StatusIconSync: React.FC<{ status?: SyncStatus }> = ({ status }) => {
+const StatusIconSync: React.FC<{ status?: SyncStatus }> = ({ status: rawStatus }) => {
+  const status = rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;
   return (
     <i
       qe-id="utils-sync-status-title"
-      title={SyncStatuses[status ?? SyncStatus.Unknown].title}
-      className={`fa ${SyncStatuses[status ?? SyncStatus.Unknown].icon} utils-sync-status-icon`}
+      title={SyncStatuses[status].title}
+      className={`fa ${SyncStatuses[status].icon} utils-sync-status-icon`}
       style={{
-        color: SyncStatuses[status ?? SyncStatus.Unknown].color,
+        color: SyncStatuses[status].color,
         marginRight: 4,
       }}
     ></i>
