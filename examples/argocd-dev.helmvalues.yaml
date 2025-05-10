@@ -1,0 +1,33 @@
+# trunk-ignore-all(checkov)
+global:
+  domain: localhost
+
+configs:
+  secret:
+    argocdServerAdminPassword: $2a$10$l2JvLtIXRHdlFHPDQTjuBecLxv5y1wdGjliLYg/SZTcPaqOjRVsBC # admin/admin
+  cm:
+    url: https://localhost:8080
+    dex.config: '{"connectors":[{"type":"mockCallback","id":"mock","name":"Dex"}],"enablePasswordDB":true}'
+  rbac:
+    policy.csv: g,authors,role:admin
+
+dex:
+  enabled: true
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: argocd-redis
+    existingSecretPasswordKey: auth
+
+server:
+  podAnnotations:
+    cm-hash: "" # This will be dynamically set in Tiltfile
+  volumes:
+    - name: argocd-extensions
+      configMap:
+        name: argocd-extensions
+  volumeMounts:
+    - name: argocd-extensions
+      mountPath: /tmp/extensions/extension-application-map

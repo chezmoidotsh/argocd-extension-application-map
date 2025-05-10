@@ -31,26 +31,10 @@ helm_remote('argo-cd',
     repo_url='https://argoproj.github.io/argo-helm', 
     release_name='argocd',
     namespace='argocd', 
+    version='7.9.1',
     create_namespace=True,
-    set=[
-        # Domain configuration
-        "global.domain=argocd.7f000001.nip.io",
-        # Admin password configuration
-        "configs.secret.argocdServerAdminPassword=$2a$10$l2JvLtIXRHdlFHPDQTjuBecLxv5y1wdGjliLYg/SZTcPaqOjRVsBC", # admin/admin
-        # Disable Dex (authentication)
-        "dex.enabled=false",
-        # Redis configuration
-        "redis.enabled=true",
-        "redis.auth.enabled=true",
-        "redis.auth.existingSecret=argocd-redis",
-        "redis.auth.existingSecretPasswordKey=auth",
-        # Extension volume configuration
-        "server.podAnnotations.cm-hash=" + str(hash(str(read_file(EXTENSION_DIST)))),
-        "server.volumes[0].name=argocd-extensions",
-        "server.volumes[0].configMap.name=argocd-extensions",
-        "server.volumeMounts[0].name=argocd-extensions",
-        "server.volumeMounts[0].mountPath=/tmp/extensions/extension-application-map",
-    ],
+    values=['examples/argocd-dev.helmvalues.yaml'],
+    set=["server.podAnnotations.cm-hash=" + str(hash(str(read_file(EXTENSION_DIST))))],
 )
 
 # -----------------------------------------------------------------------------
@@ -135,6 +119,14 @@ k8s_resource('argocd-applicationset-controller',
         'argocd-applicationset-controller:role',
         'argocd-applicationset-controller:rolebinding',
         'applicationsets.argoproj.io:customresourcedefinition',
+    ],
+)
+
+k8s_resource('argocd-dex-server',
+    objects=[
+        'argocd-dex-server:serviceaccount',
+        'argocd-dex-server:role',
+        'argocd-dex-server:rolebinding',
     ],
 )
 
