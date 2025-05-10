@@ -232,9 +232,8 @@ export interface ArgoSyncPolicy {
  * @property {string} kind - The kind of the resource
  * @property {string} namespace - The namespace of the resource
  * @property {string} name - The name of the resource
- * @property {string} status - The current status of the resource
- * @property {Object} health - The health status of the resource
- * @property {HealthStatus} health.status - The health status value
+ * @property {SyncStatus} status - The synchronization status of the resource
+ * @property {HealthStatus} health.status - The health status of the resource
  */
 export interface ArgoResourceStatus {
   group: string;
@@ -242,8 +241,8 @@ export interface ArgoResourceStatus {
   kind: string;
   namespace: string;
   name: string;
-  status: string;
-  health: {
+  status: SyncStatus;
+  health?: {
     status: HealthStatus;
   };
 }

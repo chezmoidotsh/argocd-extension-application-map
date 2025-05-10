@@ -1,4 +1,4 @@
-import { ArgoApplication, ArgoCDApplicationSet } from "../types/argocd";
+import { ArgoApplication, ArgoApplicationSet } from "../types/argocd";
 import { Application, HealthStatus, SyncStatus } from "../types/application";
 
 /**
@@ -6,10 +6,7 @@ import { Application, HealthStatus, SyncStatus } from "../types/application";
  * @param argoApp The ArgoCD application to convert
  * @returns The converted Application
  */
-export function convertArgoCDApplicationToApplication(
-  argoApp: ArgoApplication,
-): Application {
-  console.debug(`ArgoCDApplication:`, argoApp);
+export function convertApplication(argoApp: ArgoApplication): Application {
   const app: Application = {
     kind: "Application",
     metadata: {
@@ -19,6 +16,9 @@ export function convertArgoCDApplicationToApplication(
       labels: argoApp.metadata.labels,
     },
     spec: {
+      sources:
+        argoApp.spec.sources ??
+        (argoApp.spec.source ? [argoApp.spec.source] : []),
       destination: {
         server: argoApp.spec.destination.server,
         namespace: argoApp.spec.destination.namespace,
@@ -46,10 +46,9 @@ export function convertArgoCDApplicationToApplication(
  * @param argoAppSet The ArgoCD application set to convert
  * @returns The converted Application
  */
-export function convertArgoCDApplicationSetToApplication(
-  argoAppSet: ArgoCDApplicationSet,
+export function convertApplicationSet(
+  argoAppSet: ArgoApplicationSet,
 ): Application {
-  console.debug(`ArgoCDApplicationSet:`, argoAppSet);
   const app: Application = {
     kind: "ApplicationSet",
     metadata: {
@@ -59,8 +58,8 @@ export function convertArgoCDApplicationSetToApplication(
       labels: argoAppSet.metadata.labels,
     },
     status: {
-      health: undefined,
-      sync: undefined,
+      health: HealthStatus.Unknown,
+      sync: SyncStatus.Unknown,
     },
   };
 

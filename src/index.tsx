@@ -4,41 +4,33 @@ import "@xyflow/react/dist/style.css";
 
 import StateScreenApplicationEmpty from "./components/StateScreenApplicationEmpty";
 import StateScreenApplicationError from "./components/StateScreenApplicationError";
-import ApplicationMap from "./components/ApplicationMap";
+import ApplicationMap, { RankDirection } from "./components/ApplicationMap";
 import "./styles/ApplicationMap.css";
 import "./styles/CustomControls.css";
 
 import isAuthenticated from "./hooks/isAuthenticated";
-import useApplications from "./hooks/useApplications";
-import useApplicationSets from "./hooks/useApplicationSets";
+import { useApplicationGraph } from "./hooks/useApplicationGraph";
 
 const Extension: React.FC = () => {
-  const { data: applications, error: applicationsError } = useApplications();
-  const { data: applicationSets, error: applicationSetsError } =
-    useApplicationSets();
+  const { graph, isLoading, error } = useApplicationGraph();
 
   const authenticated = isAuthenticated(
     // NOTE: check if user is authenticated when an error occurs
-    applicationsError,
-    applicationSetsError,
+    error,
   );
   if (authenticated === false) {
     window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
   }
 
-  if (applicationsError)
-    return <StateScreenApplicationError error={applicationsError} />;
-  if (applicationSetsError)
-    return <StateScreenApplicationError error={applicationSetsError} />;
-  if (!applications?.length && !applicationSets?.length)
-    return <StateScreenApplicationEmpty />;
+  if (error) return <StateScreenApplicationError error={error} />;
+  if (!graph) return <StateScreenApplicationEmpty />;
 
   return (
     <div className="argocd-application-map__container">
       <ReactFlowProvider>
         <ApplicationMap
-          applications={applications}
-          applicationSets={applicationSets}
+          graph={graph}
+          rankdir={RankDirection.LR}
         ></ApplicationMap>
       </ReactFlowProvider>
     </div>
