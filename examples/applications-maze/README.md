@@ -3,6 +3,7 @@
 This repository contains practical examples of different application linking patterns in ArgoCD.
 
 ## Table of Contents
+
 - [Application Types](#application-types)
 - [Relationship Diagram](#relationship-diagram)
 
@@ -49,8 +50,7 @@ graph LR
 
     %% App of Apps 02 Deployments
     appofapps02 --> appset03[[appset-03]]
-    appset03 --> appofapps01
-    appset03 --> appofapps02
+    appset03 --> guestbook04[guestbook-app-04]
 
     %% Style Definitions
     classDef app stroke:#4CAF50,stroke-width:2px,color:#4CAF50
@@ -58,8 +58,8 @@ graph LR
     classDef appofapps stroke:#2196F3,stroke-width:2px,color:#2196F3
 
     %% Apply Styles
-    class guestbook01,guestbook02,guestbook03,guestbook07,bluegreen,guestbook,helmhooks,jsonnettla,jsonnet,kustomize,prepostsync,sockshop,syncwaves app
-    class appset01,appset02,appset03,appset03 appset
+    class guestbook01,guestbook02,guestbook03,guestbook04,bluegreen,guestbook,helmhooks,jsonnettla,jsonnet,kustomize,prepostsync,sockshop,syncwaves app
+    class appset01,appset02,appset03 appset
     class appofapps01,appofapps02 appofapps
 ```
 
@@ -72,14 +72,17 @@ The arrows indicate dependency relationships between applications, showing how d
 The graph above illustrates the relationships between different ArgoCD applications. Here's a detailed explanation:
 
 - `App of Apps 01` deploys:
+
   - `guestbook-app-01`
   - `appset-01` and `appset-02` (ApplicationSets)
 
 - `appset-01` deploys:
+
   - `guestbook-app-02` and `guestbook-app-03`
   - `App of Apps 02`
 
 - `appset-02` deploys:
+
   - `blue-green` (blue-green deployment)
   - `guestbook` (standard guestbook)
   - `helm-hooks` (Helm hooks demo)
@@ -90,6 +93,7 @@ The graph above illustrates the relationships between different ArgoCD applicati
   - `sync-waves` (sync waves demo)
 
 - `App of Apps 02` deploys:
+
   - `appset-03`
 
 - `appset-03` deploys:
