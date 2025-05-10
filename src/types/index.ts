@@ -4,4 +4,4 @@ export {
   HealthStatus,
   SyncStatus,
 } from "./application";
-export { ArgoCDApplication, ArgoCDApplicationSet } from "./argocd";
+export { ArgoApplication as ArgoCDApplication, ArgoCDApplicationSet } from "./argocd";

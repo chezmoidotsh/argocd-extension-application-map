@@ -1,4 +1,4 @@
-import { ArgoCDApplication, ArgoCDApplicationSet } from "../types/argocd";
+import { ArgoApplication, ArgoCDApplicationSet } from "../types/argocd";
 import { Application, HealthStatus, SyncStatus } from "../types/application";
 
 /**
@@ -7,7 +7,7 @@ import { Application, HealthStatus, SyncStatus } from "../types/application";
  * @returns The converted Application
  */
 export function convertArgoCDApplicationToApplication(
-  argoApp: ArgoCDApplication,
+  argoApp: ArgoApplication,
 ): Application {
   console.debug(`ArgoCDApplication:`, argoApp);
   const app: Application = {
