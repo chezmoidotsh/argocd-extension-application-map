@@ -4,7 +4,8 @@ helm = "3.17"
 kind = "0.20"
 kubectl = "1.32"
 node = "lts"
-tilt = "0.34"
+pnpm = "latest"
+tilt = "latest"
 
 # -- Configure MISE environment
 [env]

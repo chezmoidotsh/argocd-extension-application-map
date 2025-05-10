@@ -2,8 +2,11 @@ const webpack = require("webpack");
 const TerserWebpackPlugin = require("terser-webpack-plugin");
 const extName = "application-map";
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
 const config = {
-  mode: "production",
+  mode: isDevelopment ? "development" : "production",
+  devtool: isDevelopment ? "source-map" : false,
   entry: {
     extension: "./src/index.tsx",
   },
@@ -25,23 +28,29 @@ const config = {
     "react-dom": "ReactDOM",
     moment: "Moment",
   },
-  optimization: {
-    minimize: true,
-    minimizer: [
-      new TerserWebpackPlugin({
-        terserOptions: {
-          format: {
-            comments: false,
-          },
-        },
-        extractComments: false,
-      }),
-    ],
-  },
+  optimization: !isDevelopment
+    ? {
+        minimize: true,
+        minimizer: [
+          new TerserWebpackPlugin({
+            terserOptions: {
+              format: {
+                comments: false,
+              },
+              compress: {
+                drop_console: true,
+                drop_debugger: true,
+              },
+            },
+            extractComments: false,
+          }),
+        ],
+      }
+    : undefined,
   plugins: [
     new webpack.LoaderOptionsPlugin({
-      minimize: true,
-      debug: false,
+      minimize: !isDevelopment,
+      debug: isDevelopment,
     }),
   ],
   module: {
