@@ -12,7 +12,7 @@ import {
 import { useEffect } from "react";
 import { ApplicationGraph } from "../types";
 import ApplicationNode from "./ApplicationNode";
-import MapNavigationControls from "./MapNavigationControls";
+import ApplicationMapNavigationControls from "./ApplicationMapNavigationControls";
 import Dagre from "@dagrejs/dagre";
 
 // Constants
@@ -192,7 +192,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
         zoomable={true}
         aria-label="ArgoCD Application Map Mini Map"
       />
-      <MapNavigationControls aria-label="ArgoCD Application Map Navigation Controls" />
+      <ApplicationMapNavigationControls aria-label="ArgoCD Application Map Navigation Controls" />
     </ReactFlow>
   );
 };

@@ -34,16 +34,19 @@ const SyncStatuses: SyncStatusesType = {
 } as const;
 
 /**
- * StatusIconSync component displays an icon representing the sync status of an application
+ * ApplicationNodeStatusIconSync component displays an icon representing the sync status of an application
  * @component
  * @param {Object} props - Component props
  * @param {SyncStatus} [props.status] - The sync status to display
  * @returns {JSX.Element} A Font Awesome icon with appropriate styling
  * @example
- * <StatusIconSync status={SyncStatus.Synced} />
+ * <ApplicationNodeStatusIconSync status={SyncStatus.Synced} />
  */
-const StatusIconSync: React.FC<{ status?: SyncStatus }> = ({ status: rawStatus }) => {
-  const status = rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;
+const ApplicationNodeStatusIconSync: React.FC<{ status?: SyncStatus }> = ({
+  status: rawStatus,
+}) => {
+  const status =
+    rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;
   return (
     <i
       qe-id="utils-sync-status-title"
@@ -57,4 +60,4 @@ const StatusIconSync: React.FC<{ status?: SyncStatus }> = ({ status: rawStatus }
   );
 };
 
-export default StatusIconSync;
+export default ApplicationNodeStatusIconSync;

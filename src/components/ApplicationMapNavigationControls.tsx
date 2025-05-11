@@ -2,14 +2,14 @@ import * as React from "react";
 import { useReactFlow, Panel, ControlButton } from "@xyflow/react";
 
 /**
- * MapNavigationControls component provides zoom and fit view controls for the application map
+ * ApplicationMapNavigationControls component provides zoom and fit view controls for the application map
  * @component
  * @example
  * ```tsx
- * <MapNavigationControls />
+ * <ApplicationMapNavigationControls />
  * ```
  */
-const MapNavigationControls: React.FC = () => {
+const ApplicationMapNavigationControls: React.FC = () => {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   return (
@@ -47,4 +47,4 @@ const MapNavigationControls: React.FC = () => {
   );
 };
 
-export default MapNavigationControls;
+export default ApplicationMapNavigationControls;

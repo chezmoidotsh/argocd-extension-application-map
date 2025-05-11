@@ -1,6 +1,6 @@
 import React from "react";
-import StatusIconHealth from "./StatusIconHealth";
-import StatusIconSync from "./StatusIconSync";
+import ApplicationNodeStatusIconHealth from "./ApplicationNodeStatusIconHealth";
+import ApplicationNodeStatusIconSync from "./ApplicationNodeStatusIconSync";
 import { Handle, NodeProps } from "@xyflow/react";
 import { Application } from "../types";
 
@@ -77,8 +77,8 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
           {data.metadata.name}
         </div>
         <div className="application-resource-tree__node-status-icon">
-          <StatusIconHealth status={data.status?.health} />
-          <StatusIconSync status={data.status?.sync} />
+          <ApplicationNodeStatusIconHealth status={data.status?.health} />
+          <ApplicationNodeStatusIconSync status={data.status?.sync} />
         </div>
       </div>
     </div>
