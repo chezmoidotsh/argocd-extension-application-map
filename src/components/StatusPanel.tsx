@@ -13,6 +13,7 @@ import {
   SyncStatuses,
 } from "../types";
 import "../styles/index.scss";
+import { hasCycle } from "../utils/cyclic_graph";
 
 /**
  * Props for the StatusPanel component
@@ -222,7 +223,7 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ graph }) => {
       <div className="application-status-panel row">
         <StatusPanelHealthRow statuses={healthStatuses} />
         <StatusPanelSyncRow statuses={syncStatuses} />
-        {graph.selfLoopCount > 0 && (
+        {hasCycle(graph) && (
           <div className="application-status-panel__item">
             <div style={{ lineHeight: "19.5px", marginBottom: "0.3em" }}>
               <label
@@ -246,19 +247,17 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ graph }) => {
                 className="application-status-panel__text"
                 style={{ color: "#f4c030" }}
               >
-                &nbsp;{graph.selfLoopCount} self-loop
-                {graph.selfLoopCount > 1 ? "s" : ""} detected
+                &nbsp;Circular dependency detected
               </div>
             </div>
             <div className="application-status-panel__item__row argocd-application-map__status-panel__warning-box">
               <div className="application-status-panel__text argocd-application-map__status-panel__warning-text">
                 <div className="argocd-application-map__status-panel__warning-header">
                   <i className="fa fa-exclamation-circle argocd-application-map__status-panel__warning-icon"></i>
-                  <strong>Self-loops in ArgoCD can lead to:</strong>
+                  <strong>Circular dependencies in ArgoCD can lead to:</strong>
                 </div>
                 <ul className="argocd-application-map__status-panel__warning-list">
                   <li>Infinite sync loops</li>
-                  <li>Resource conflicts</li>
                   <li>Unstable application states</li>
                   <li>Race conditions during removal</li>
                 </ul>
