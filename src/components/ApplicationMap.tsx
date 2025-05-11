@@ -8,6 +8,7 @@ import {
   Position,
   Node,
   Edge,
+  useReactFlow,
 } from "@xyflow/react";
 import { useEffect } from "react";
 import { ApplicationGraph } from "../types";
@@ -21,6 +22,11 @@ const EDGE_STYLE = {
   stroke: "#555",
   strokeWidth: 1,
   strokeDasharray: "5,6",
+  opacity: 1,
+};
+const SELECTED_EDGE_STYLE = {
+  ...EDGE_STYLE,
+  strokeDasharray: "none",
 };
 const MARKER_END = {
   type: MarkerType.ArrowClosed,
@@ -123,6 +129,8 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
 }) => {
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
+  const { getNodes, getEdges } = useReactFlow();
+  const [_, setSelectedEdgeId] = React.useState<string | null>(null);
 
   useEffect(() => {
     if (!graph) return;
@@ -176,6 +184,40 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     setEdges(layoutedEdges);
   }, [graph, rankdir]);
 
+  const onEdgeClick = React.useCallback(
+    (_: React.MouseEvent, edge: Edge) => {
+      setSelectedEdgeId(edge.id);
+      const connectedNodeIds = new Set([edge.source, edge.target]);
+      
+      // Update nodes and edges
+      setNodes(getNodes().map((node) => ({
+        ...node,
+        style: { ...node.style, opacity: connectedNodeIds.has(node.id) ? 1 : 0.5 },
+      })));
+
+      setEdges(getEdges().map((e) => ({
+        ...e,
+        style: e.id === edge.id ? SELECTED_EDGE_STYLE : { ...EDGE_STYLE, opacity: 0.5 },
+      })));
+    },
+    [getNodes, getEdges, setNodes, setEdges],
+  );
+
+  const onPaneClick = React.useCallback(() => {
+    setSelectedEdgeId(null);
+    
+    // Reset all nodes and edges to default state
+    setNodes(getNodes().map((node) => ({
+      ...node,
+      style: { ...node.style, opacity: 1 },
+    })));
+
+    setEdges(getEdges().map((edge) => ({
+      ...edge,
+      style: EDGE_STYLE,
+    })));
+  }, [getNodes, getEdges, setNodes, setEdges]);
+
   return (
     <ReactFlow
       {...props}
@@ -185,6 +227,9 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       style={{ width: "100%", height: "100%" }}
       fitView
       fitViewOptions={FIT_VIEW_OPTIONS}
+
+      onEdgeClick={onEdgeClick}
+      onPaneClick={onPaneClick}
     >
       <MiniMap
         position="top-right"
