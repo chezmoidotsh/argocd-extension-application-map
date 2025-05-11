@@ -4,8 +4,7 @@ import "@xyflow/react/dist/style.css";
 
 import StateScreen from "./components/StateScreen";
 import ApplicationMap, { RankDirection } from "./components/ApplicationMap";
-import "./styles/ApplicationMap.css";
-import "./styles/CustomControls.css";
+import "./styles/index.scss";
 import StatusPanel from "./components/StatusPanel";
 
 import { useApplicationGraph } from "./hooks/useApplicationGraph";

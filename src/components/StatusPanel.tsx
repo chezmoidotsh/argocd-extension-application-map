@@ -5,7 +5,6 @@
  */
 
 import React from "react";
-import "../styles/ApplicationMap.css";
 import {
   ApplicationGraph,
   HealthStatus,
@@ -13,6 +12,7 @@ import {
   HealthStatuses,
   SyncStatuses,
 } from "../types";
+import "../styles/index.scss";
 
 /**
  * Props for the StatusPanel component

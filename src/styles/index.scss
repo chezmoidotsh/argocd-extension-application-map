@@ -1,0 +1,93 @@
+// Variables
+$container-height: calc(100vh - 100px);
+$warning-bg-color: #fff8e1;
+$warning-border-color: #f4c030;
+$warning-text-color: #5c4c00;
+$control-text-color: #6d7f8b;
+$control-hover-bg: #d1d5d9;
+$separator-color: #dee6eb;
+$secondary-text-color: #666;
+
+// Container
+.argocd-application-map {
+  &__container {
+    height: $container-height;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  // Controls Panel
+  &__controls-panel {
+    margin-left: 10px;
+    padding: 5px;
+    box-shadow: 1px 1px 3px #8fa4b1;
+    background: #fff;
+  }
+
+  &__control-button {
+    padding: 5px;
+    margin: 2px;
+    color: $control-text-color;
+    border-radius: 5px;
+    vertical-align: middle;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    background: transparent;
+    border: 1px solid transparent !important;
+    user-select: none;
+    text-transform: uppercase;
+    transition:
+      background-color 0.2s,
+      border 0.2s,
+      color 0.2s;
+
+    &:hover {
+      background-color: $control-hover-bg;
+    }
+  }
+
+  &__separator {
+    border-right: 1px solid $separator-color;
+    padding: 6px 0;
+  }
+
+  // Status Panel
+  &__status-panel {
+    &__warning {
+      &-box {
+        margin-top: 8px;
+        padding: 8px 12px;
+        background-color: $warning-bg-color;
+        border-left: 4px solid $warning-border-color;
+      }
+
+      &-text {
+        font-size: 12px;
+        color: $warning-text-color;
+      }
+
+      &-header {
+        margin-bottom: 4px;
+      }
+
+      &-icon {
+        margin-right: 6px;
+      }
+
+      &-list {
+        margin: 4px 0 4px 20px;
+        padding: 0;
+      }
+
+      &-footer {
+        font-size: 11px;
+        color: $secondary-text-color;
+        margin-top: 4px;
+      }
+    }
+  }
+}
