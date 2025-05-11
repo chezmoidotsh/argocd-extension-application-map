@@ -2,8 +2,7 @@ import * as React from "react";
 import { ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
-import StateScreenApplicationEmpty from "./components/StateScreenApplicationEmpty";
-import StateScreenApplicationError from "./components/StateScreenApplicationError";
+import StateScreen from "./components/StateScreen";
 import ApplicationMap, { RankDirection } from "./components/ApplicationMap";
 import "./styles/ApplicationMap.css";
 import "./styles/CustomControls.css";
@@ -22,8 +21,42 @@ const Extension: React.FC = () => {
     window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
   }
 
-  if (error) return <StateScreenApplicationError error={error} />;
-  if (!graph) return <StateScreenApplicationEmpty />;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <StateScreen
+        icon="fa-solid fa-hourglass"
+        title="Loading applications..."
+        subtitle="Please wait while we fetch your application data"
+      />
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <StateScreen
+        icon="fa-solid fa-xmark"
+        title="Failed to load applications"
+        subtitle="Please try refreshing the page or contact your administrator"
+        additionalContent={
+          <pre style={{ color: "#ff6b6b" }}>{error.message}</pre>
+        }
+      />
+    );
+  }
+
+  // Empty state
+  if (!graph) {
+    return (
+      <StateScreen
+        icon="argo-icon-application"
+        title="No applications available to you just yet"
+        subtitle="Create new application to start managing resources in your cluster"
+      />
+    );
+  }
 
   return (
     <div className="argocd-application-map__container">
