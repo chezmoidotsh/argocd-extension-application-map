@@ -1,52 +1,5 @@
 import React from "react";
-import { HealthStatus } from "../types/application";
-
-/**
- * Type definition for all health status configurations
- */
-type HealthStatusesType = {
-  [K in HealthStatus]: {
-    readonly color: string;
-    readonly icon: string;
-    readonly title?: string;
-  };
-};
-
-/**
- * Configuration mapping for all health statuses
- * @type {HealthStatusesType}
- */
-const HealthStatuses: HealthStatusesType = {
-  [HealthStatus.Healthy]: {
-    color: "#18be94",
-    icon: "fa-heart",
-    title: "Healthy",
-  },
-  [HealthStatus.Suspended]: {
-    color: "#766f94",
-    icon: "fa-pause-circle",
-    title: "Suspended",
-  },
-  [HealthStatus.Degraded]: {
-    color: "#e96d76",
-    icon: "fa-heart-broken",
-    title: "Degraded",
-  },
-  [HealthStatus.Progressing]: {
-    color: "#0dadea",
-    icon: "fa-circle-notch fa-spin",
-    title: "Progressing",
-  },
-  [HealthStatus.Missing]: {
-    color: "#f4c030",
-    icon: "fa-ghost",
-    title: "Missing",
-  },
-  [HealthStatus.Unknown]: {
-    color: "#ccd6dd",
-    icon: "fa-question-circle",
-  },
-};
+import { HealthStatus, HealthStatuses } from "../types";
 
 /**
  * ApplicationNodeStatusIconHealth component displays an icon representing the health status of an application

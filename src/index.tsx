@@ -6,6 +6,7 @@ import StateScreen from "./components/StateScreen";
 import ApplicationMap, { RankDirection } from "./components/ApplicationMap";
 import "./styles/ApplicationMap.css";
 import "./styles/CustomControls.css";
+import StatusPanel from "./components/StatusPanel";
 
 import { useApplicationGraph } from "./hooks/useApplicationGraph";
 
@@ -84,6 +85,7 @@ const Extension: React.FC = () => {
   // Main application map view
   return (
     <div className="argocd-application-map__container">
+      <StatusPanel graph={graph} />
       <ReactFlowProvider>
         <ApplicationMap graph={graph} rankdir={RankDirection.LR} />
       </ReactFlowProvider>

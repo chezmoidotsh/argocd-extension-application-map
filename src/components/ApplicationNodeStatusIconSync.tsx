@@ -1,37 +1,5 @@
 import React from "react";
-import { SyncStatus } from "../types";
-
-/**
- * Type definition for all sync status configurations
- */
-type SyncStatusesType = {
-  [K in SyncStatus]: {
-    readonly color: string;
-    readonly icon: string;
-    readonly title?: string;
-  };
-};
-
-/**
- * Configuration mapping for all sync statuses
- * @type {SyncStatusesType}
- */
-const SyncStatuses: SyncStatusesType = {
-  [SyncStatus.Synced]: {
-    color: "#18be94",
-    icon: "fa-check-circle",
-    title: "Synced",
-  },
-  [SyncStatus.OutOfSync]: {
-    color: "#f4c030",
-    icon: "fa-arrow-alt-circle-up",
-    title: "OutOfSync",
-  },
-  [SyncStatus.Unknown]: {
-    color: "#ccd6dd",
-    icon: "fa-circle-notch fa-spin",
-  },
-} as const;
+import { SyncStatus, SyncStatuses } from "../types";
 
 /**
  * ApplicationNodeStatusIconSync component displays an icon representing the sync status of an application
