@@ -151,7 +151,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
         targetPosition: rankdir.targetPosition,
 
         // Interaction properties
-        selectable: true,
+        selectable: attributes.data.kind !== "ApplicationSet",
         draggable: false,
         connectable: false,
         deletable: false,

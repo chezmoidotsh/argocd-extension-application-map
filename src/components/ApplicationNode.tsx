@@ -49,6 +49,10 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
       title={nodeTitle}
       style={{ width, height }}
       {...props}
+
+      onClick={() => {
+        window.location.href = `/applications/${data.metadata.namespace}/${data.metadata.name}?view=tree&resource=`;
+      }}
     >
       <Handle
         type="source"
