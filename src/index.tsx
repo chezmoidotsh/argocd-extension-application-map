@@ -7,20 +7,43 @@ import ApplicationMap, { RankDirection } from "./components/ApplicationMap";
 import "./styles/ApplicationMap.css";
 import "./styles/CustomControls.css";
 
-import isAuthenticated from "./hooks/isAuthenticated";
 import { useApplicationGraph } from "./hooks/useApplicationGraph";
 
+/**
+ * Main Extension component for the ArgoCD Application Map
+ * Displays a graph visualization of ArgoCD applications and their relationships
+ */
 const Extension: React.FC = () => {
   const { graph, isLoading, error } = useApplicationGraph();
 
-  const authenticated = isAuthenticated(
-    // NOTE: check if user is authenticated when an error occurs
-    error,
-  );
-  if (authenticated === false) {
-    window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
-  }
+  /**
+   * Checks if the user is authenticated by calling the ArgoCD API
+   * @returns Promise<boolean> - true if authenticated, false otherwise
+   */
+  const checkAuth = React.useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await fetch("/api/v1/session/userinfo");
+      if (!response.ok) {
+        return false;
+      }
+      const { loggedIn } = await response.json();
+      return loggedIn ?? false;
+    } catch (error) {
+      console.error("Authentication check failed:", error);
+      return false;
+    }
+  }, []);
 
+  // Check authentication when there's an error
+  React.useEffect(() => {
+    if (error) {
+      checkAuth().then((isAuth) => {
+        if (!isAuth) {
+          window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
+        }
+      });
+    }
+  }, [error, checkAuth]);
 
   // Loading state
   if (isLoading) {
@@ -58,13 +81,11 @@ const Extension: React.FC = () => {
     );
   }
 
+  // Main application map view
   return (
     <div className="argocd-application-map__container">
       <ReactFlowProvider>
-        <ApplicationMap
-          graph={graph}
-          rankdir={RankDirection.LR}
-        ></ApplicationMap>
+        <ApplicationMap graph={graph} rankdir={RankDirection.LR} />
       </ReactFlowProvider>
     </div>
   );
