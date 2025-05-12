@@ -38,10 +38,6 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
   ...props
 }) => {
   const nodeTitle = `Kind: ${data.kind}\nNamespace: ${data.metadata.namespace}\nName: ${data.metadata.name}`;
-  const iconClass =
-    data.kind === "ApplicationSet"
-      ? "argo-icon-catalog"
-      : "argo-icon-application";
 
   return (
     <div
@@ -65,11 +61,20 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
       />
 
       <div className="application-resource-tree__node-kind-icon">
-        <i
-          title={data.kind}
-          className={`icon ${iconClass}`}
-          aria-label={`${data.kind} icon`}
-        />
+        {data.kind === "ApplicationSet" ? (
+          <div
+            className="argocd-application-map__node-kind-icon-as"
+            aria-label="ApplicationSet icon"
+          >
+            <span style={{ color: "white", fontSize: "1em" }}>AS</span>
+          </div>
+        ) : (
+          <i
+            title={data.kind}
+            className={`icon argo-icon-application`}
+            aria-label={`Application icon`}
+          />
+        )}
         <div className="application-resource-tree__node-kind">
           {data.kind.toLowerCase()}
         </div>

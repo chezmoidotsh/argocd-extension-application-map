@@ -90,4 +90,17 @@ $secondary-text-color: #666;
       }
     }
   }
+
+  &__node-kind-icon-as {
+    background-color: #8fa4b1;
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 400;
+    height: 32px;
+    line-height: 30px;
+    padding: 2px 4px;
+    text-align: center;
+    vertical-align: middle;
+    width: 32px;
+  }
 }
