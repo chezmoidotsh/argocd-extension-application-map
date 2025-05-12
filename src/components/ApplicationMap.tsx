@@ -16,27 +16,54 @@ import ApplicationNode from "./ApplicationNode";
 import ApplicationMapNavigationControls from "./ApplicationMapNavigationControls";
 import Dagre from "@dagrejs/dagre";
 
-// Constants
-const NODE_SIZE = { width: 282, height: 52 };
-const EDGE_STYLE = {
-  stroke: "#555",
-  strokeWidth: 1,
-  strokeDasharray: "5,6",
+// Style constants
+const NODE_STYLES_DEFAULT = {
   opacity: 1,
 };
-const SELECTED_EDGE_STYLE = {
-  ...EDGE_STYLE,
-  strokeDasharray: "none",
+const NODE_STYLES = {
+  default: NODE_STYLES_DEFAULT,
+  selected: NODE_STYLES_DEFAULT,
+  unselected: {
+    ...NODE_STYLES_DEFAULT,
+    opacity: 0.5,
+  },
+} as const;
+
+const EDGE_STYLES_DEFAULT = {
+  stroke: "#777",
+  strokeWidth: 1,
+  strokeDasharray: "3,3",
+  strokeOpacity: 1,
 };
-const MARKER_END = {
+const EDGE_STYLES = {
+  default: EDGE_STYLES_DEFAULT,
+  selected: {
+    ...EDGE_STYLES_DEFAULT,
+    strokeDasharray: "none",
+    strokeOpacity: 1,
+  },
+  unselected: {
+    ...EDGE_STYLES_DEFAULT,
+    strokeOpacity: 0.5,
+  },
+} as const;
+
+const MARKER_END_DEFAULT = {
   type: MarkerType.ArrowClosed,
   color: "#555",
   strokeWidth: 3,
 };
-const FIT_VIEW_OPTIONS = {
-  maxZoom: 1,
-  minZoom: 0.25,
-};
+const MARKER_END = {
+  default: MARKER_END_DEFAULT,
+  selected: MARKER_END_DEFAULT,
+  unselected: {
+    ...MARKER_END_DEFAULT,
+    opacity: 0.5,
+  },
+} as const;
+
+const NODE_SIZE = { width: 282, height: 52 };
+const FIT_VIEW_OPTIONS = { maxZoom: 1, minZoom: 0.5 };
 
 /**
  * Props for the ApplicationMap component
@@ -44,6 +71,12 @@ const FIT_VIEW_OPTIONS = {
 interface ApplicationMapProps {
   graph: ApplicationGraph;
   rankdir: RankDirectionType;
+
+  selectedNodes?: string[];
+  selectedEdges?: string[];
+
+  onEdgeClick: (event: React.MouseEvent, edge: Edge) => void;
+  onPaneClick: () => void;
 }
 
 /**
@@ -112,6 +145,27 @@ const generateLayout = (
 };
 
 /**
+ * Generic function to preserve styles when updating nodes or edges
+ * @param oldItems The existing items (nodes or edges)
+ * @param newItems The new items to be set
+ * @returns New items with preserved styles from old items
+ */
+const preserveStyles = <T extends { id: string; style?: any }>(
+  oldItems: T[],
+  newItems: T[],
+): T[] => {
+  const existingStyles = oldItems.reduce(
+    (acc, item) => ({ ...acc, [item.id]: item.style }),
+    {} as Record<string, any>,
+  );
+
+  return newItems.map((item) => ({
+    ...item,
+    style: existingStyles[item.id] || item.style,
+  }));
+};
+
+/**
  * ApplicationMap component displays a graph visualization of ArgoCD applications and their relationships
  * @component
  * @example
@@ -125,13 +179,19 @@ const generateLayout = (
 const ApplicationMap: React.FC<ApplicationMapProps> = ({
   graph,
   rankdir,
+  onEdgeClick,
+  onPaneClick,
+  selectedNodes = [],
+  selectedEdges = [],
   ...props
 }) => {
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
   const { getNodes, getEdges } = useReactFlow();
-  const [_, setSelectedEdgeId] = React.useState<string | null>(null);
 
+  /**
+   * Modifies where the nodes and edges are positioned in the graph based on the rank direction
+   */
   useEffect(() => {
     if (!graph) return;
 
@@ -175,48 +235,75 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
         target,
 
         // Style properties
-        style: EDGE_STYLE,
-        markerEnd: MARKER_END,
+        style: EDGE_STYLES.default,
+        markerEnd: MARKER_END.default,
       }),
     );
 
-    setNodes(layoutedNodes);
-    setEdges(layoutedEdges);
+    setNodes((old) => preserveStyles(old, layoutedNodes));
+    setEdges((old) => preserveStyles(old, layoutedEdges));
   }, [graph, rankdir]);
 
-  const onEdgeClick = React.useCallback(
-    (_: React.MouseEvent, edge: Edge) => {
-      setSelectedEdgeId(edge.id);
-      const connectedNodeIds = new Set([edge.source, edge.target]);
-      
-      // Update nodes and edges
-      setNodes(getNodes().map((node) => ({
-        ...node,
-        style: { ...node.style, opacity: connectedNodeIds.has(node.id) ? 1 : 0.5 },
-      })));
+  /**
+   * Handles node selection and updates the node styles accordingly
+   */
+  useEffect(() => {
+    if (!getNodes().length) return;
 
-      setEdges(getEdges().map((e) => ({
-        ...e,
-        style: e.id === edge.id ? SELECTED_EDGE_STYLE : { ...EDGE_STYLE, opacity: 0.5 },
-      })));
-    },
-    [getNodes, getEdges, setNodes, setEdges],
-  );
+    // If no nodes are selected, reset the node styles to the default state
+    if (!selectedNodes?.length) {
+      setNodes(
+        getNodes().map((node) => ({
+          ...node,
+          style: NODE_STYLES.default,
+          markerEnd: MARKER_END.default,
+        })),
+      );
+    } else {
+      const selectedNodesIds = selectedNodes.reduce(
+        (acc, id) => ({ ...acc, [id]: true }),
+        {} as Record<string, boolean>,
+      );
 
-  const onPaneClick = React.useCallback(() => {
-    setSelectedEdgeId(null);
-    
-    // Reset all nodes and edges to default state
-    setNodes(getNodes().map((node) => ({
-      ...node,
-      style: { ...node.style, opacity: 1 },
-    })));
+      setNodes(
+        getNodes().map((node) => ({
+          ...node,
+          style: selectedNodesIds[node.id]
+            ? NODE_STYLES.selected
+            : NODE_STYLES.unselected,
+          markerEnd: selectedNodesIds[node.id]
+            ? MARKER_END.selected
+            : MARKER_END.unselected,
+        })),
+      );
+    }
+  }, [selectedNodes]);
 
-    setEdges(getEdges().map((edge) => ({
-      ...edge,
-      style: EDGE_STYLE,
-    })));
-  }, [getNodes, getEdges, setNodes, setEdges]);
+  /**
+   * Handles edge selection and updates the edge styles accordingly
+   */
+  useEffect(() => {
+    if (!getEdges().length) return;
+    if (!selectedEdges?.length) {
+      setEdges(
+        getEdges().map((edge) => ({ ...edge, style: EDGE_STYLES.default })),
+      );
+    } else {
+      const selectedEdgesIds = selectedEdges.reduce(
+        (acc, id) => ({ ...acc, [id]: true }),
+        {} as Record<string, boolean>,
+      );
+
+      setEdges(
+        getEdges().map((edge) => ({
+          ...edge,
+          style: selectedEdgesIds[edge.id]
+            ? EDGE_STYLES.selected
+            : EDGE_STYLES.unselected,
+        })),
+      );
+    }
+  }, [selectedEdges]);
 
   return (
     <ReactFlow
@@ -227,7 +314,6 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       style={{ width: "100%", height: "100%" }}
       fitView
       fitViewOptions={FIT_VIEW_OPTIONS}
-
       onEdgeClick={onEdgeClick}
       onPaneClick={onPaneClick}
     >

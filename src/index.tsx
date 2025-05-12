@@ -1,5 +1,5 @@
 import * as React from "react";
-import { ReactFlowProvider } from "@xyflow/react";
+import { Edge, ReactFlowProvider } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import StateScreen from "./components/StateScreen";
@@ -15,6 +15,8 @@ import { useApplicationGraph } from "./hooks/useApplicationGraph";
  */
 const Extension: React.FC = () => {
   const { graph, isLoading, error } = useApplicationGraph();
+  const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+  const [selectedEdges, setSelectedEdges] = React.useState<string[]>([]);
 
   /**
    * Checks if the user is authenticated by calling the ArgoCD API
@@ -32,6 +34,27 @@ const Extension: React.FC = () => {
       console.error("Authentication check failed:", error);
       return false;
     }
+  }, []);
+
+  /**
+   * Selects the edge and nodes associated with the clicked edge when the user clicks on an edge
+   * @param event The mouse event
+   * @param edge The edge that was clicked
+   */
+  const onEdgeClick = React.useCallback(
+    (event: React.MouseEvent, edge: Edge) => {
+      setSelectedEdges([edge.id]);
+      setSelectedNodes([edge.source, edge.target]);
+    },
+    [],
+  );
+
+  /**
+   * Resets the selected nodes and edges when the pane is clicked
+   */
+  const onPaneClick = React.useCallback(() => {
+    setSelectedNodes([]);
+    setSelectedEdges([]);
   }, []);
 
   // Check authentication when there's an error
@@ -86,7 +109,14 @@ const Extension: React.FC = () => {
     <div className="argocd-application-map__container">
       <StatusPanel graph={graph} />
       <ReactFlowProvider>
-        <ApplicationMap graph={graph} rankdir={RankDirection.LR} />
+        <ApplicationMap
+          graph={graph}
+          rankdir={RankDirection.LR}
+          selectedNodes={selectedNodes}
+          selectedEdges={selectedEdges}
+          onEdgeClick={onEdgeClick}
+          onPaneClick={onPaneClick}
+        />
       </ReactFlowProvider>
     </div>
   );
