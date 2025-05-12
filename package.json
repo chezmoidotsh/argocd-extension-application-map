@@ -1,5 +1,5 @@
 {
-  "name": "@chezmoi-sh/argocd-ui-extension-application-map",
+  "name": "@chezmoi-sh/argocd-extension-application-map",
   "version": "0.1.1",
   "private": false,
   "dependencies": {
