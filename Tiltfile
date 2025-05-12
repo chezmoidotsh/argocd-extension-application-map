@@ -122,14 +122,6 @@ k8s_resource('argocd-applicationset-controller',
     ],
 )
 
-k8s_resource('argocd-dex-server',
-    objects=[
-        'argocd-dex-server:serviceaccount',
-        'argocd-dex-server:role',
-        'argocd-dex-server:rolebinding',
-    ],
-)
-
 # -----------------------------------------------------------------------------
 # Example Application
 # -----------------------------------------------------------------------------

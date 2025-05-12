@@ -7,12 +7,12 @@ configs:
     argocdServerAdminPassword: $2a$10$l2JvLtIXRHdlFHPDQTjuBecLxv5y1wdGjliLYg/SZTcPaqOjRVsBC # admin/admin
   cm:
     url: https://localhost:8080
-    dex.config: '{"connectors":[{"type":"mockCallback","id":"mock","name":"Dex"}],"enablePasswordDB":true}'
+    users.anonymous.enabled: true
   rbac:
-    policy.csv: g,authors,role:admin
+    policy.default: role:admin
 
 dex:
-  enabled: true
+  enabled: false
 
 redis:
   enabled: true
