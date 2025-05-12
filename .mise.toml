@@ -1,8 +1,12 @@
 # -- Configure MISE requirements
 [tools]
+# Kubernetes tools
+argocd = "latest"
 helm = "3.17"
 kind = "0.20"
 kubectl = "1.32"
+
+# Development tools
 node = "lts"
 pnpm = "latest"
 tilt = "latest"
@@ -12,7 +16,6 @@ tilt = "latest"
 HELM_CACHE_HOME = "{{ config_root }}/.misenv/helm/cache"
 HELM_CONFIG_HOME = "{{ config_root }}/.misenv/helm/config"
 HELM_DATA_HOME = "{{ config_root }}/.misenv/helm/data"
-KREW_ROOT = "{{ config_root }}/.misenv/krew"
 KUBECONFIG = "{{ config_root }}/.misenv/kubeconfig"
 
 # -- Configure MISE tasks

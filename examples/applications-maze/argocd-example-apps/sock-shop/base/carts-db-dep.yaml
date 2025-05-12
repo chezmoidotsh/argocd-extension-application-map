@@ -16,23 +16,23 @@ spec:
         name: carts-db
     spec:
       containers:
-      - name: carts-db
-        image: mongo
-        ports:
-        - name: mongo
-          containerPort: 27017
-        securityContext:
-          capabilities:
-            drop:
-              - all
-            add:
-              - CHOWN
-              - SETGID
-              - SETUID
-          readOnlyRootFilesystem: true
-        volumeMounts:
-        - mountPath: /tmp
-          name: tmp-volume
+        - name: carts-db
+          image: mongo
+          ports:
+            - name: mongo
+              containerPort: 27017
+          securityContext:
+            capabilities:
+              drop:
+                - all
+              add:
+                - CHOWN
+                - SETGID
+                - SETUID
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
       volumes:
         - name: tmp-volume
           emptyDir:

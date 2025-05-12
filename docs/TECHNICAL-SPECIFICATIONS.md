@@ -8,9 +8,11 @@
 > while maintaining technical accuracy and completeness.
 
 ## Overview
+
 This ArgoCD UI extension provides a comprehensive hierarchical view of Applications and ApplicationSets, visualizing their relationships and health status. The Application Map extension seamlessly integrates with ArgoCD's native UI, maintaining visual consistency while offering enhanced visualization capabilities for complex deployment hierarchies.
 
 ## Context and References
+
 - [ArgoCD Documentation](https://argo-cd.readthedocs.io/en/stable/)
 - [ArgoCD UI Extensions](https://argo-cd.readthedocs.io/en/stable/developer-guide/extensions/ui-extensions/)
 - [ArgoCD API Documentation](https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/)
@@ -19,13 +21,16 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 
 ## Core Concepts
+
 1. **Extension Architecture**
+
    - System Level Extension for global access
    - Integration with ArgoCD's extension API
    - React-based component system
    - Type-safe development with TypeScript
 
 2. **Data Model**
+
    - Applications and ApplicationSets hierarchy
    - Resource relationships and dependencies
    - Health and sync status tracking
@@ -40,21 +45,25 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
 ## Technical Architecture
 
 ### Extension Type
+
 - **Type**: System Level Extension
 - **Reason**: The extension requires system-level access to retrieve and display information about all Applications and ApplicationSets across different projects and clusters.
-- **Implementation Details**: 
+- **Implementation Details**:
   - Integration with [ArgoCD's extension API](https://argo-cd.readthedocs.io/en/stable/developer-guide/extensions/ui-extensions/)
   - Implementation of appropriate [RBAC permissions](https://argo-cd.readthedocs.io/en/stable/operator-manual/rbac/)
   - Seamless integration with ArgoCD's authentication system
 
 ### Core Features
+
 1. **Hierarchical View**
+
    - Tree-based visualization of Applications and ApplicationSets
    - Clear representation of parent-child relationships
    - Complete visualization of deployment chains from top-level resources to leaf applications
    - Implementation using ArgoCD's native visualization components
 
 2. **Grouping Capabilities**
+
    - Logical grouping of applications by:
      - Cluster
      - Project
@@ -62,11 +71,13 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Static (non-collapsible) groups for optimal visibility
 
 3. **Status Visualization**
+
    - Native ArgoCD sync status indicators
    - Health status indicators matching ArgoCD's design system
    - Consistent color scheme and iconography with ArgoCD
 
 4. **Navigation**
+
    - Single-click: Visual highlighting of parent hierarchy
    - Double-click: Direct navigation to application details
    - Integration with ArgoCD's native routing system
@@ -82,7 +93,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Persistent filter state management
 
 ### Technical Stack
+
 1. **Frontend**
+
    - React with TypeScript for type safety and enhanced developer experience
    - ArgoCD UI Extension SDK for seamless integration
    - Material-UI for consistent styling with ArgoCD
@@ -96,7 +109,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
 ### Design Specifications
 
 #### Visual Elements
+
 1. **Icons and Indicators**
+
    - Native ArgoCD application icon
    - Native ArgoCD ApplicationSet icon
    - Native ArgoCD cluster icon
@@ -110,7 +125,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Consistent spacing and padding with ArgoCD's design system
 
 #### Layout
+
 1. **Main View**
+
    - Left sidebar with filters (width: 250px)
    - Main content area with hierarchical view
    - Responsive design supporting various screen sizes
@@ -123,18 +140,23 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Native ArgoCD hover effects
 
 ### API Integration
+
 1. **ArgoCD Extension API Integration**
+
    ```typescript
    // Extension registration
    ((window) => {
-     const component = (props: { application: Application, tree: ApplicationTree }) => {
+     const component = (props: {
+       application: Application;
+       tree: ApplicationTree;
+     }) => {
        // Use React from global scope
        const { React } = window;
-       
+
        return React.createElement(
          "div",
          { style: { padding: "10px" } },
-         "Hello World"
+         "Hello World",
        );
      };
 
@@ -143,33 +165,34 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
        component,
        "Application Map",
        "/map",
-       "fa-sitemap"
+       "fa-sitemap",
      );
    })(window);
    ```
 
 2. **Data Access**
+
    ```typescript
    // Access to ArgoCD data through props
-   const component = (props: { application: Application, tree: ApplicationTree }) => {
+   const component = (props: {
+     application: Application;
+     tree: ApplicationTree;
+   }) => {
      const { application, tree } = props;
-     
+
      // Access application data
      const appName = application.metadata.name;
      const appStatus = application.status;
-     
+
      // Access resource tree
      const resources = tree.nodes;
-     
-     return React.createElement(
-       "div",
-       null,
-       `Application: ${appName}`
-     );
+
+     return React.createElement("div", null, `Application: ${appName}`);
    };
    ```
 
 3. **Integration Benefits**
+
    - Direct access to ArgoCD's UI components
    - Automatic RBAC enforcement
    - Consistent data structure
@@ -183,7 +206,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Automatic retry mechanism
 
 ### Performance Considerations
+
 1. **Data Loading**
+
    - Lazy loading of resource details
    - Pagination for large resource sets (page size: 50)
    - Caching of frequently accessed data (TTL: 5 minutes)
@@ -196,6 +221,7 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Memoization of expensive computations
 
 ### Security
+
 1. **Access Control**
    - Strict adherence to ArgoCD RBAC
    - Resource filtering based on user permissions
@@ -203,18 +229,22 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Input validation and sanitization
 
 ### Development Environment Setup
+
 > [!IMPORTANT]
 > Before starting development, ensure you have a local development environment with:
+>
 > - [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) or [k3d](https://k3d.io/v5.4.6/) for local Kubernetes cluster
 > - [Tilt](https://docs.tilt.dev/install.html) for development workflow
 > - [ArgoCD](https://argo-cd.readthedocs.io/en/stable/getting_started/) installed on the cluster
-> 
+>
 > These tools are essential for testing the extension in a realistic environment.
 
 ### Development Workflow
 
 #### Phase 1: Setup and Foundation
+
 1. **Environment Setup**
+
    - [ArgoCD development environment](https://argo-cd.readthedocs.io/en/stable/getting_started/)
    - Extension development environment configuration
    - Testing environment setup
@@ -227,7 +257,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Extension registration
 
 #### Phase 2: Core Features
+
 1. **API Integration**
+
    - Service integration implementation
    - Data fetching and caching
    - Error handling
@@ -240,7 +272,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Status indicator integration
 
 #### Phase 3: Advanced Features
+
 1. **Filtering System**
+
    - Filter implementation
    - Real-time update handling
    - State persistence
@@ -253,7 +287,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - State management
 
 #### Phase 4: Polish and Optimization
+
 1. **Performance**
+
    - Rendering optimization
    - Data loading optimization
    - Memory management
@@ -266,7 +302,9 @@ This ArgoCD UI extension provides a comprehensive hierarchical view of Applicati
    - Error state handling
 
 #### Phase 5: Testing and Documentation
+
 1. **Testing**
+
    - Unit test implementation
    - Integration testing
    - End-to-end testing
