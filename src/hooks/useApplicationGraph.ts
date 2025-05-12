@@ -112,6 +112,7 @@ function addApplicationToGraph(
           id: resourceId,
           position: { x: 0, y: 0 },
           data: {
+            kind: resource.kind,
             metadata: {
               name: resource.name,
               namespace: resource.namespace,
@@ -159,10 +160,8 @@ function addApplicationSetToGraph(
   applicationSet.status?.resources?.forEach((resource) => {
     const resourceId = `${resource.namespace}/${resource.name}`;
     if (!graph.hasNode(resourceId)) {
-      // WARN: this should never happen as all applications should be added before application sets
-      console.warn(
-        `Application ${resourceId} not found and this should never happen`,
-      );
+      // WARN: this append when the application is removed but the application set is not aware of it
+      return;
     } else {
       graph.addEdgeWithKey(
         `${applicationSetId} → ${resourceId}`,
