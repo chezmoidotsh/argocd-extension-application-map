@@ -4,7 +4,7 @@
  * in an ArgoCD cluster, including warnings for self-loops in the application graph.
  */
 
-import React from "react";
+import React, { useCallback } from "react";
 import {
   ApplicationGraph,
   HealthStatus,
@@ -16,24 +16,13 @@ import "../styles/index.scss";
 import { hasCycle } from "../utils/cyclic_graph";
 
 /**
- * Props for the StatusPanel component
- * @interface StatusPanelProps
- * @property {ApplicationGraph} graph - The application graph containing node and edge data
- */
-interface StatusPanelProps {
-  graph: ApplicationGraph;
-}
-
-/**
  * Component for displaying health status information
  * @component
- * @param {Object} props - Component props
- * @param {HealthStatus[]} props.statuses - Array of health statuses for applications
- * @returns {JSX.Element} Rendered health status panel
  */
-const StatusPanelHealthRow: React.FC<{ statuses: HealthStatus[] }> = ({
-  statuses,
-}) => {
+const StatusPanelHealthRow: React.FC<{
+  statuses: HealthStatus[];
+  onStatusClick: (status: HealthStatus) => void;
+}> = ({ statuses, onStatusClick: onHealthStatusClick }) => {
   const statusCounts = statuses.reduce(
     (acc, status) => {
       acc[status] = (acc[status] || 0) + 1;
@@ -104,7 +93,11 @@ const StatusPanelHealthRow: React.FC<{ statuses: HealthStatus[] }> = ({
                   style={{ color: HealthStatuses[title as HealthStatus].color }}
                 ></i>
               </div>
-              <div className="application-status-panel__text">
+              <div
+                className="application-status-panel__text"
+                onClick={() => onHealthStatusClick(title as HealthStatus)}
+                style={{ cursor: "pointer" }}
+              >
                 {count} applications {title.toLocaleLowerCase()}
               </div>
             </div>
@@ -117,13 +110,11 @@ const StatusPanelHealthRow: React.FC<{ statuses: HealthStatus[] }> = ({
 /**
  * Component for displaying sync status information
  * @component
- * @param {Object} props - Component props
- * @param {(SyncStatus | undefined)[]} props.statuses - Array of sync statuses for applications
- * @returns {JSX.Element} Rendered sync status panel
  */
 const StatusPanelSyncRow: React.FC<{
   statuses: (SyncStatus | undefined)[];
-}> = ({ statuses }) => {
+  onStatusClick: (status: SyncStatus) => void;
+}> = ({ statuses, onStatusClick: onSyncStatusClick }) => {
   const statusCounts = statuses.reduce(
     (acc, status) => {
       const syncStatus = status || SyncStatus.Unknown;
@@ -187,7 +178,11 @@ const StatusPanelSyncRow: React.FC<{
                   style={{ color: SyncStatuses[title as SyncStatus].color }}
                 ></i>
               </div>
-              <div className="application-status-panel__text">
+              <div
+                className="application-status-panel__text"
+                onClick={() => onSyncStatusClick(title as SyncStatus)}
+                style={{ cursor: "pointer" }}
+              >
                 {count} applications {title.toLocaleLowerCase()}
               </div>
             </div>
@@ -200,15 +195,16 @@ const StatusPanelSyncRow: React.FC<{
 /**
  * Main StatusPanel component that displays overall application status information
  * @component
- * @param {StatusPanelProps} props - Component props
- * @returns {JSX.Element} Rendered status panel with health, sync, and warning information
  *
  * @example
  * ```tsx
- * <StatusPanel graph={applicationGraph} />
+ * <StatusPanel graph={applicationGraph} onFilterUpdated={handleFilterUpdate} />
  * ```
  */
-const StatusPanel: React.FC<StatusPanelProps> = ({ graph }) => {
+const StatusPanel: React.FC<{
+  graph: ApplicationGraph;
+  onFilterUpdated: (selectedNodes: string[]) => void;
+}> = ({ graph, onFilterUpdated }) => {
   const healthStatuses = graph
     .mapNodes((_, attr) => attr.data)
     .filter((node) => node.kind === "Application")
@@ -218,11 +214,35 @@ const StatusPanel: React.FC<StatusPanelProps> = ({ graph }) => {
     .filter((node) => node.kind === "Application")
     .map((node) => node.status?.sync);
 
+  const onHealthStatusClick = useCallback(
+    (status: HealthStatus) => {
+      onFilterUpdated(
+        graph.filterNodes((_, attr) => attr.data.status?.health === status),
+      );
+    },
+    [graph, onFilterUpdated],
+  );
+
+  const onSyncStatusClick = useCallback(
+    (status: SyncStatus) => {
+      onFilterUpdated(
+        graph.filterNodes((_, attr) => attr.data.status?.sync === status),
+      );
+    },
+    [graph, onFilterUpdated],
+  );
+
   return (
     <div className="application-details__status-panel">
       <div className="application-status-panel row">
-        <StatusPanelHealthRow statuses={healthStatuses} />
-        <StatusPanelSyncRow statuses={syncStatuses} />
+        <StatusPanelHealthRow
+          statuses={healthStatuses}
+          onStatusClick={onHealthStatusClick}
+        />
+        <StatusPanelSyncRow
+          statuses={syncStatuses}
+          onStatusClick={onSyncStatusClick}
+        />
         {hasCycle(graph) && (
           <div className="application-status-panel__item">
             <div style={{ lineHeight: "19.5px", marginBottom: "0.3em" }}>
