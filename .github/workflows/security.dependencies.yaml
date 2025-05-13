@@ -1,0 +1,45 @@
+---
+name: 🔒️ Security checks (Dependencies)
+
+on:
+  push:
+    branches: [main]
+    paths: [package.json, pnpm-lock.yaml]
+  pull_request:
+    paths: [package.json, pnpm-lock.yaml]
+  schedule:
+    - cron: 0 0 * * 1 # Run every Monday at midnight
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  security_audit:
+    name: 🔍 Dependency security audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: 📦 Install PNPM
+        run: npm install -g pnpm
+
+      - name: 🔒 Install dependencies
+        run: pnpm install
+
+      - name: 🛡️ Run security audit
+        run: pnpm audit --json | pnpx npm-audit-sarif /dev/stdin > pnpm-audit.sarif || true
+
+      - name: 📊 Upload audit results to GitHub Code Scanning
+        uses: github/codeql-action/upload-sarif@018ac1a585e52f775ee7460e25bd00c4d516240e # v2.21.2
+        with:
+          sarif_file: pnpm-audit.sarif
+          category: pnpm-audit

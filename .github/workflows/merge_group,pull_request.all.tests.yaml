@@ -1,0 +1,50 @@
+---
+name: 🧪 Run Tests
+
+on:
+  merge_group: {}
+  pull_request:
+    paths:
+      - src/
+      - package.json
+      - pnpm-lock.yaml
+
+concurrency:
+  group: ${{ github.action }}-${{ github.event.pull_request.id }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  tests:
+    name: ✅ Run Jest Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: 📦 Install PNPM
+        run: npm install -g pnpm
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 🧪 Run tests
+        run: pnpm test
+
+      - name: 📊 Upload test results
+        uses: dorny/test-reporter@6e6a65b7a0bd2c9197df7d0ae36ac5cee784230c # v2.0.0
+        if: always()
+        with:
+          name: Jest Test Results
+          path: junit.xml
+          reporter: jest-junit
+          fail-on-error: true

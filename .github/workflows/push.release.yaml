@@ -1,0 +1,92 @@
+---
+name: 🚀 Release Extension
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - package.json
+
+permissions:
+  contents: write
+  discussions: write
+
+jobs:
+  check-version:
+    name: 🔍 Check version change
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version: ${{ steps.check.outputs.version }}
+    permissions:
+      contents: read
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 2
+
+      - name: 🔍 Check for version change
+        id: check
+        run: |
+          # Get current version
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $CURRENT_VERSION"
+
+          # Get previous version from the previous commit
+          git checkout HEAD~1
+          if [ -f "package.json" ]; then
+            PREVIOUS_VERSION=$(node -p "try { require('./package.json').version } catch { 'none' }")
+          else
+            PREVIOUS_VERSION="none"
+          fi
+          git checkout -
+          echo "Previous version: $PREVIOUS_VERSION"
+
+          # Check if version has changed
+          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
+            echo "Version has changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Version has not changed ($CURRENT_VERSION)"
+            echo "should_release=false" >> $GITHUB_OUTPUT
+            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+  build:
+    name: 📦 Build and Release
+    needs: check-version
+    if: needs.check-version.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: 🏗️ Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 20
+
+      - name: 📦 Install PNPM
+        run: npm install -g pnpm
+
+      - name: 📦 Install dependencies
+        run: pnpm install
+
+      - name: 🔨 Build the extension
+        run: pnpm build:prod && pnpm build:enpack
+
+      - name: 📄 Create checksums
+        run: |
+          SHA256_FILE="extension_checksums.txt"
+          sha256sum ./dist/extension.tar > ${SHA256_FILE}
+          echo "Created checksum file: ${SHA256_FILE}"
+          cat ${SHA256_FILE}
+
+      - name: 🚀 Create GitHub Release
+        run: |
+          VERSION="v${{ needs.check-version.outputs.version }}"
+          gh release create ${VERSION} --draft --generate-notes ./dist/extension.tar ./extension_checksums.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
