@@ -25,7 +25,7 @@ const NODE_STYLES = {
   selected: NODE_STYLES_DEFAULT,
   unselected: {
     ...NODE_STYLES_DEFAULT,
-    opacity: 0.5,
+    opacity: 0.25,
   },
 } as const;
 
@@ -44,7 +44,7 @@ const EDGE_STYLES = {
   },
   unselected: {
     ...EDGE_STYLES_DEFAULT,
-    strokeOpacity: 0.5,
+    strokeOpacity: 0.25,
   },
 } as const;
 
