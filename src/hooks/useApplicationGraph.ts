@@ -11,6 +11,17 @@ import { DirectedGraph } from "graphology";
 import { convertApplication, convertApplicationSet } from "../utils/converters";
 
 /**
+ * Generates a unique ID for a resource in the format kind/namespace/name
+ * @param kind - The kind of the resource
+ * @param namespace - The namespace of the resource
+ * @param name - The name of the resource
+ * @returns The generated ID
+ */
+function resourceId(kind: string, namespace: string, name: string): string {
+  return `${kind}/${namespace}/${name}`;
+}
+
+/**
  * Hook to fetch the application graph
  */
 export const useApplicationGraph = (): {
@@ -83,17 +94,17 @@ function addApplicationToGraph(
   graph: ApplicationGraph,
   application: ArgoApplication,
 ) {
-  const applicationId = `${application.metadata.namespace}/${application.metadata.name}`;
-  if (!graph.hasNode(applicationId)) {
-    graph.addNode(applicationId, {
-      id: applicationId,
+  const aId = resourceId("Application", application.metadata.namespace, application.metadata.name);
+  if (!graph.hasNode(aId)) {
+    graph.addNode(aId, {
+      id: aId,
       position: { x: 0, y: 0 },
       data: convertApplication(application),
     });
   } else {
     // NOTE: the application already exists if a previous application deploys this application
     // NOTE2: application from the API always has the latest status
-    graph.updateNodeAttribute(applicationId, "data", () =>
+    graph.updateNodeAttribute(aId, "data", () =>
       convertApplication(application),
     );
   }
@@ -106,10 +117,10 @@ function addApplicationToGraph(
         (resource.kind === "Application" || resource.kind === "ApplicationSet"),
     )
     .forEach((resource) => {
-      const resourceId = `${resource.namespace}/${resource.name}`;
-      if (!graph.hasNode(resourceId)) {
-        graph.addNode(resourceId, {
-          id: resourceId,
+      const rId = resourceId(resource.kind, resource.namespace, resource.name);
+      if (!graph.hasNode(rId)) {
+        graph.addNode(rId, {
+          id: rId,
           position: { x: 0, y: 0 },
           data: {
             kind: resource.kind,
@@ -125,9 +136,9 @@ function addApplicationToGraph(
         });
       }
       graph.addEdgeWithKey(
-        `${applicationId} → ${resourceId}`,
-        applicationId,
-        resourceId,
+        `${aId} → ${rId}`,
+        aId,
+        rId,
       );
     });
 }
@@ -141,16 +152,16 @@ function addApplicationSetToGraph(
   graph: ApplicationGraph,
   applicationSet: ArgoApplicationSet,
 ) {
-  const applicationSetId = `${applicationSet.metadata.namespace}/${applicationSet.metadata.name}`;
-  if (!graph.hasNode(applicationSetId)) {
-    graph.addNode(applicationSetId, {
-      id: applicationSetId,
+  const asId = resourceId("ApplicationSet", applicationSet.metadata.namespace, applicationSet.metadata.name);
+  if (!graph.hasNode(asId)) {
+    graph.addNode(asId, {
+      id: asId,
       position: { x: 0, y: 0 },
       data: convertApplicationSet(applicationSet),
     });
   } else {
     // NOTE: the application set already exists if a previous application deploys this application set
-    graph.updateNodeAttribute(applicationSetId, "data", (old) => ({
+    graph.updateNodeAttribute(asId, "data", (old) => ({
       ...convertApplicationSet(applicationSet),
       status: old.status,
     }));
@@ -158,15 +169,15 @@ function addApplicationSetToGraph(
 
   // Creates/updates all deployed applications and links them to this application set
   applicationSet.status?.resources?.forEach((resource) => {
-    const resourceId = `${resource.namespace}/${resource.name}`;
-    if (!graph.hasNode(resourceId)) {
+    const rId = resourceId(resource.kind, resource.namespace, resource.name);
+    if (!graph.hasNode(rId)) {
       // WARN: this append when the application is removed but the application set is not aware of it
       return;
     } else {
       graph.addEdgeWithKey(
-        `${applicationSetId} → ${resourceId}`,
-        applicationSetId,
-        resourceId,
+        `${asId} → ${rId}`,
+        asId,
+        rId,
       );
     }
   });

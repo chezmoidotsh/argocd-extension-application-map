@@ -79,6 +79,7 @@ export interface Metadata {
  * ```
  */
 export interface ArgoApplication {
+  kind: "Application";
   metadata: Metadata;
   spec: {
     source?: ArgoSource;
@@ -137,6 +138,7 @@ export interface ArgoApplication {
  * ```
  */
 export interface ArgoApplicationSet {
+  kind: "ApplicationSet";
   metadata: {
     name: string;
     namespace: string;
