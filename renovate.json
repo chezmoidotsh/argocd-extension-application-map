@@ -4,5 +4,37 @@
 		"github>chezmoi-sh/renovate-config",
 		"github>chezmoi-sh/renovate-config:github-actions(monthly)",
 		"github>chezmoi-sh/renovate-config:gitmoji"
+	],
+	"packageRules": [
+		{
+			"groupName": "react",
+			"matchPackagePatterns": [
+				"^react$",
+				"^react-dom$",
+				"^@types/react$",
+				"^@types/react-dom$"
+			]
+		},
+		{
+			"groupName": "graphology",
+			"matchPackagePatterns": [
+				"^graphology"
+			]
+		},
+		{
+			"groupName": "webpack",
+			"matchPackagePatterns": [
+				"^webpack",
+				".*-loader$"
+			]
+		},
+		{
+			"groupName": "jest",
+			"matchPackagePatterns": [
+				"^jest",
+				"^@jest/",
+				"^@types/jest"
+			]
+		}
 	]
 }
