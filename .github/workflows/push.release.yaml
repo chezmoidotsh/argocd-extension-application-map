@@ -88,14 +88,14 @@ jobs:
 
       - name: 📄 Create checksums
         run: |
-          SHA256_FILE="extension_checksums.txt"
-          sha256sum ./dist/extension.tar > "${SHA256_FILE}"
+          SHA256_FILE="extension-application-map_checksums.txt"
+          sha256sum ./dist/extension-application-map.tar > "${SHA256_FILE}"
           echo "Created checksum file: ${SHA256_FILE}"
           cat "${SHA256_FILE}"
 
       - name: 🚀 Create GitHub Release
         run: |
           VERSION="v${{ needs.check-version.outputs.version }}"
-          gh release create "${VERSION}" --draft --generate-notes ./dist/extension.tar ./extension_checksums.txt
+          gh release create "${VERSION}" --draft --generate-notes ./dist/extension-application-map.tar ./extension-application-map_checksums.txt
         env:
           GH_TOKEN: ${{ github.token }}

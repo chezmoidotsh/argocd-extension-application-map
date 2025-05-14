@@ -19,7 +19,7 @@
     "dev": "NODE_ENV=development pnpm webpack:watch",
     "build:dev": "NODE_ENV=development pnpm webpack",
     "build:prod": "NODE_ENV=production pnpm webpack",
-    "build:enpack": "tar -C dist -cvf dist/extension.tar resources",
+    "build:enpack": "tar -C dist -cvf dist/extension-application-map.tar resources",
     "build": "pnpm build:prod && pnpm build:enpack",
     "start": "pnpm dev",
     "test": "jest",
