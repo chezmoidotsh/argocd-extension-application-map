@@ -6,14 +6,23 @@ on:
     branches: [main]
     paths:
       - package.json
+  workflow_run:
+    workflows: [🚀 Bump Version]
+    types:
+      - completed
+    branches: [main]
 
 permissions:
   contents: write
   discussions: write
 
+# This workflow can be triggered either by a push to main that changes package.json
+# or automatically after the version bump workflow completes successfully
+
 jobs:
   check-version:
     name: 🔍 Check version change
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     outputs:
       should_release: ${{ steps.check.outputs.should_release }}
