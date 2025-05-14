@@ -49,16 +49,16 @@ jobs:
         id: auto-bump
         run: |
           npm version ${{ steps.nyx.outputs.version }} --no-git-tag-version
-          echo "version=${{ steps.nyx.outputs.version }}" >> $GITHUB_OUTPUT
-          echo "bump_type=${{ steps.nyx.outputs.bump }}" >> $GITHUB_OUTPUT
+          echo "version=${{ steps.nyx.outputs.version }}" >> "${GITHUB_OUTPUT}"
+          echo "bump_type=${{ steps.nyx.outputs.bump }}" >> "${GITHUB_OUTPUT}"
 
       - name: 📝 Manual version bump
         if: github.event.inputs.version_type != 'auto'
         id: manual-bump
         run: |
           npm version ${{ github.event.inputs.version_type }} --no-git-tag-version
-          echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
-          echo "bump_type=${{ github.event.inputs.version_type }}" >> $GITHUB_OUTPUT
+          echo "version=$(node -p "require('./package.json').version")" >> "${GITHUB_OUTPUT}"
+          echo "bump_type=${{ github.event.inputs.version_type }}" >> "${GITHUB_OUTPUT}"
 
       - name: 🔏 Create signed commit
         # Run if manual bump or if auto and new version was found
@@ -75,17 +75,17 @@ jobs:
 
           # Create a new commit using GitHub API (GraphQL) to get signed commit
           gh api graphql \
-            -f query='mutation($repo:String!,$branch:String!,$message:String!,$path:String!,$content:Base64String!,$oid:GitObjectID!){
+            -f query="mutation(\$repo:String!,\$branch:String!,\$message:String!,\$path:String!,\$content:Base64String!,\$oid:GitObjectID!){
               createCommitOnBranch(input:{
-                branch:{repositoryNameWithOwner:$repo,branchName:$branch},
-                message:{headline:$message},
-                fileChanges:{additions:[{path:$path,contents:$content}]},
-                expectedHeadOid:$oid
+                branch:{repositoryNameWithOwner:\$repo,branchName:\$branch},
+                message:{headline:\$message},
+                fileChanges:{additions:[{path:\$path,contents:\$content}]},
+                expectedHeadOid:\$oid
               }){commit{url}}
-            }' \
+            }" \
             -f repo="${{ github.repository }}" \
             -f branch="main" \
-            -f message="🚀: bump $BUMP_TYPE version to $VERSION" \
+            -f message="🚀: bump ${BUMP_TYPE} version to ${VERSION}" \
             -f path="package.json" \
             -f content="$(base64 -w 0 package.json)" \
             -f oid="$(git rev-parse HEAD)"
