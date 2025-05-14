@@ -40,7 +40,7 @@ jobs:
         run: |
           # Get current version
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "Current version: $CURRENT_VERSION"
+          echo "Current version: ${CURRENT_VERSION}"
 
           # Get previous version from the previous commit
           git checkout HEAD~1
@@ -50,17 +50,17 @@ jobs:
             PREVIOUS_VERSION="none"
           fi
           git checkout -
-          echo "Previous version: $PREVIOUS_VERSION"
+          echo "Previous version: ${PREVIOUS_VERSION}"
 
           # Check if version has changed
-          if [ "$CURRENT_VERSION" != "$PREVIOUS_VERSION" ]; then
-            echo "Version has changed from $PREVIOUS_VERSION to $CURRENT_VERSION"
-            echo "should_release=true" >> $GITHUB_OUTPUT
-            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          if [ "${CURRENT_VERSION}" != "${PREVIOUS_VERSION}" ]; then
+            echo "Version has changed from ${PREVIOUS_VERSION} to ${CURRENT_VERSION}"
+            echo "should_release=true" >> "${GITHUB_OUTPUT}"
+            echo "version=${CURRENT_VERSION}" >> "${GITHUB_OUTPUT}"
           else
-            echo "Version has not changed ($CURRENT_VERSION)"
-            echo "should_release=false" >> $GITHUB_OUTPUT
-            echo "version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+            echo "Version has not changed (${CURRENT_VERSION})"
+            echo "should_release=false" >> "${GITHUB_OUTPUT}"
+            echo "version=${CURRENT_VERSION}" >> "${GITHUB_OUTPUT}"
           fi
 
   build:
@@ -89,13 +89,13 @@ jobs:
       - name: 📄 Create checksums
         run: |
           SHA256_FILE="extension_checksums.txt"
-          sha256sum ./dist/extension.tar > ${SHA256_FILE}
+          sha256sum ./dist/extension.tar > "${SHA256_FILE}"
           echo "Created checksum file: ${SHA256_FILE}"
-          cat ${SHA256_FILE}
+          cat "${SHA256_FILE}"
 
       - name: 🚀 Create GitHub Release
         run: |
           VERSION="v${{ needs.check-version.outputs.version }}"
-          gh release create ${VERSION} --draft --generate-notes ./dist/extension.tar ./extension_checksums.txt
+          gh release create "${VERSION}" --draft --generate-notes ./dist/extension.tar ./extension_checksums.txt
         env:
           GH_TOKEN: ${{ github.token }}
