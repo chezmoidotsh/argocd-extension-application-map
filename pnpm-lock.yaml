@@ -55,8 +55,8 @@ importers:
         specifier: ^16.0.0
         version: 16.0.0
       raw-loader:
-        specifier: ^0.5.1
-        version: 0.5.1
+        specifier: ^4.0.0
+        version: 4.0.2(webpack@5.99.8)
       sass:
         specifier: ^1.34.1
         version: 1.88.0
@@ -1812,8 +1812,11 @@ packages:
   randombytes@2.1.0:
     resolution: {integrity: sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ==}
 
-  raw-loader@0.5.1:
-    resolution: {integrity: sha512-sf7oGoLuaYAScB4VGr0tzetsYlS8EJH6qnTCfQ/WVEa89hALQ4RQfCKt5xCyPQKPDUbVUAIP1QsxAwfAjlDp7Q==}
+  raw-loader@4.0.2:
+    resolution: {integrity: sha512-ZnScIV3ag9A4wPX/ZayxL/jZH+euYb6FcUinPcgiQW0+UBtEv0O6Q3lGd3cqJ+GHH+rksEv3Pj99oxJ3u3VIKA==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
 
   react-dom@18.3.1:
     resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
@@ -4196,7 +4199,11 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
-  raw-loader@0.5.1: {}
+  raw-loader@4.0.2(webpack@5.99.8):
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.3.0
+      webpack: 5.99.8(webpack-cli@6.0.1)
 
   react-dom@18.3.1(react@18.3.1):
     dependencies:
