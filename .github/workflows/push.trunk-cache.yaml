@@ -20,6 +20,6 @@ jobs:
       - name: ⬇️ Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: 📦️ Populate cache with Trunk
-        uses: trunk-io/trunk-action@4d5ecc89b2691705fd08c747c78652d2fc806a94 # v1.1.19
+        uses: trunk-io/trunk-action@06c428bf05832198443baab1096754b166a6c466 # v1.2.2
         with:
           check-mode: populate_cache_only
