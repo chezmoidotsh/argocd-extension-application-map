@@ -5,6 +5,7 @@ on:
   merge_group: {}
   pull_request:
     paths:
+      - .github/workflows/merge_group,pull_request.all.tests.yaml
       - src/
       - package.json
       - pnpm-lock.yaml
@@ -38,7 +39,7 @@ jobs:
         run: pnpm install
 
       - name: 🧪 Run tests
-        run: pnpm test
+        run: pnpm test:ci
 
       - name: 📊 Upload test results
         uses: dorny/test-reporter@6e6a65b7a0bd2c9197df7d0ae36ac5cee784230c # v2.0.0
