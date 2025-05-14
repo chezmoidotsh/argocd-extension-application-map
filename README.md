@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![ArgoCD Extension](https://img.shields.io/badge/ArgoCD-Extension-blue)](https://argoproj.github.io/argo-cd/)
-[![Version](https://img.shields.io/badge/version-0.1.1-blue)](https://github.com/chezmoi-sh/argocd-extension-application-map/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/chezmoi-sh/argocd-extension-application-map)](https://github.com/chezmoi-sh/argocd-extension-application-map/releases)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/chezmoi-sh/argocd-extension-application-map/pulls)
 
 </div>
