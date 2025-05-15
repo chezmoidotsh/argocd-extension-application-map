@@ -25,12 +25,7 @@ ArgoCD Application Map is an ArgoCD extension that provides an interactive visua
 
 ### Prerequisites
 
-- ArgoCD v2.7.0 or later
-
-> [!WARNING]
-> There is a regression in ArgoCD 3.x that breaks this extension.
->
-> See [this issue](https://github.com/argoproj/argo-cd/issues/22921) for more details.
+- ArgoCD v2.x or later
 
 ### Install UI Extension
 
