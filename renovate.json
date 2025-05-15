@@ -1,40 +1,31 @@
 {
-	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": [
-		"github>chezmoi-sh/renovate-config",
-		"github>chezmoi-sh/renovate-config:github-actions(monthly)",
-		"github>chezmoi-sh/renovate-config:gitmoji"
-	],
-	"packageRules": [
-		{
-			"groupName": "react",
-			"matchPackagePatterns": [
-				"^react$",
-				"^react-dom$",
-				"^@types/react$",
-				"^@types/react-dom$"
-			]
-		},
-		{
-			"groupName": "graphology",
-			"matchPackagePatterns": [
-				"^graphology"
-			]
-		},
-		{
-			"groupName": "webpack",
-			"matchPackagePatterns": [
-				"^webpack",
-				".*-loader$"
-			]
-		},
-		{
-			"groupName": "jest",
-			"matchPackagePatterns": [
-				"^jest",
-				"^@jest/",
-				"^@types/jest"
-			]
-		}
-	]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>chezmoi-sh/renovate-config",
+    "github>chezmoi-sh/renovate-config:github-actions(monthly)",
+    "github>chezmoi-sh/renovate-config:gitmoji"
+  ],
+  "packageRules": [
+    {
+      "groupName": "react",
+      "matchPackageNames": [
+        "/^react$/",
+        "/^react-dom$/",
+        "/^@types/react$/",
+        "/^@types/react-dom$/"
+      ]
+    },
+    {
+      "groupName": "graphology",
+      "matchPackageNames": ["/^graphology/"]
+    },
+    {
+      "groupName": "webpack",
+      "matchPackageNames": ["/^webpack/", "/.*-loader$/"]
+    },
+    {
+      "groupName": "jest",
+      "matchPackageNames": ["/^jest/", "/^@jest//", "/^@types/jest/"]
+    }
+  ]
 }
