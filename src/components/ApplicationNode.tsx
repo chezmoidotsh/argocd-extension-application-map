@@ -2,7 +2,8 @@ import React from "react";
 import ApplicationNodeStatusIconHealth from "./ApplicationNodeStatusIconHealth";
 import ApplicationNodeStatusIconSync from "./ApplicationNodeStatusIconSync";
 import { Handle, NodeProps } from "@xyflow/react";
-import { Application } from "../types";
+import { ApplicationUnion } from "../types/application";
+import { isApplication, isApplicationSet } from "../types";
 
 /**
  * Props for the ApplicationNode component
@@ -10,7 +11,7 @@ import { Application } from "../types";
  */
 interface ApplicationNodeProps extends Omit<NodeProps, "data"> {
   /** The ArgoCD application data to display */
-  data: Application;
+  data: ApplicationUnion;
 }
 
 /**
@@ -61,7 +62,7 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
       />
 
       <div className="application-resource-tree__node-kind-icon">
-        {data.kind === "ApplicationSet" ? (
+        {isApplicationSet(data) ? (
           <div
             className="argocd-application-map__node-kind-icon-as"
             aria-label="ApplicationSet icon"
@@ -85,8 +86,12 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
           {data.metadata.name}
         </div>
         <div className="application-resource-tree__node-status-icon">
-          <ApplicationNodeStatusIconHealth status={data.status?.health} />
-          <ApplicationNodeStatusIconSync status={data.status?.sync} />
+          {isApplication(data) && (
+            <>
+              <ApplicationNodeStatusIconHealth status={data.status?.health} />
+              <ApplicationNodeStatusIconSync status={data.status?.sync} />
+            </>
+          )}
         </div>
       </div>
     </div>

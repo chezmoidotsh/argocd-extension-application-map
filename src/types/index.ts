@@ -9,18 +9,20 @@ import { DirectedGraph } from "graphology";
 import { Node } from "@xyflow/react";
 
 // Internal type imports
-import type { Application, ApplicationKind } from "./application";
+import type {
+  Application,
+  ApplicationKind,
+  ApplicationSet,
+  ApplicationUnion,
+} from "./application";
 import { HealthStatus, SyncStatus } from "./application";
-import {
-  ArgoApplication as ArgoCDApplication,
-  ArgoApplicationSet as ArgoCDApplicationSet,
-} from "./argocd";
+import { ArgoApplication as ArgoCDApplication } from "./argocd";
 import { HealthStatuses, SyncStatuses } from "./status";
 
 /**
  * Re-export application-related types
  */
-export type { Application, ApplicationKind };
+export type { Application, ApplicationSet, ApplicationKind };
 
 /**
  * Re-export application-related constants and interfaces
@@ -29,7 +31,6 @@ export {
   HealthStatus,
   SyncStatus,
   ArgoCDApplication,
-  ArgoCDApplicationSet,
   HealthStatuses,
   SyncStatuses,
 };
@@ -49,4 +50,15 @@ export type ApplicationGraph = DirectedGraph<ApplicationGraphNode>;
  * @extends {Omit<Node, "data">} - Base node type without the data property
  * @property {Application} data - The application data associated with this node
  */
-export type ApplicationGraphNode = Omit<Node, "data"> & { data: Application };
+export type ApplicationGraphNode = Omit<Node, "data"> & {
+  data: ApplicationUnion;
+};
+
+export const isApplication = (node: ApplicationUnion): node is Application => {
+  return node?.kind === "Application";
+};
+export const isApplicationSet = (
+  node: ApplicationUnion,
+): node is ApplicationSet => {
+  return node?.kind === "ApplicationSet";
+};

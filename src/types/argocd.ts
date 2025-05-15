@@ -20,7 +20,6 @@ import { SyncStatus, HealthStatus } from "./application";
 
 /**
  * Common metadata fields for Kubernetes resources
- * @interface Metadata
  * @property {string} name - The name of the resource
  * @property {string} namespace - The Kubernetes namespace
  * @property {Record<string, string>} [labels] - Optional labels attached to the resource
@@ -39,7 +38,6 @@ export interface Metadata {
 
 /**
  * Represents an ArgoCD Application resource
- * @interface Application
  * @property {Metadata} metadata - Metadata about the ArgoCD Application
  * @property {Object} spec - Specification of the ArgoCD Application
  * @property {Source} spec.source - Optional source configuration for the application
@@ -48,35 +46,6 @@ export interface Metadata {
  * @property {string} spec.project - ArgoCD project name
  * @property {SyncPolicy} spec.syncPolicy - Synchronization policy configuration
  * @property {ApplicationStatus} status - Current status of the ArgoCD Application
- * @example
- * ```tsx
- * const app: Application = {
- *   metadata: {
- *     name: 'my-app',
- *     namespace: 'default',
- *     labels: { 'app.kubernetes.io/name': 'my-app' },
- *     annotations: { 'argocd.argoproj.io/sync-wave': '0' }
- *   },
- *   spec: {
- *     source: {
- *       repoURL: 'https://github.com/org/repo.git',
- *       path: 'manifests',
- *       targetRevision: 'HEAD'
- *     },
- *     destination: {
- *       server: 'https://kubernetes.default.svc',
- *       namespace: 'default'
- *     },
- *     project: 'default',
- *     syncPolicy: {
- *       automated: {
- *         prune: true,
- *         selfHeal: true
- *       }
- *     }
- *   }
- * };
- * ```
  */
 export interface ArgoApplication {
   kind: "Application";
@@ -91,88 +60,12 @@ export interface ArgoApplication {
   status: ArgoApplicationStatus;
 }
 
-/**
- * Represents an ArgoCD ApplicationSet resource
- * @interface ApplicationSet
- * @property {Object} metadata - Metadata about the ArgoCD ApplicationSet
- * @property {string} metadata.name - Name of the ApplicationSet
- * @property {string} metadata.namespace - Kubernetes namespace where the ApplicationSet is deployed
- * @property {Record<string, string>} metadata.labels - Labels attached to the ApplicationSet
- * @property {Record<string, string>} metadata.annotations - Annotations attached to the ApplicationSet
- * @property {Object} status - Current status of the ArgoCD ApplicationSet
- * @property {Array<Object>} status.resources - List of Kubernetes resources managed by the ApplicationSet
- * @property {string} status.resources[].group - API group of the resource
- * @property {string} status.resources[].version - API version of the resource
- * @property {string} status.resources[].kind - Kind of the resource
- * @property {string} status.resources[].namespace - Namespace of the resource
- * @property {string} status.resources[].name - Name of the resource
- * @property {SyncStatus} status.resources[].status - Current status of the resource
- * @property {Object} status.resources[].health - Health status of the resource
- * @property {HealthStatus} status.resources[].health.status - Health status value
- * @property {Array<Object>} [status.conditions] - List of conditions describing the current state of the ApplicationSet
- * @property {string} status.conditions[].type - Type of condition
- * @property {string} status.conditions[].status - Status of the condition
- * @property {string} status.conditions[].lastTransitionTime - Last time the condition transitioned from one status to another
- * @property {string} [status.conditions[].message] - Human-readable message indicating details about the transition
- * @example
- * ```tsx
- * const appSet: ApplicationSet = {
- *   metadata: {
- *     name: 'my-app-set',
- *     namespace: 'argocd',
- *     labels: { 'app.kubernetes.io/name': 'my-app-set' },
- *     annotations: {}
- *   },
- *   status: {
- *     resources: [{
- *       group: 'argoproj.io',
- *       version: 'v1alpha1',
- *       kind: 'Application',
- *       namespace: 'argocd',
- *       name: 'my-app',
- *       status: 'Synced',
- *       health: { status: 'Healthy' }
- *     }]
- *   }
- * };
- * ```
- */
-export interface ArgoApplicationSet {
-  kind: "ApplicationSet";
-  metadata: {
-    name: string;
-    namespace: string;
-    labels: Record<string, string>;
-    annotations: Record<string, string>;
-  };
-  status: {
-    resources: Array<{
-      group: string;
-      version: string;
-      kind: string;
-      namespace: string;
-      name: string;
-      status: SyncStatus;
-      health: {
-        status: HealthStatus;
-      };
-    }>;
-    conditions?: Array<{
-      type: string;
-      status: string;
-      lastTransitionTime: string;
-      message?: string;
-    }>;
-  };
-}
-
 // ============================================================================
 // Configuration Types
 // ============================================================================
 
 /**
  * Configuration for an ArgoCD source
- * @interface Source
  * @property {string} repoURL - The URL of the Git repository
  * @property {string} path - The path within the repository
  * @property {string} targetRevision - The target revision to sync to (branch, tag, or commit)
@@ -193,7 +86,6 @@ export interface ArgoSource {
 
 /**
  * Configuration for the destination cluster
- * @interface Destination
  * @property {string} server - The Kubernetes server URL
  * @property {string} namespace - The target namespace in the cluster
  */
@@ -227,32 +119,7 @@ export interface ArgoSyncPolicy {
 // ============================================================================
 
 /**
- * Status information for a Kubernetes resource
- * @interface ResourceStatus
- * @property {string} group - The API group of the resource
- * @property {string} version - The API version of the resource
- * @property {string} kind - The kind of the resource
- * @property {string} namespace - The namespace of the resource
- * @property {string} name - The name of the resource
- * @property {SyncStatus} status - The synchronization status of the resource
- * @property {HealthStatus} health.status - The health status of the resource
- */
-export interface ArgoResourceStatus {
-  group: string;
-  version: string;
-  kind: string;
-  namespace: string;
-  name: string;
-  status: SyncStatus;
-  health?: {
-    status: HealthStatus;
-  };
-}
-
-/**
  * Status information for an ArgoCD application
- * @interface ApplicationStatus
- * @property {ResourceStatus[]} resources - List of resources managed by the application
  * @property {Object} sync - Synchronization status information
  * @property {SyncStatus} sync.status - The current sync status
  * @property {string} sync.revision - The current revision being synced
@@ -261,7 +128,6 @@ export interface ArgoResourceStatus {
  * @property {string} [reconciledAt] - Optional timestamp of the last reconciliation
  */
 export interface ArgoApplicationStatus {
-  resources: ArgoResourceStatus[];
   sync: {
     status: SyncStatus;
     revision: string;
@@ -270,4 +136,71 @@ export interface ArgoApplicationStatus {
     status: HealthStatus;
   };
   reconciledAt?: string;
+}
+
+// ============================================================================
+// Resource Tree Types
+// ============================================================================
+
+/**
+ * Root structure containing all ArgoCD resources in the tree view
+ */
+export interface ArgoResourceTree {
+  nodes: ArgoResourceNode[];
+}
+
+/**
+ * Complete ArgoCD resource structure representing a node in the resource tree
+ *
+ * Resource identification
+ * @property {string} group - The API group of the resource (e.g. 'argoproj.io')
+ * @property {string} version - The API version of the resource (e.g. 'v1alpha1')
+ * @property {'Application' | 'ApplicationSet'} kind - The kind of the resource
+ *
+ * Resource metadata
+ * @property {string} namespace - The namespace where the resource is located
+ * @property {string} name - The name of the resource
+ * @property {string} uid - The unique identifier of the resource
+ * @property {string} resourceVersion - The resource version from Kubernetes
+ * @property {string} createdAt - The timestamp when the resource was created
+ *
+ * Optional properties
+ * @property {Object} [health] - Health status of the resource
+ * @property {HealthStatus} health.status - Current health status
+ * @property {string} health.message - Detailed health status message
+ * @property {ArgoResourceParentRef[]} [parentRefs] - References to parent resources
+ */
+export interface ArgoResourceNode {
+  // Resource identification
+  group: string;
+  version: string;
+  kind: "Application" | "ApplicationSet";
+
+  // Resource metadata
+  namespace: string;
+  name: string;
+  uid: string;
+  resourceVersion: string;
+  createdAt: string;
+
+  // Optional properties
+  health?: {
+    status: HealthStatus;
+    message: string;
+  };
+  parentRefs?: ArgoResourceParentRef[];
+}
+
+/**
+ * A reference to a parent resource
+ * @property {string} group - The API group of the parent resource
+ * @property {string} kind - The kind of the parent resource
+ * @property {string} namespace - The namespace of the parent resource
+ * @property {string} name - The name of the parent resource
+ */
+export interface ArgoResourceParentRef {
+  group: string;
+  kind: string;
+  namespace: string;
+  name: string;
 }

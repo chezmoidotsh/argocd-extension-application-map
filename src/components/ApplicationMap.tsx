@@ -11,7 +11,7 @@ import {
   useReactFlow,
 } from "@xyflow/react";
 import { useEffect } from "react";
-import { ApplicationGraph } from "../types";
+import { ApplicationGraph, ApplicationGraphNode } from "../types";
 import ApplicationNode from "./ApplicationNode";
 import ApplicationMapNavigationControls from "./ApplicationMapNavigationControls";
 import Dagre from "@dagrejs/dagre";
@@ -198,33 +198,35 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     const dagreGraph = generateLayout(graph, rankdir.rankdir);
 
     // Generate the final nodes and edges
-    const layoutedNodes = graph.mapNodes((node, attributes): Node => {
-      const { x, y } = dagreGraph.node(node);
-      return {
-        // Core properties
-        id: node,
-        type: "application",
-        data: attributes.data,
+    const layoutedNodes = graph.mapNodes(
+      (node, attributes): ApplicationGraphNode => {
+        const { x, y } = dagreGraph.node(node);
+        return {
+          // Core properties
+          id: node,
+          type: "application",
+          data: attributes.data,
 
-        // Layout properties
-        position: {
-          x: x - NODE_SIZE.width / 2,
-          y: y - NODE_SIZE.height / 2,
-        },
-        width: NODE_SIZE.width,
-        height: NODE_SIZE.height,
+          // Layout properties
+          position: {
+            x: x - NODE_SIZE.width / 2,
+            y: y - NODE_SIZE.height / 2,
+          },
+          width: NODE_SIZE.width,
+          height: NODE_SIZE.height,
 
-        // Connection properties
-        sourcePosition: rankdir.sourcePosition,
-        targetPosition: rankdir.targetPosition,
+          // Connection properties
+          sourcePosition: rankdir.sourcePosition,
+          targetPosition: rankdir.targetPosition,
 
-        // Interaction properties
-        selectable: attributes.data.kind !== "ApplicationSet",
-        draggable: false,
-        connectable: false,
-        deletable: false,
-      };
-    });
+          // Interaction properties
+          selectable: attributes.data.kind !== "ApplicationSet",
+          draggable: false,
+          connectable: false,
+          deletable: false,
+        };
+      },
+    );
 
     const layoutedEdges = graph.mapEdges(
       (edge, _attributes, source, target): Edge => ({
