@@ -68,8 +68,34 @@ export interface ApplicationStatus {
 }
 
 /**
- * Interface representing an ArgoCD application or application set
+ * Interface representing a single ArgoCD application
  * @interface Application
+ * @property {string} kind - The kind of the application, always "Application"
+ * @property {Metadata} metadata - Application metadata including name, namespace, and labels
+ * @property {ApplicationSpec} spec - Application specification including sources, destination, project, and sync policy
+ * @property {ApplicationStatus} status - Current status including health and sync state
+ */
+export interface Application {
+  kind: "Application";
+  metadata: Metadata;
+  spec: ApplicationSpec;
+  status: ApplicationStatus;
+}
+
+/**
+ * Interface representing an ArgoCD ApplicationSet
+ * @interface ApplicationSet
+ * @property {string} kind - The kind of the application set, always "ApplicationSet"
+ * @property {Metadata} metadata - Application set metadata including name, namespace, and labels
+ */
+export interface ApplicationSet {
+  kind: "ApplicationSet";
+  metadata: Metadata;
+}
+
+/**
+ * Interface representing an ArgoCD application or application set
+ * @interface ApplicationUnion
  *
  * This is a discriminated union type with two variants:
  *
@@ -86,17 +112,6 @@ export interface ApplicationStatus {
  * @property {ApplicationKind} kind - The kind of application (Application or ApplicationSet)
  * @property {Metadata} metadata - Application metadata including name, namespace, and labels
  * @property {ApplicationSpec} [spec] - Application specification (only present for Application kind)
- * @property {ApplicationStatus} status - Current status including health and sync state
+ * @property {ApplicationStatus} [status] - Current status including health and sync state (only present for Application kind)
  */
-export type Application =
-  | {
-      kind: "Application";
-      metadata: Metadata;
-      spec: ApplicationSpec;
-      status: ApplicationStatus;
-    }
-  | {
-      kind: "ApplicationSet";
-      metadata: Metadata;
-      status: ApplicationStatus;
-    };
+export type ApplicationUnion = Application | ApplicationSet;

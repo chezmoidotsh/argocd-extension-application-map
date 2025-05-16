@@ -13,7 +13,7 @@ import {
   SyncStatuses,
 } from "../types";
 import "../styles/index.scss";
-import { hasCycle } from "../utils/cyclic_graph";
+import { hasCycle } from "../utils/has_cycle";
 
 /**
  * Component for displaying health status information
