@@ -13,7 +13,7 @@ importers:
         version: 1.1.4
       '@xyflow/react':
         specifier: ^12.6.0
-        version: 12.6.3(@types/react@19.1.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 12.6.4(@types/react@19.1.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       graphology:
         specifier: ^0.26.0
         version: 0.26.0(graphology-types@0.24.8)
@@ -59,10 +59,10 @@ importers:
         version: 4.0.2(webpack@5.99.8)
       sass:
         specifier: ^1.34.1
-        version: 1.88.0
+        version: 1.89.0
       sass-loader:
         specifier: ^16.0.0
-        version: 16.0.5(sass@1.88.0)(webpack@5.99.8)
+        version: 16.0.5(sass@1.89.0)(webpack@5.99.8)
       style-loader:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.99.8)
@@ -759,14 +759,14 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@xyflow/react@12.6.3':
-    resolution: {integrity: sha512-uZC/mkmNCPu6yJkgaxZQ939LRtUZSeB5yB7z1kkl/ivlYQp+bZnkNsE3CRsTSnWEj20Ic4r+FeIsmfnvSsDvZQ==}
+  '@xyflow/react@12.6.4':
+    resolution: {integrity: sha512-/dOQ43Nu217cwHzy7f8kNUrFMeJJENzftVgT2VdFFHi6fHlG83pF+gLmvkRW9Be7alCsR6G+LFxxCdsQQbazHg==}
     peerDependencies:
       react: '>=17'
       react-dom: '>=17'
 
-  '@xyflow/system@0.0.60':
-    resolution: {integrity: sha512-vPewwUwxYfbt6+Q6uuWJAiJam6AfpqNEDsZVWZAH9XC4P644AIVlYbr/5OC6s6oQPvbGjCSTIksAuN+lBPHTgg==}
+  '@xyflow/system@0.0.61':
+    resolution: {integrity: sha512-TsZG/Ez8dzxX6/Ol44LvFqVZsYvyz6dpDlAQZZk6hTL7JLGO5vN3dboRJqMwU8/Qtr5IEv5YBzojjAwIqW1HCA==}
 
   acorn-walk@8.3.4:
     resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
@@ -1886,8 +1886,8 @@ packages:
       webpack:
         optional: true
 
-  sass@1.88.0:
-    resolution: {integrity: sha512-sF6TWQqjFvr4JILXzG4ucGOLELkESHL+I5QJhh7CNaE+Yge0SI+ehCatsXhJ7ymU1hAFcIS3/PBpjdIbXoyVbg==}
+  sass@1.89.0:
+    resolution: {integrity: sha512-ld+kQU8YTdGNjOLfRWBzewJpU5cwEv/h5yyqlSeJcj6Yh8U4TDA9UA5FPicqDz/xgRPWRSYIQNiFks21TbA9KQ==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -2235,8 +2235,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zustand@4.5.6:
-    resolution: {integrity: sha512-ibr/n1hBzLLj5Y+yUcU7dYw8p6WnIVzdJbnX+1YpaScvZVF2ziugqHs+LAmHw4lWO9c/zRj+K1ncgWDQuthEdQ==}
+  zustand@4.5.7:
+    resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
       '@types/react': '>=16.8'
@@ -2986,18 +2986,18 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@xyflow/react@12.6.3(@types/react@19.1.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@xyflow/react@12.6.4(@types/react@19.1.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@xyflow/system': 0.0.60
+      '@xyflow/system': 0.0.61
       classcat: 5.0.5
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      zustand: 4.5.6(@types/react@19.1.4)(react@18.3.1)
+      zustand: 4.5.7(@types/react@19.1.4)(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - immer
 
-  '@xyflow/system@0.0.60':
+  '@xyflow/system@0.0.61':
     dependencies:
       '@types/d3-drag': 3.0.7
       '@types/d3-selection': 3.0.11
@@ -4236,14 +4236,14 @@ snapshots:
 
   safe-buffer@5.2.1: {}
 
-  sass-loader@16.0.5(sass@1.88.0)(webpack@5.99.8):
+  sass-loader@16.0.5(sass@1.89.0)(webpack@5.99.8):
     dependencies:
       neo-async: 2.6.2
     optionalDependencies:
-      sass: 1.88.0
+      sass: 1.89.0
       webpack: 5.99.8(webpack-cli@6.0.1)
 
-  sass@1.88.0:
+  sass@1.89.0:
     dependencies:
       chokidar: 4.0.3
       immutable: 5.1.2
@@ -4590,7 +4590,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zustand@4.5.6(@types/react@19.1.4)(react@18.3.1):
+  zustand@4.5.7(@types/react@19.1.4)(react@18.3.1):
     dependencies:
       use-sync-external-store: 1.5.0(react@18.3.1)
     optionalDependencies:
