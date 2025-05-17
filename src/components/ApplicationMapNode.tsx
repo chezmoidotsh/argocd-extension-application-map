@@ -1,6 +1,6 @@
 import React from "react";
-import ApplicationNodeStatusIconHealth from "./ApplicationNodeStatusIconHealth";
-import ApplicationNodeStatusIconSync from "./ApplicationNodeStatusIconSync";
+import ApplicationNodeStatusIconHealth from "./IconStatusHealth";
+import ApplicationNodeStatusIconSync from "./IconStatusSync";
 import { Handle, NodeProps } from "@xyflow/react";
 import { ApplicationUnion } from "../types/application";
 import { isApplication, isApplicationSet } from "../types";
@@ -30,7 +30,7 @@ interface ApplicationNodeProps extends Omit<NodeProps, "data"> {
  * />
  * ```
  */
-const ApplicationNode: React.FC<ApplicationNodeProps> = ({
+const ApplicationMapNode: React.FC<ApplicationNodeProps> = ({
   data,
   width,
   height,
@@ -96,6 +96,4 @@ const ApplicationNode: React.FC<ApplicationNodeProps> = ({
       </div>
     </div>
   );
-};
-
-export default ApplicationNode;
+}

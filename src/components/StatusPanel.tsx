@@ -17,9 +17,8 @@ import { hasCycle } from "../utils/has_cycle";
 
 /**
  * Component for displaying health status information
- * @component
  */
-const StatusPanelHealthRow: React.FC<{
+export const StatusPanelHealth: React.FC<{
   statuses: HealthStatus[];
   onStatusClick: (status: HealthStatus) => void;
 }> = ({ statuses, onStatusClick: onHealthStatusClick }) => {
@@ -109,9 +108,8 @@ const StatusPanelHealthRow: React.FC<{
 
 /**
  * Component for displaying sync status information
- * @component
  */
-const StatusPanelSyncRow: React.FC<{
+export const StatusPanelSync: React.FC<{
   statuses: (SyncStatus | undefined)[];
   onStatusClick: (status: SyncStatus) => void;
 }> = ({ statuses, onStatusClick: onSyncStatusClick }) => {
@@ -194,12 +192,6 @@ const StatusPanelSyncRow: React.FC<{
 
 /**
  * Main StatusPanel component that displays overall application status information
- * @component
- *
- * @example
- * ```tsx
- * <StatusPanel graph={applicationGraph} onFilterUpdated={handleFilterUpdate} />
- * ```
  */
 const StatusPanel: React.FC<{
   graph: ApplicationGraph;
@@ -235,11 +227,11 @@ const StatusPanel: React.FC<{
   return (
     <div className="application-details__status-panel">
       <div className="application-status-panel row">
-        <StatusPanelHealthRow
+        <StatusPanelHealth
           statuses={healthStatuses}
           onStatusClick={onHealthStatusClick}
         />
-        <StatusPanelSyncRow
+        <StatusPanelSync
           statuses={syncStatuses}
           onStatusClick={onSyncStatusClick}
         />

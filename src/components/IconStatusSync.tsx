@@ -10,7 +10,7 @@ import { SyncStatus, SyncStatuses } from "../types";
  * @example
  * <ApplicationNodeStatusIconSync status={SyncStatus.Synced} />
  */
-const ApplicationNodeStatusIconSync: React.FC<{ status?: SyncStatus }> = ({
+const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({
   status: rawStatus,
 }) => {
   const status =
@@ -28,4 +28,4 @@ const ApplicationNodeStatusIconSync: React.FC<{ status?: SyncStatus }> = ({
   );
 };
 
-export default ApplicationNodeStatusIconSync;
+export default IconStatusSync;

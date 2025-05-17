@@ -32,7 +32,7 @@ export const HealthStatuses: HealthStatusesType = {
     title: "Healthy",
   },
   [HealthStatus.Suspended]: {
-    color: "#ccd6dd",
+    color: "#f4c030",
     icon: "fa-pause-circle",
     title: "Suspended",
   },

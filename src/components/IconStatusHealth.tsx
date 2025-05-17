@@ -10,7 +10,7 @@ import { HealthStatus, HealthStatuses } from "../types";
  * @example
  * <ApplicationNodeStatusIconHealth status={HealthStatus.Healthy} />
  */
-const ApplicationNodeStatusIconHealth: React.FC<{ status?: HealthStatus }> = ({
+const IconStatusHealth: React.FC<{ status?: HealthStatus }> = ({
   status: rawStatus,
 }) => {
   const status =
@@ -28,4 +28,4 @@ const ApplicationNodeStatusIconHealth: React.FC<{ status?: HealthStatus }> = ({
   );
 };
 
-export default ApplicationNodeStatusIconHealth;
+export default IconStatusHealth;

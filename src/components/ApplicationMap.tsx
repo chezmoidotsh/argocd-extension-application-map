@@ -12,7 +12,7 @@ import {
 } from "@xyflow/react";
 import { useEffect } from "react";
 import { ApplicationGraph, ApplicationGraphNode } from "../types";
-import ApplicationNode from "./ApplicationNode";
+import ApplicationMapNode from "./ApplicationMapNode";
 import ApplicationMapNavigationControls from "./ApplicationMapNavigationControls";
 import Dagre from "@dagrejs/dagre";
 
@@ -167,14 +167,6 @@ const preserveStyles = <T extends { id: string; style?: any }>(
 
 /**
  * ApplicationMap component displays a graph visualization of ArgoCD applications and their relationships
- * @component
- * @example
- * ```tsx
- * <ApplicationMap
- *   applications={applications}
- *   applicationSets={applicationSets}
- * />
- * ```
  */
 const ApplicationMap: React.FC<ApplicationMapProps> = ({
   graph,
@@ -312,7 +304,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       {...props}
       nodes={nodes}
       edges={edges}
-      nodeTypes={{ application: ApplicationNode }}
+      nodeTypes={{ application: ApplicationMapNode }}
       style={{ width: "100%", height: "100%" }}
       fitView
       fitViewOptions={FIT_VIEW_OPTIONS}

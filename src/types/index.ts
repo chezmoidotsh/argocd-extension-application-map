@@ -16,7 +16,7 @@ import type {
   ApplicationUnion,
 } from "./application";
 import { HealthStatus, SyncStatus } from "./application";
-import { ArgoApplication as ArgoCDApplication } from "./argocd";
+import type { ArgoApplication } from "./argocd";
 import { HealthStatuses, SyncStatuses } from "./status";
 
 /**
@@ -30,10 +30,10 @@ export type { Application, ApplicationSet, ApplicationKind };
 export {
   HealthStatus,
   SyncStatus,
-  ArgoCDApplication,
   HealthStatuses,
   SyncStatuses,
 };
+export type { ArgoApplication };
 
 /**
  * Represents a directed graph of applications where nodes are applications
