@@ -7,6 +7,7 @@ $control-text-color: #6d7f8b;
 $control-hover-bg: #d1d5d9;
 $separator-color: #dee6eb;
 $secondary-text-color: #666;
+$panel-title-text-color: rgb(109, 127, 139);
 
 // Container
 .argocd-application-map {
@@ -57,6 +58,20 @@ $secondary-text-color: #666;
 
   // Status Panel
   &__status-panel {
+    &__title {
+      line-height: 19.5px;
+      margin-bottom: 3px;
+
+      & label {
+        font-size: 12px;
+        font-weight: 600;
+
+        .theme-light & {
+          color: $panel-title-text-color;
+        }
+      }
+    }
+
     &__warning {
       &-box {
         margin-top: 8px;

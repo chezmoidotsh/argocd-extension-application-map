@@ -1,202 +1,156 @@
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import StatusPanel, {
-  StatusPanelHealth,
-  StatusPanelSync,
-} from "./StatusPanel";
-import {
-  HealthStatus,
-  SyncStatus,
-  ApplicationUnion,
-} from "../types/application";
-import { ApplicationGraphNode } from "../types";
-import { DirectedGraph } from "graphology";
-import { action } from "@storybook/addon-actions";
-
-// Helper to create a mock Application node
-function createAppNode(
-  id: string,
-  data: Partial<ApplicationUnion> & { kind?: "Application" },
-) {
-  return {
-    id,
-    data: {
-      kind: "Application",
-      metadata: { name: id, namespace: "default" },
-      spec: {
-        sources: [
-          {
-            repoURL: "https://github.com/example/repo.git",
-            path: ".",
-            targetRevision: "main",
-          },
-        ],
-        destination: {
-          server: "https://kubernetes.default.svc",
-          namespace: "default",
-        },
-        project: "default",
-        syncPolicy: {},
-      },
-      status: {
-        health: HealthStatus.Healthy,
-        sync: SyncStatus.Synced,
-        ...data.status,
-      },
-      ...data,
-    } as ApplicationUnion,
-    position: { x: 0, y: 0 },
-    width: 100,
-    height: 40,
-    selected: false,
-    dragging: false,
-    draggable: false,
-    selectable: false,
-    positionAbsolute: { x: 0, y: 0 },
-    draggingHandle: null,
-    zIndex: 0,
-    parentNode: undefined,
-    extent: undefined,
-    sourcePosition: undefined,
-    targetPosition: undefined,
-    hidden: false,
-    dataType: undefined,
-  } as ApplicationGraphNode;
-}
-
-function makeGraph(
-  nodes: ApplicationGraphNode[],
-  edges: Array<[string, string]> = [],
-) {
-  const graph = new DirectedGraph<ApplicationGraphNode>();
-  nodes.forEach((node) => graph.addNode(node.id, node));
-  edges.forEach(([from, to]) => graph.addEdge(from, to));
-  // Add mapNodes and filterNodes helpers for StatusPanel
-  (graph as any).mapNodes = (fn: (id: string, attr: any) => any) => {
-    return graph
-      .nodes()
-      .map((id) => fn(id, { data: graph.getNodeAttribute(id, "data") }));
-  };
-  (graph as any).filterNodes = (fn: (id: string, attr: any) => boolean) => {
-    return graph
-      .nodes()
-      .filter((id) => fn(id, { data: graph.getNodeAttribute(id, "data") }));
-  };
-  return graph as any;
-}
+import { HealthStatus, SyncStatus } from '../types/application';
+import { allStatusScenario, cyclicScenario } from './.storybook/scenarii';
+import StatusPanel, { StatusPanelCycleWarning, StatusPanelHealth, StatusPanelSync } from './StatusPanel';
+import { action } from '@storybook/addon-actions';
+import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
+import { expect } from '@storybook/test';
+import React from 'react';
 
 const meta: Meta<typeof StatusPanel> = {
-  title: "Status Panel/StatusPanel",
+  title: 'Status Panel/StatusPanel',
   component: StatusPanel,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   subcomponents: {
-    StatusPanelHealth: StatusPanelHealth,
-    StatusPanelSync: StatusPanelSync,
+    StatusPanelHealth,
+    StatusPanelSync,
+    StatusPanelCycleWarning,
+  },
+  argTypes: {
+    graph: { control: false }, // graph must not be controlled by storybook
   },
 };
 export default meta;
 type Story = StoryObj<typeof StatusPanel>;
 
-const degradedNode = createAppNode("app-degraded", {
-  status: { health: HealthStatus.Degraded, sync: SyncStatus.OutOfSync },
-});
-const healthyNode = createAppNode("app-healthy", {
-  status: { health: HealthStatus.Healthy, sync: SyncStatus.Synced },
-});
-const missingNode = createAppNode("app-missing", {
-  status: { health: HealthStatus.Missing, sync: SyncStatus.Unknown },
-});
-const progressingNode = createAppNode("app-progressing", {
-  status: { health: HealthStatus.Progressing, sync: SyncStatus.Unknown },
-});
-const suspendedNode = createAppNode("app-suspended", {
-  status: { health: HealthStatus.Suspended, sync: SyncStatus.Unknown },
-});
-
-export const AllStatuses: Story = {
+export const Example: Story = {
   args: {
-    graph: makeGraph([
-      healthyNode,
-      degradedNode,
-      progressingNode,
-      missingNode,
-      suspendedNode,
-    ]),
-    onFilterUpdated: action("onFilterUpdated"),
+    graph: allStatusScenario,
+    onFilterUpdated: action('onFilterUpdated'),
   },
-};
+  play: async ({ canvasElement }: any) => {
+    const canvas = within(canvasElement);
 
-export const AllHealthy: Story = {
-  args: {
-    graph: makeGraph([
-      createAppNode("app1", {
-        status: { health: HealthStatus.Healthy, sync: SyncStatus.Synced },
-      }),
-      createAppNode("app2", {
-        status: { health: HealthStatus.Healthy, sync: SyncStatus.Synced },
-      }),
-    ]),
-    onFilterUpdated: action("onFilterUpdated"),
+    const healthStatusHealthy = await canvas.findByTestId('health-status-healthy-row');
+    expect(healthStatusHealthy).not.toBeNull();
+    expect(healthStatusHealthy).toHaveTextContent('1 application healthy');
+
+    const healthStatusDegraded = await canvas.findByTestId('health-status-degraded-row');
+    expect(healthStatusDegraded).not.toBeNull();
+    expect(healthStatusDegraded).toHaveTextContent('1 application degraded');
+
+    const healthStatusProgressing = await canvas.findByTestId('health-status-progressing-row');
+    expect(healthStatusProgressing).not.toBeNull();
+    expect(healthStatusProgressing).toHaveTextContent('1 application progressing');
+
+    const healthStatusSuspended = await canvas.findByTestId('health-status-suspended-row');
+    expect(healthStatusSuspended).not.toBeNull();
+    expect(healthStatusSuspended).toHaveTextContent('1 application suspended');
+
+    const healthStatusMissing = await canvas.findByTestId('health-status-missing-row');
+    expect(healthStatusMissing).not.toBeNull();
+    expect(healthStatusMissing).toHaveTextContent('1 application missing');
+
+    const healthStatusUnknown = await canvas.findByTestId('health-status-unknown-row');
+    expect(healthStatusUnknown).not.toBeNull();
+    expect(healthStatusUnknown).toHaveTextContent('1 application unknown');
+
+    const syncStatusSynced = await canvas.findByTestId('sync-status-synced-row');
+    expect(syncStatusSynced).not.toBeNull();
+    expect(syncStatusSynced).toHaveTextContent('1 application synced');
+
+    const syncStatusOutOfSync = await canvas.findByTestId('sync-status-outofsync-row');
+    expect(syncStatusOutOfSync).not.toBeNull();
+    expect(syncStatusOutOfSync).toHaveTextContent('4 applications outofsync');
+
+    const syncStatusUnknown = await canvas.findByTestId('sync-status-unknown-row');
+    expect(syncStatusUnknown).not.toBeNull();
+    expect(syncStatusUnknown).toHaveTextContent('1 application unknown');
+
+    expect(canvas.queryByTestId('cycle-warning-panel')).toBeNull();
   },
 };
 
 export const WithCycleWarning: Story = {
   args: {
-    graph: makeGraph(
-      [healthyNode, degradedNode],
-      [
-        ["app-healthy", "app-degraded"],
-        ["app-degraded", "app-healthy"], // cycle
-      ],
-    ),
-    onFilterUpdated: action("onFilterUpdated"),
+    graph: cyclicScenario,
+    onFilterUpdated: action('onFilterUpdated'),
+  },
+  play: async ({ canvasElement }: any) => {
+    const canvas = within(canvasElement);
+
+    const cycleWarning = await canvas.findByTestId('cycle-warning-panel');
+    expect(cycleWarning).not.toBeNull();
   },
 };
 
-// Stories for StatusPanelHealth
-export const HealthStatusExample: Story = {
-  render: (args) => (
-    <StatusPanelHealth
-      statuses={[
-        HealthStatus.Healthy,
-        HealthStatus.Degraded,
-        HealthStatus.Healthy,
-        HealthStatus.Missing,
-        HealthStatus.Progressing,
-        HealthStatus.Healthy,
-        HealthStatus.Suspended,
-      ]}
-      onStatusClick={action("onHealthStatusClick")}
-    />
-  ),
-};
-HealthStatusExample.decorators = [
-  (Story) => (
+export const AllHealthStatuses: Story = {
+  render: () => (
     <div className="application-status-panel">
-      <Story />
+      <StatusPanelHealth
+        statuses={[
+          HealthStatus.Healthy,
+          HealthStatus.Degraded,
+          HealthStatus.Missing,
+          HealthStatus.Progressing,
+          HealthStatus.Suspended,
+          HealthStatus.Unknown,
+        ]}
+        onStatusClick={action('onHealthStatusClick')}
+      />
     </div>
   ),
-];
+  play: async ({ canvasElement }: any) => {
+    const canvas = within(canvasElement);
 
-// Stories for StatusPanelSync
-export const SyncStatusExample: Story = {
-  render: (args) => (
-    <StatusPanelSync
-      statuses={[
-        SyncStatus.Synced,
-        SyncStatus.OutOfSync,
-        SyncStatus.Synced,
-        SyncStatus.Unknown,
-        SyncStatus.OutOfSync,
-      ]}
-      onStatusClick={action("onSyncStatusClick")}
-    />
-  ),
+    const healthStatusHealthy = await canvas.findByTestId('health-status-healthy-row');
+    expect(healthStatusHealthy).not.toBeNull();
+    expect(healthStatusHealthy).toHaveTextContent('1 application healthy');
+
+    const healthStatusDegraded = await canvas.findByTestId('health-status-degraded-row');
+    expect(healthStatusDegraded).not.toBeNull();
+    expect(healthStatusDegraded).toHaveTextContent('1 application degraded');
+
+    const healthStatusProgressing = await canvas.findByTestId('health-status-progressing-row');
+    expect(healthStatusProgressing).not.toBeNull();
+    expect(healthStatusProgressing).toHaveTextContent('1 application progressing');
+
+    const healthStatusSuspended = await canvas.findByTestId('health-status-suspended-row');
+    expect(healthStatusSuspended).not.toBeNull();
+    expect(healthStatusSuspended).toHaveTextContent('1 application suspended');
+
+    const healthStatusMissing = await canvas.findByTestId('health-status-missing-row');
+    expect(healthStatusMissing).not.toBeNull();
+    expect(healthStatusMissing).toHaveTextContent('1 application missing');
+
+    const healthStatusUnknown = await canvas.findByTestId('health-status-unknown-row');
+    expect(healthStatusUnknown).not.toBeNull();
+    expect(healthStatusUnknown).toHaveTextContent('1 application unknown');
+  },
 };
-SyncStatusExample.decorators = [
-  (Story) => (
+
+export const AllSyncStatuses: Story = {
+  render: () => (
     <div className="application-status-panel">
-      <Story />
+      <StatusPanelSync
+        statuses={[SyncStatus.Synced, SyncStatus.OutOfSync, SyncStatus.Unknown]}
+        onStatusClick={action('onSyncStatusClick')}
+      />
     </div>
   ),
-];
+  play: async ({ canvasElement }: any) => {
+    const canvas = within(canvasElement);
+
+    const syncStatusSynced = await canvas.findByTestId('sync-status-synced-row');
+    expect(syncStatusSynced).not.toBeNull();
+    expect(syncStatusSynced).toHaveTextContent('1 application synced');
+
+    const syncStatusOutOfSync = await canvas.findByTestId('sync-status-outofsync-row');
+    expect(syncStatusOutOfSync).not.toBeNull();
+    expect(syncStatusOutOfSync).toHaveTextContent('1 application outofsync');
+
+    const syncStatusUnknown = await canvas.findByTestId('sync-status-unknown-row');
+    expect(syncStatusUnknown).not.toBeNull();
+    expect(syncStatusUnknown).toHaveTextContent('1 application unknown');
+  },
+};
