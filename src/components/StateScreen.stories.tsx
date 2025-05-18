@@ -1,16 +1,16 @@
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import StateScreen from "./StateScreen";
+import StateScreen from './StateScreen';
+import { Meta, StoryObj } from '@storybook/react';
+import React from 'react';
 
 const meta: Meta<typeof StateScreen> = {
-  title: "Components/StateScreen",
+  title: 'Components/StateScreen',
   component: StateScreen,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
-    icon: { control: "text" },
-    title: { control: "text" },
-    subtitle: { control: "text" },
-    additionalContent: { control: false },
+    icon: { control: 'text' },
+    title: { control: 'text' },
+    subtitle: { control: 'text' },
+    children: { control: false },
   },
 };
 export default meta;
@@ -18,23 +18,23 @@ type Story = StoryObj<typeof StateScreen>;
 
 export const Basic: Story = {
   args: {
-    icon: "argo-icon-application",
-    title: "No applications available",
-    subtitle: "Create new application to start",
+    icon: 'argo-icon-application',
+    title: 'No applications available',
+    subtitle: 'Create new application to start',
   },
 };
 
 export const WithAdditionalContent: Story = {
   args: {
-    icon: "fa-solid fa-xmark",
-    title: "Failed to load",
-    subtitle: "Please try refreshing",
-    additionalContent: (
+    icon: 'fa-solid fa-xmark',
+    title: 'Failed to load',
+    subtitle: 'Please try refreshing',
+    children: (
       <pre
         style={{
-          color: "#ff6b6b",
-          background: "#fff0f0",
-          padding: "0.5em",
+          color: '#ff6b6b',
+          background: '#fff0f0',
+          padding: '0.5em',
           borderRadius: 4,
         }}
       >
