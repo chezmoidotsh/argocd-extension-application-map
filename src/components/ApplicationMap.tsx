@@ -1,4 +1,5 @@
 import * as React from "react";
+import ApplicationMapNode, { NODE_HEIGHT, NODE_WIDTH } from './ApplicationMapNode';
 import {
   ReactFlow,
   useNodesState,
@@ -62,7 +63,6 @@ const MARKER_END = {
   },
 } as const;
 
-const NODE_SIZE = { width: 282, height: 52 };
 const FIT_VIEW_OPTIONS = { maxZoom: 1, minZoom: 0.5 };
 
 /**
@@ -75,8 +75,10 @@ interface ApplicationMapProps {
   selectedNodes?: string[];
   selectedEdges?: string[];
 
-  onEdgeClick: (event: React.MouseEvent, edge: Edge) => void;
-  onPaneClick: () => void;
+  onEdgeClick?: (event: React.MouseEvent, edge: Edge) => void;
+  onPaneClick?: () => void;
+  onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
+  onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
 }
 
 /**
@@ -130,10 +132,7 @@ const generateLayout = (
     .setGraph({ rankdir });
 
   graph.forEachNode((node) => {
-    dagreGraph.setNode(node, {
-      width: NODE_SIZE.width,
-      height: NODE_SIZE.height,
-    });
+    dagreGraph.setNode(node, { width: NODE_WIDTH, height: NODE_HEIGHT });
   });
 
   graph.forEachEdge((_edge, _attributes, source, target) => {
@@ -173,6 +172,8 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
   rankdir,
   onEdgeClick,
   onPaneClick,
+  onApplicationClick,
+  onApplicationSetClick,
   selectedNodes = [],
   selectedEdges = [],
   ...props
@@ -190,35 +191,31 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     const dagreGraph = generateLayout(graph, rankdir.rankdir);
 
     // Generate the final nodes and edges
-    const layoutedNodes = graph.mapNodes(
-      (node, attributes): ApplicationGraphNode => {
-        const { x, y } = dagreGraph.node(node);
-        return {
-          // Core properties
-          id: node,
-          type: "application",
-          data: attributes.data,
+    const layoutedNodes = graph.mapNodes((node, attributes): ApplicationGraphNode => {
+      const { x, y } = dagreGraph.node(node);
+      return {
+        // Core properties
+        id: node,
+        type: 'application',
+        data: attributes.data,
 
-          // Layout properties
-          position: {
-            x: x - NODE_SIZE.width / 2,
-            y: y - NODE_SIZE.height / 2,
-          },
-          width: NODE_SIZE.width,
-          height: NODE_SIZE.height,
+        // Layout properties
+        position: {
+          x: x - NODE_WIDTH / 2,
+          y: y - NODE_HEIGHT / 2,
+        },
 
-          // Connection properties
-          sourcePosition: rankdir.sourcePosition,
-          targetPosition: rankdir.targetPosition,
+        // Connection properties
+        sourcePosition: rankdir.sourcePosition,
+        targetPosition: rankdir.targetPosition,
 
-          // Interaction properties
-          selectable: attributes.data.kind !== "ApplicationSet",
-          draggable: false,
-          connectable: false,
-          deletable: false,
-        };
-      },
-    );
+        // Interaction properties
+        selectable: attributes.data.kind !== 'ApplicationSet',
+        draggable: false,
+        connectable: false,
+        deletable: false,
+      };
+    });
 
     const layoutedEdges = graph.mapEdges(
       (edge, _attributes, source, target): Edge => ({
@@ -304,8 +301,21 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       {...props}
       nodes={nodes}
       edges={edges}
-      nodeTypes={{ application: ApplicationMapNode }}
       style={{ width: "100%", height: "100%" }}
+      nodeTypes={{
+        application: (node) => (
+          <ApplicationMapNode
+            kind={node.data.kind}
+            name={node.data.metadata.name}
+            namespace={node.data.metadata.namespace}
+            health={node.data.status?.health}
+            sync={node.data.status?.sync}
+            rankdir={rankdir}
+            onApplicationClick={onApplicationClick}
+            onApplicationSetClick={onApplicationSetClick}
+          />
+        ),
+      }}
       fitView
       fitViewOptions={FIT_VIEW_OPTIONS}
       onEdgeClick={onEdgeClick}
