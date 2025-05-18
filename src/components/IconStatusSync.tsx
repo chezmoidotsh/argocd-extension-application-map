@@ -1,20 +1,13 @@
-import React from "react";
-import { SyncStatus, SyncStatuses } from "../types";
+import { SyncStatus, SyncStatuses } from '../types';
+import React from 'react';
 
 /**
- * ApplicationNodeStatusIconSync component displays an icon representing the sync status of an application
- * @component
- * @param {Object} props - Component props
- * @param {SyncStatus} [props.status] - The sync status to display
- * @returns {JSX.Element} A Font Awesome icon with appropriate styling
- * @example
- * <ApplicationNodeStatusIconSync status={SyncStatus.Synced} />
+ * This component renders a FontAwesome icon representing the synchronization status of an application.
+ * It is used throughout the UI to provide a consistent, visual indicator of whether an application is
+ * in sync, out of sync, or in an unknown state.
  */
-const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({
-  status: rawStatus,
-}) => {
-  const status =
-    rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;
+const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({ status: rawStatus }) => {
+  const status = rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;
   return (
     <i
       qe-id="utils-sync-status-title"

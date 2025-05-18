@@ -1,14 +1,14 @@
-import { Meta, StoryObj } from "@storybook/react";
-import IconStatusHealth from "./IconStatusHealth";
-import { HealthStatus } from "../types/application";
+import { HealthStatus } from '../types/application';
+import IconStatusHealth from './IconStatusHealth';
+import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof IconStatusHealth> = {
-  title: "Icons/IconStatusHealth",
+  title: 'Icons/IconStatusHealth',
   component: IconStatusHealth,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     status: {
-      control: "select",
+      control: 'select',
       options: Object.values(HealthStatus),
       table: {
         defaultValue: { summary: HealthStatus.Unknown },

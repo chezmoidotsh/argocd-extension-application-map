@@ -1,15 +1,14 @@
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import IconStatusSync from "./IconStatusSync";
-import { SyncStatus } from "../types/application";
+import { SyncStatus } from '../types/application';
+import IconStatusSync from './IconStatusSync';
+import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof IconStatusSync> = {
-  title: "Icons/IconStatusSync",
+  title: 'Icons/IconStatusSync',
   component: IconStatusSync,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     status: {
-      control: "select",
+      control: 'select',
       options: Object.values(SyncStatus),
       table: {
         defaultValue: { summary: SyncStatus.Unknown },

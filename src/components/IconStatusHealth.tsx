@@ -1,20 +1,13 @@
-import React from "react";
-import { HealthStatus, HealthStatuses } from "../types";
+import { HealthStatus, HealthStatuses } from '../types';
+import React from 'react';
 
 /**
- * ApplicationNodeStatusIconHealth component displays an icon representing the health status of an application
- * @component
- * @param {Object} props - Component props
- * @param {HealthStatus} [props.status] - The health status to display
- * @returns {JSX.Element} A Font Awesome icon with appropriate styling
- * @example
- * <ApplicationNodeStatusIconHealth status={HealthStatus.Healthy} />
+ * This component renders a FontAwesome icon representing the health status of an application.
+ * It is used throughout the UI to provide a consistent, visual indicator of whether an application is
+ * healthy, degraded, missing, progressing, unknown, or suspended.
  */
-const IconStatusHealth: React.FC<{ status?: HealthStatus }> = ({
-  status: rawStatus,
-}) => {
-  const status =
-    rawStatus && HealthStatuses[rawStatus] ? rawStatus : HealthStatus.Unknown;
+const IconStatusHealth: React.FC<{ status?: HealthStatus }> = ({ status: rawStatus }) => {
+  const status = rawStatus && HealthStatuses[rawStatus] ? rawStatus : HealthStatus.Unknown;
   return (
     <i
       qe-id="utils-health-status-title"
