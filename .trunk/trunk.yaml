@@ -16,6 +16,8 @@ runtimes:
     - python@3.10.8
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
+  disabled:
+    - eslint # disable because all formatters has been removed from ESLint >= 9.x
   enabled:
     - actionlint@1.7.7
     - osv-scanner@2.0.2
@@ -24,7 +26,9 @@ lint:
     - checkov@3.2.420
     - git-diff-check
     - markdownlint@0.44.0
-    - prettier@3.5.3
+    - prettier@3.5.3:
+        packages:
+          - "@trivago/prettier-plugin-sort-imports@4.3.0"
     - taplo@0.9.3
     - trufflehog@3.88.29
   ignore:
