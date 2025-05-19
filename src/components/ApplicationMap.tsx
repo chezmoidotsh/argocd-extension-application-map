@@ -1,21 +1,27 @@
-import * as React from "react";
-import ApplicationMapNode, { NODE_HEIGHT, NODE_WIDTH } from './ApplicationMapNode';
 import {
-  ReactFlow,
-  useNodesState,
-  useEdgesState,
+  ApplicationGraph,
+  HealthStatus,
+  SyncStatus,
+} from '../types';
+import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
+import ApplicationMapNode, {
+  ApplicationMapNode as ApplicationMapNodeType,
+  NODE_HEIGHT,
+  NODE_WIDTH,
+} from './ApplicationMapNode';
+import Dagre from '@dagrejs/dagre';
+import {
+  Edge,
   MarkerType,
   MiniMap,
   Position,
-  Node,
-  Edge,
+  ReactFlow,
+  useEdgesState,
+  useNodesState,
   useReactFlow,
-} from "@xyflow/react";
-import { useEffect } from "react";
-import { ApplicationGraph, ApplicationGraphNode } from "../types";
-import ApplicationMapNode from "./ApplicationMapNode";
-import ApplicationMapNavigationControls from "./ApplicationMapNavigationControls";
-import Dagre from "@dagrejs/dagre";
+} from '@xyflow/react';
+import * as React from 'react';
+import { useEffect } from 'react';
 
 // Style constants
 const NODE_STYLES_DEFAULT = {
@@ -31,16 +37,16 @@ const NODE_STYLES = {
 } as const;
 
 const EDGE_STYLES_DEFAULT = {
-  stroke: "#777",
+  stroke: '#777',
   strokeWidth: 1,
-  strokeDasharray: "3,3",
+  strokeDasharray: '3,3',
   strokeOpacity: 1,
 };
 const EDGE_STYLES = {
   default: EDGE_STYLES_DEFAULT,
   selected: {
     ...EDGE_STYLES_DEFAULT,
-    strokeDasharray: "none",
+    strokeDasharray: 'none',
     strokeOpacity: 1,
   },
   unselected: {
@@ -51,7 +57,7 @@ const EDGE_STYLES = {
 
 const MARKER_END_DEFAULT = {
   type: MarkerType.ArrowClosed,
-  color: "#555",
+  color: '#555',
   strokeWidth: 3,
 };
 const MARKER_END = {
@@ -90,22 +96,22 @@ interface ApplicationMapProps {
  */
 export const RankDirection = {
   LR: {
-    rankdir: "LR",
+    rankdir: 'LR',
     sourcePosition: Position.Right,
     targetPosition: Position.Left,
   },
   RL: {
-    rankdir: "RL",
+    rankdir: 'RL',
     sourcePosition: Position.Left,
     targetPosition: Position.Right,
   },
   TB: {
-    rankdir: "TB",
+    rankdir: 'TB',
     sourcePosition: Position.Bottom,
     targetPosition: Position.Top,
   },
   BT: {
-    rankdir: "BT",
+    rankdir: 'BT',
     sourcePosition: Position.Top,
     targetPosition: Position.Bottom,
   },
@@ -114,8 +120,7 @@ export const RankDirection = {
 /**
  * Type representing the direction of graph layout
  */
-export type RankDirectionType =
-  (typeof RankDirection)[keyof typeof RankDirection];
+export type RankDirectionType = (typeof RankDirection)[keyof typeof RankDirection];
 
 /**
  * Generates a Dagre layout for the given graph
@@ -123,13 +128,8 @@ export type RankDirectionType =
  * @param rankdir The direction of the graph layout
  * @returns A Dagre graph with computed layout
  */
-const generateLayout = (
-  graph: ApplicationGraph,
-  rankdir: string,
-): Dagre.graphlib.Graph => {
-  const dagreGraph = new Dagre.graphlib.Graph()
-    .setDefaultNodeLabel(() => ({}))
-    .setGraph({ rankdir });
+const generateLayout = (graph: ApplicationGraph, rankdir: string): Dagre.graphlib.Graph => {
+  const dagreGraph = new Dagre.graphlib.Graph().setDefaultNodeLabel(() => ({})).setGraph({ rankdir });
 
   graph.forEachNode((node) => {
     dagreGraph.setNode(node, { width: NODE_WIDTH, height: NODE_HEIGHT });
@@ -149,14 +149,8 @@ const generateLayout = (
  * @param newItems The new items to be set
  * @returns New items with preserved styles from old items
  */
-const preserveStyles = <T extends { id: string; style?: any }>(
-  oldItems: T[],
-  newItems: T[],
-): T[] => {
-  const existingStyles = oldItems.reduce(
-    (acc, item) => ({ ...acc, [item.id]: item.style }),
-    {} as Record<string, any>,
-  );
+const preserveStyles = <T extends { id: string; style?: any }>(oldItems: T[], newItems: T[]): T[] => {
+  const existingStyles = oldItems.reduce((acc, item) => ({ ...acc, [item.id]: item.style }), {} as Record<string, any>);
 
   return newItems.map((item) => ({
     ...item,
@@ -181,6 +175,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
   const { getNodes, getEdges } = useReactFlow();
+  const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
 
   /**
    * Modifies where the nodes and edges are positioned in the graph based on the rank direction
@@ -191,15 +186,36 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     const dagreGraph = generateLayout(graph, rankdir.rankdir);
 
     // Generate the final nodes and edges
-    const layoutedNodes = graph.mapNodes((node, attributes): ApplicationGraphNode => {
+    const layoutedNodes = graph.mapNodes((node, attributes): ApplicationMapNodeType => {
       const { x, y } = dagreGraph.node(node);
       return {
         // Core properties
         id: node,
         type: 'application',
-        data: attributes.data,
+
+        // Data properties
+        data:
+          attributes.data.kind == 'Application'
+            ? {
+                kind: 'Application',
+                name: attributes.data.metadata.name,
+                namespace: attributes.data.metadata.namespace,
+                health: attributes.data.status?.health ?? HealthStatus.Unknown,
+                sync: attributes.data.status?.sync ?? SyncStatus.Unknown,
+
+                onApplicationClick: onApplicationClick,
+              }
+            : {
+                kind: 'ApplicationSet',
+                name: attributes.data.metadata.name,
+                namespace: attributes.data.metadata.namespace,
+
+                onApplicationSetClick: onApplicationSetClick,
+              },
 
         // Layout properties
+        width: NODE_WIDTH,
+        height: NODE_HEIGHT,
         position: {
           x: x - NODE_WIDTH / 2,
           y: y - NODE_HEIGHT / 2,
@@ -214,26 +230,27 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
         draggable: false,
         connectable: false,
         deletable: false,
-      };
+        hidden: false,
+      } as ApplicationMapNodeType;
     });
 
     const layoutedEdges = graph.mapEdges(
       (edge, _attributes, source, target): Edge => ({
         // Core properties
         id: edge,
-        type: "smoothstep",
+        type: 'smoothstep',
         source,
         target,
 
         // Style properties
         style: EDGE_STYLES.default,
         markerEnd: MARKER_END.default,
-      }),
+      })
     );
 
     setNodes((old) => preserveStyles(old, layoutedNodes));
     setEdges((old) => preserveStyles(old, layoutedEdges));
-  }, [graph, rankdir]);
+  }, [graph, rankdir, onApplicationClick, onApplicationSetClick]);
 
   /**
    * Handles node selection and updates the node styles accordingly
@@ -248,24 +265,20 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
           ...node,
           style: NODE_STYLES.default,
           markerEnd: MARKER_END.default,
-        })),
+        }))
       );
     } else {
       const selectedNodesIds = selectedNodes.reduce(
         (acc, id) => ({ ...acc, [id]: true }),
-        {} as Record<string, boolean>,
+        {} as Record<string, boolean>
       );
 
       setNodes(
         getNodes().map((node) => ({
           ...node,
-          style: selectedNodesIds[node.id]
-            ? NODE_STYLES.selected
-            : NODE_STYLES.unselected,
-          markerEnd: selectedNodesIds[node.id]
-            ? MARKER_END.selected
-            : MARKER_END.unselected,
-        })),
+          style: selectedNodesIds[node.id] ? NODE_STYLES.selected : NODE_STYLES.unselected,
+          markerEnd: selectedNodesIds[node.id] ? MARKER_END.selected : MARKER_END.unselected,
+        }))
       );
     }
   }, [selectedNodes]);
@@ -276,57 +289,37 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
   useEffect(() => {
     if (!getEdges().length) return;
     if (!selectedEdges?.length) {
-      setEdges(
-        getEdges().map((edge) => ({ ...edge, style: EDGE_STYLES.default })),
-      );
+      setEdges(getEdges().map((edge) => ({ ...edge, style: EDGE_STYLES.default })));
     } else {
       const selectedEdgesIds = selectedEdges.reduce(
         (acc, id) => ({ ...acc, [id]: true }),
-        {} as Record<string, boolean>,
+        {} as Record<string, boolean>
       );
 
       setEdges(
         getEdges().map((edge) => ({
           ...edge,
-          style: selectedEdgesIds[edge.id]
-            ? EDGE_STYLES.selected
-            : EDGE_STYLES.unselected,
-        })),
+          style: selectedEdgesIds[edge.id] ? EDGE_STYLES.selected : EDGE_STYLES.unselected,
+        }))
       );
     }
   }, [selectedEdges]);
+
+  console.log(nodes);
 
   return (
     <ReactFlow
       {...props}
       nodes={nodes}
       edges={edges}
-      style={{ width: "100%", height: "100%" }}
-      nodeTypes={{
-        application: (node) => (
-          <ApplicationMapNode
-            kind={node.data.kind}
-            name={node.data.metadata.name}
-            namespace={node.data.metadata.namespace}
-            health={node.data.status?.health}
-            sync={node.data.status?.sync}
-            rankdir={rankdir}
-            onApplicationClick={onApplicationClick}
-            onApplicationSetClick={onApplicationSetClick}
-          />
-        ),
-      }}
+      nodeTypes={nodeTypes}
+      style={{ width: '100%', height: '100%' }}
       fitView
       fitViewOptions={FIT_VIEW_OPTIONS}
       onEdgeClick={onEdgeClick}
       onPaneClick={onPaneClick}
     >
-      <MiniMap
-        position="top-right"
-        pannable={true}
-        zoomable={true}
-        aria-label="ArgoCD Application Map Mini Map"
-      />
+      <MiniMap position="top-right" pannable={true} zoomable={true} aria-label="ArgoCD Application Map Mini Map" />
       <ApplicationMapNavigationControls aria-label="ArgoCD Application Map Navigation Controls" />
     </ReactFlow>
   );

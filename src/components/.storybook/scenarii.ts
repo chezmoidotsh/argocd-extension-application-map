@@ -273,45 +273,7 @@ export const denseScenario = new ScenarioGraph()
     namespace: 'default',
     name: 'team2-api2',
   })
-
-  // Additional dependencies that cannot be expressed with parentRef
-  // Connect frontend to APIs
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'team2-frontend' },
-    { kind: 'Application', namespace: 'default', name: 'team2-api1' }
-  )
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'team2-frontend' },
-    { kind: 'Application', namespace: 'default', name: 'team2-api2' }
-  )
-
-  // Cross-team dependencies
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'payment-service' },
-    { kind: 'Application', namespace: 'default', name: 'notification-service' }
-  )
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'user-service' },
-    { kind: 'Application', namespace: 'default', name: 'auth-service' }
-  )
-
-  // Dependencies on infrastructure
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'auth-service' },
-    { kind: 'Application', namespace: 'default', name: 'infra-database' }
-  )
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'payment-service' },
-    { kind: 'Application', namespace: 'default', name: 'infra-database' }
-  )
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'user-service' },
-    { kind: 'Application', namespace: 'default', name: 'infra-cache' }
-  )
-  .addParentRef(
-    { kind: 'Application', namespace: 'default', name: 'notification-service' },
-    { kind: 'Application', namespace: 'default', name: 'infra-queue' }
-  )
+  
   .createScenarioGraph();
 
 /**
