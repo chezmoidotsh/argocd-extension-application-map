@@ -1,22 +1,19 @@
-import * as React from "react";
-import { useReactFlow, Panel, ControlButton } from "@xyflow/react";
+import { ControlButton, Panel, useReactFlow } from '@xyflow/react';
+import * as React from 'react';
 
 /**
  * ApplicationMapNavigationControls component provides zoom and fit view controls for the application map
- * @component
- * @example
- * ```tsx
- * <ApplicationMapNavigationControls />
- * ```
  */
-const ApplicationMapNavigationControls: React.FC = () => {
-  const { zoomIn, zoomOut, fitView } = useReactFlow();
-
+const ApplicationMapNavigationControls: React.FC<{
+  zoomIn: () => void;
+  zoomOut: () => void;
+  fitView: () => void;
+}> = ({ zoomIn, zoomOut, fitView }) => {
   return (
     <Panel
       className="react-flow__controls argocd-application-map__controls-panel horizontal"
       position="top-left"
-      data-testid="rf__controls"
+      style={{ display: 'inline-flex', flexDirection: 'row' }}
     >
       <ControlButton
         className="argocd-application-map__control-button"

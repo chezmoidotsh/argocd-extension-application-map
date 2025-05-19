@@ -176,6 +176,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
   const [edges, setEdges] = useEdgesState([]);
   const { getNodes, getEdges } = useReactFlow();
   const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   /**
    * Modifies where the nodes and edges are positioned in the graph based on the rank direction
@@ -320,7 +321,12 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       onPaneClick={onPaneClick}
     >
       <MiniMap position="top-right" pannable={true} zoomable={true} aria-label="ArgoCD Application Map Mini Map" />
-      <ApplicationMapNavigationControls aria-label="ArgoCD Application Map Navigation Controls" />
+      <ApplicationMapNavigationControls
+        zoomIn={zoomIn}
+        zoomOut={zoomOut}
+        fitView={fitView}
+        aria-label="ArgoCD Application Map Navigation Controls"
+      />
     </ReactFlow>
   );
 };

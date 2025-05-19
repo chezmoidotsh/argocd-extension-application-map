@@ -1,16 +1,17 @@
-import React from "react";
-import { Meta, StoryObj } from "@storybook/react";
-import ApplicationMapNavigationControls from "./ApplicationMapNavigationControls";
-import { ReactFlowProvider } from "@xyflow/react";
+import { action } from '@storybook/addon-actions';
+import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
+import { Meta, StoryObj } from '@storybook/react';
+import { ReactFlowProvider } from '@xyflow/react';
+import React from 'react';
 
 const meta: Meta<typeof ApplicationMapNavigationControls> = {
-  title: "ApplicationMap/NavigationControls",
+  title: 'ApplicationMap/NavigationControls',
   component: ApplicationMapNavigationControls,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   decorators: [
-    (Story) => (
+    (Story: any) => (
       <ReactFlowProvider>
-        <div style={{ padding: 24, background: "#f8f9fa", minHeight: 200 }}>
+        <div style={{ padding: 24, background: '#f8f9fa', minHeight: 200 }}>
           <Story />
         </div>
       </ReactFlowProvider>
@@ -20,4 +21,10 @@ const meta: Meta<typeof ApplicationMapNavigationControls> = {
 export default meta;
 type Story = StoryObj<typeof ApplicationMapNavigationControls>;
 
-export const Basic: Story = {};
+export const Basic: Story = {
+  args: {
+    zoomIn: action('zoomIn'),
+    zoomOut: action('zoomOut'),
+    fitView: action('fitView'),
+  },
+};
