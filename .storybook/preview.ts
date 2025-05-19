@@ -1,5 +1,5 @@
-import './storybook-argo-v3.0.0.css';
 import type { Preview } from '@storybook/react';
+import './storybook-argo-v3.0.0.css';
 
 // Force la classe 'theme-light' sur le body pour toutes les stories
 if (typeof window !== 'undefined') {

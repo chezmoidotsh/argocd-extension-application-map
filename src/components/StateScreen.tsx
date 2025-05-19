@@ -1,5 +1,4 @@
 import * as React from 'react';
-import type { JSX } from 'react';
 
 /**
  * This component provides a reusable, visually consistent way to present empty, error, or informational states

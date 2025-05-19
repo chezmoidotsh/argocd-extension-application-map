@@ -1,6 +1,6 @@
+import { Meta, StoryObj } from '@storybook/react';
 import { SyncStatus } from '../types/application';
 import IconStatusSync from './IconStatusSync';
-import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof IconStatusSync> = {
   title: 'Icons/IconStatusSync',

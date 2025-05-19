@@ -1,11 +1,11 @@
-import { HealthStatus, SyncStatus } from '../types/application';
-import { allStatusScenario, cyclicScenario } from './.storybook/scenarii';
-import StatusPanel, { StatusPanelCycleWarning, StatusPanelHealth, StatusPanelSync } from './StatusPanel';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { expect } from '@storybook/test';
 import React from 'react';
+import { HealthStatus, SyncStatus } from '../types/application';
+import { allStatusScenario, cyclicScenario } from './.storybook/scenarii';
+import StatusPanel, { StatusPanelCycleWarning, StatusPanelHealth, StatusPanelSync } from './StatusPanel';
 
 const meta: Meta<typeof StatusPanel> = {
   title: 'Status Panel/StatusPanel',

@@ -1,6 +1,6 @@
-import StateScreen from './StateScreen';
 import { Meta, StoryObj } from '@storybook/react';
 import React from 'react';
+import StateScreen from './StateScreen';
 
 const meta: Meta<typeof StateScreen> = {
   title: 'Components/StateScreen',

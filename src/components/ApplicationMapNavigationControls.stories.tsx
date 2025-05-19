@@ -1,8 +1,8 @@
 import { action } from '@storybook/addon-actions';
-import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 import { Meta, StoryObj } from '@storybook/react';
 import { ReactFlowProvider } from '@xyflow/react';
 import React from 'react';
+import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 
 const meta: Meta<typeof ApplicationMapNavigationControls> = {
   title: 'ApplicationMap/NavigationControls',

@@ -1,3 +1,4 @@
+import { DirectedGraph } from 'graphology';
 import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../../types';
 import { ArgoApplication, ArgoResourceNode, ArgoResourceTree } from '../../types/argocd';
 import { resourceId } from '../resource_id';
@@ -6,7 +7,6 @@ import {
   updateApplicationGraph,
   updateApplicationSubResources,
 } from '../update_application_graph';
-import { DirectedGraph } from 'graphology';
 
 describe('updateApplicationGraph function', () => {
   let graph: ApplicationGraph;

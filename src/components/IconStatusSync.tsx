@@ -1,5 +1,5 @@
-import { SyncStatus, SyncStatuses } from '../types';
 import React from 'react';
+import { SyncStatus, SyncStatuses } from '../types';
 
 /**
  * This component renders a FontAwesome icon representing the synchronization status of an application.

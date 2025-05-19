@@ -1,4 +1,4 @@
-import { HealthStatus, SyncStatus } from "./application";
+import { HealthStatus, SyncStatus } from './application';
 
 /**
  * Type definition for all health status configurations
@@ -27,33 +27,33 @@ export type SyncStatusesType = {
  */
 export const HealthStatuses: HealthStatusesType = {
   [HealthStatus.Healthy]: {
-    color: "#18be94",
-    icon: "fa-heart",
-    title: "Healthy",
+    color: '#18be94',
+    icon: 'fa-heart',
+    title: 'Healthy',
   },
   [HealthStatus.Suspended]: {
-    color: "#f4c030",
-    icon: "fa-pause-circle",
-    title: "Suspended",
+    color: '#f4c030',
+    icon: 'fa-pause-circle',
+    title: 'Suspended',
   },
   [HealthStatus.Degraded]: {
-    color: "#e96d76",
-    icon: "fa-heart-broken",
-    title: "Degraded",
+    color: '#e96d76',
+    icon: 'fa-heart-broken',
+    title: 'Degraded',
   },
   [HealthStatus.Progressing]: {
-    color: "#0d84ff",
-    icon: "fa-circle-notch fa-spin",
-    title: "Progressing",
+    color: '#0d84ff',
+    icon: 'fa-circle-notch fa-spin',
+    title: 'Progressing',
   },
   [HealthStatus.Missing]: {
-    color: "#ccd6dd",
-    icon: "fa-ghost",
-    title: "Missing",
+    color: '#ccd6dd',
+    icon: 'fa-ghost',
+    title: 'Missing',
   },
   [HealthStatus.Unknown]: {
-    color: "#ccd6dd",
-    icon: "fa-question-circle",
+    color: '#ccd6dd',
+    icon: 'fa-question-circle',
   },
 } as const;
 
@@ -62,17 +62,17 @@ export const HealthStatuses: HealthStatusesType = {
  */
 export const SyncStatuses: SyncStatusesType = {
   [SyncStatus.Synced]: {
-    color: "#18be94",
-    icon: "fa-check-circle",
-    title: "Synced",
+    color: '#18be94',
+    icon: 'fa-check-circle',
+    title: 'Synced',
   },
   [SyncStatus.OutOfSync]: {
-    color: "#f4c030",
-    icon: "fa-arrow-alt-circle-up",
-    title: "OutOfSync",
+    color: '#f4c030',
+    icon: 'fa-arrow-alt-circle-up',
+    title: 'OutOfSync',
   },
   [SyncStatus.Unknown]: {
-    color: "#ccd6dd",
-    icon: "fa-circle-notch fa-spin",
+    color: '#ccd6dd',
+    icon: 'fa-circle-notch fa-spin',
   },
 } as const;

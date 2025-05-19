@@ -1,9 +1,9 @@
+import { Handle, Node, NodeProps } from '@xyflow/react';
+import React from 'react';
 import { HealthStatus, SyncStatus } from '../types/application';
 import { resourceId } from '../utils';
 import ApplicationNodeStatusIconHealth from './IconStatusHealth';
 import ApplicationNodeStatusIconSync from './IconStatusSync';
-import { Handle, Node, NodeProps } from '@xyflow/react';
-import React from 'react';
 
 export const NODE_WIDTH = 282;
 export const NODE_HEIGHT = 52;
@@ -96,8 +96,6 @@ export default function ApplicationMapNode({ data, sourcePosition, targetPositio
     },
     [data]
   );
-
-  console.debug('Displaying node', { data });
 
   return (
     <div

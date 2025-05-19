@@ -1,10 +1,10 @@
-import { allStatusScenario, denseScenario } from './.storybook/scenarii';
-import Map, { RankDirection } from './ApplicationMap';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
+import { allStatusScenario, denseScenario } from './.storybook/scenarii';
+import Map, { RankDirection } from './ApplicationMap';
 
 const meta: Meta<typeof Map> = {
   title: 'ApplicationMap/Map',

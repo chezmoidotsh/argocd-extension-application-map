@@ -1,15 +1,5 @@
-import {
-  ApplicationGraph,
-  HealthStatus,
-  SyncStatus,
-} from '../types';
-import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
-import ApplicationMapNode, {
-  ApplicationMapNode as ApplicationMapNodeType,
-  NODE_HEIGHT,
-  NODE_WIDTH,
-} from './ApplicationMapNode';
 import Dagre from '@dagrejs/dagre';
+import * as React from 'react';
 import {
   Edge,
   MarkerType,
@@ -20,8 +10,15 @@ import {
   useNodesState,
   useReactFlow,
 } from '@xyflow/react';
-import * as React from 'react';
 import { useEffect } from 'react';
+import '../styles/index.scss';
+import { ApplicationGraph, HealthStatus, SyncStatus } from '../types';
+import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
+import ApplicationMapNode, {
+  ApplicationMapNode as ApplicationMapNodeType,
+  NODE_HEIGHT,
+  NODE_WIDTH,
+} from './ApplicationMapNode';
 
 // Style constants
 const NODE_STYLES_DEFAULT = {
@@ -305,8 +302,6 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       );
     }
   }, [selectedEdges]);
-
-  console.log(nodes);
 
   return (
     <ReactFlow

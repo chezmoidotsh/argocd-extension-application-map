@@ -1,14 +1,9 @@
-/**
- * @fileoverview StatusPanel component for displaying application health and sync status in ArgoCD
- * This component provides a visual overview of the health and synchronization status of applications
- * in an ArgoCD cluster, including warnings for self-loops in the application graph.
- */
+import React, { useCallback, useEffect, useState } from 'react';
 import '../styles/index.scss';
 import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../types';
 import { hasCycle as hasCycleFn } from '../utils/has_cycle';
 import IconStatusHealth from './IconStatusHealth';
 import IconStatusSync from './IconStatusSync';
-import React, { useCallback, useEffect, useState } from 'react';
 
 /**
  * Displays an aggregated summary of ArgoCD application health states.

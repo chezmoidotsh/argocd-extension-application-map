@@ -1,6 +1,6 @@
+import { Meta, StoryObj } from '@storybook/react';
 import { HealthStatus } from '../types/application';
 import IconStatusHealth from './IconStatusHealth';
-import { Meta, StoryObj } from '@storybook/react';
 
 const meta: Meta<typeof IconStatusHealth> = {
   title: 'Icons/IconStatusHealth',

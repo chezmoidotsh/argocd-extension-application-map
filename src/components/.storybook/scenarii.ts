@@ -1,7 +1,7 @@
+import { DirectedGraph } from 'graphology';
 import type { ApplicationGraph, ApplicationGraphNode } from '../../types';
 import { HealthStatus, SyncStatus } from '../../types/application';
 import { createOrUpdateApplicationNode, resourceId, updateApplicationSubResources } from '../../utils';
-import { DirectedGraph } from 'graphology';
 
 /**
  * ScenarioGraph utilities for Storybook scenarios.
@@ -273,7 +273,7 @@ export const denseScenario = new ScenarioGraph()
     namespace: 'default',
     name: 'team2-api2',
   })
-  
+
   .createScenarioGraph();
 
 /**

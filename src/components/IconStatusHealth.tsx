@@ -1,5 +1,5 @@
-import { HealthStatus, HealthStatuses } from '../types';
 import React from 'react';
+import { HealthStatus, HealthStatuses } from '../types';
 
 /**
  * This component renders a FontAwesome icon representing the health status of an application.

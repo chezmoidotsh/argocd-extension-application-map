@@ -1,5 +1,3 @@
-import { HealthStatus, SyncStatus } from '../types/application';
-import ApplicationMapNode from './ApplicationMapNode';
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent } from '@storybook/test';
@@ -7,6 +5,8 @@ import { within } from '@storybook/test';
 import { expect } from '@storybook/test';
 import { ReactFlowProvider } from '@xyflow/react';
 import React from 'react';
+import { HealthStatus, SyncStatus } from '../types/application';
+import ApplicationMapNode from './ApplicationMapNode';
 
 const meta: Meta<typeof ApplicationMapNode> = {
   title: 'ApplicationMap/Node',
