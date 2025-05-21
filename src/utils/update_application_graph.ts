@@ -1,28 +1,14 @@
-import {
-  ApplicationGraph,
-  ApplicationGraphNode,
-  HealthStatus,
-  SyncStatus,
-} from "../types";
-import { ArgoApplication, ArgoResourceTree } from "../types/argocd";
-import { resourceId } from "./resource_id";
+import { ApplicationGraph, ApplicationGraphNode, HealthStatus, SyncStatus } from '../types';
+import { ArgoApplication, ArgoResourceTree } from '../types/argocd';
+import { resourceId } from './resource_id';
 
 /**
- * Updates the application graph with the latest application state and its resource tree
+ * Adds or updates the application node in the graph
  * @param graph - The application graph to update
  * @param application - The Argo application to process
- * @param resourceTree - The resource tree of the application
  */
-export function updateApplicationGraph(
-  graph: ApplicationGraph,
-  application: ArgoApplication,
-  resourceTree: ArgoResourceTree,
-): void {
-  const appId = resourceId(
-    "Application",
-    application.metadata.namespace,
-    application.metadata.name,
-  );
+export function createOrUpdateApplicationNode(graph: ApplicationGraph, application: ArgoApplication): string {
+  const appId = resourceId('Application', application.metadata.namespace, application.metadata.name);
 
   // Add or update the application node
   if (!graph.hasNode(appId)) {
@@ -31,8 +17,8 @@ export function updateApplicationGraph(
       position: { x: 0, y: 0 },
     } as ApplicationGraphNode);
   }
-  graph.setNodeAttribute(appId, "data", {
-    kind: "Application",
+  graph.setNodeAttribute(appId, 'data', {
+    kind: 'Application',
     metadata: {
       annotations: application.metadata?.annotations,
       labels: application.metadata?.labels,
@@ -40,9 +26,7 @@ export function updateApplicationGraph(
       namespace: application.metadata?.namespace,
     },
     spec: {
-      sources:
-        application.spec?.sources ??
-        (application.spec?.source ? [application.spec?.source] : []),
+      sources: application.spec?.sources ?? (application.spec?.source ? [application.spec?.source] : []),
       destination: {
         server: application.spec?.destination.server,
         namespace: application.spec?.destination.namespace,
@@ -56,21 +40,27 @@ export function updateApplicationGraph(
       },
     },
     status: {
-      health:
-        (application.status?.health?.status as HealthStatus) ??
-        HealthStatus.Unknown,
-      sync:
-        (application.status?.sync?.status as SyncStatus) ?? SyncStatus.Unknown,
+      health: (application.status?.health?.status as HealthStatus) ?? HealthStatus.Unknown,
+      sync: (application.status?.sync?.status as SyncStatus) ?? SyncStatus.Unknown,
     },
   });
+  return appId;
+}
 
-  // Process each resource from the resource tree
+/**
+ * Updates the application graph with the resource tree (sub-resources)
+ * @param graph - The application graph to update
+ * @param appId - The id of the application node
+ * @param resourceTree - The resource tree of the application
+ */
+export function updateApplicationSubResources(
+  graph: ApplicationGraph,
+  appId: string | undefined,
+  resourceTree: ArgoResourceTree
+): void {
   for (const node of resourceTree.nodes) {
     // We only care about Application and ApplicationSet resources
-    if (
-      node.group !== "argoproj.io" ||
-      (node.kind !== "Application" && node.kind !== "ApplicationSet")
-    ) {
+    if (node.group !== 'argoproj.io' || (node.kind !== 'Application' && node.kind !== 'ApplicationSet')) {
       continue;
     }
 
@@ -96,15 +86,10 @@ export function updateApplicationGraph(
       for (const parentRef of node.parentRefs) {
         // Only process Application and ApplicationSet parent references
         if (
-          parentRef.group === "argoproj.io" &&
-          (parentRef.kind === "Application" ||
-            parentRef.kind === "ApplicationSet")
+          parentRef.group === 'argoproj.io' &&
+          (parentRef.kind === 'Application' || parentRef.kind === 'ApplicationSet')
         ) {
-          const parentNodeId = resourceId(
-            parentRef.kind,
-            parentRef.namespace,
-            parentRef.name,
-          );
+          const parentNodeId = resourceId(parentRef.kind, parentRef.namespace, parentRef.name);
 
           // Add parent node if it doesn't exist
           if (!graph.hasNode(parentNodeId)) {
@@ -127,11 +112,26 @@ export function updateApplicationGraph(
           }
         }
       }
-    } else {
+    } else if (appId) {
       // Add edge from application to resource if it doesn't exist
       if (!graph.hasEdge(appId, resourceNodeId)) {
         graph.addEdge(appId, resourceNodeId);
       }
     }
   }
+}
+
+/**
+ * Updates the application graph with the latest application state and its resource tree
+ * @param graph - The application graph to update
+ * @param application - The Argo application to process
+ * @param resourceTree - The resource tree of the application
+ */
+export function updateApplicationGraph(
+  graph: ApplicationGraph,
+  application: ArgoApplication,
+  resourceTree: ArgoResourceTree
+): void {
+  const appId = createOrUpdateApplicationNode(graph, application);
+  updateApplicationSubResources(graph, appId, resourceTree);
 }

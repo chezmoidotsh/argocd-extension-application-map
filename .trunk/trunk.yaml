@@ -12,27 +12,33 @@ plugins:
 # Many linters and tools depend on runtimes - configure them here. (https://docs.trunk.io/runtimes)
 runtimes:
   enabled:
-    - node@18.20.5
+    - node@22.15.0
     - python@3.10.8
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
+  disabled:
+    - eslint # disable because all formatters has been removed from ESLint >= 9.x
   enabled:
+    - renovate@40.0.6
+    - svgo@3.3.2
     - actionlint@1.7.7
     - osv-scanner@2.0.2
     - oxipng@9.1.5
     - yamllint@1.37.1
-    - checkov@3.2.420
+    - checkov@3.2.427
     - git-diff-check
-    - markdownlint@0.44.0
-    - prettier@3.5.3
+    - markdownlint@0.45.0
+    - prettier@3.5.3:
+        packages:
+          - '@trivago/prettier-plugin-sort-imports@5.2.2'
     - taplo@0.9.3
-    - trufflehog@3.88.29
+    - trufflehog@3.88.31
   ignore:
     - linters: [ALL]
       paths:
-        - "examples/**/*.yaml"
-        - "examples/**/*.yml"
-        - "examples/**/*.yaml.j2"
+        - 'examples/**/*.yaml'
+        - 'examples/**/*.yml'
+        - 'examples/**/*.yaml.j2'
 actions:
   disabled:
     - trunk-announce

@@ -1,58 +1,30 @@
-import * as React from "react";
+import * as React from 'react';
 
 /**
- * Props for the StateScreen component
- * @property {string} icon - The icon class name to display
- * @property {string} title - The main title text
- * @property {string} subtitle - The subtitle text
- * @property {JSX.Element} additionalContent - Optional content to display in a pre tag
+ * This component provides a reusable, visually consistent way to present empty, error, or informational states
+ * throughout the application. It displays an icon, a title, a subtitle, and optional additional content (such as
+ * pre-formatted code, actions, or explanations).
+ *
+ * Typical use cases include:
+ * - Empty data sets (e.g., no applications found)
+ * - Error or warning screens
+ * - Onboarding or instructional messages
+ * - Maintenance or offline notifications
  */
-interface StateScreenProps {
+const StateScreen: React.FC<{
   icon: string;
   title: string;
   subtitle: string;
-  additionalContent?: JSX.Element;
-}
-
-/**
- * Component to display a state screen with an icon, title, subtitle and optional pre-formatted content
- * @param {StateScreenProps} props - The component props
- * @returns {JSX.Element} The state screen component
- * @example
- * ```tsx
- * // Basic usage
- * <StateScreen
- *   icon="argo-icon-application"
- *   title="No applications available"
- *   subtitle="Create new application to start"
- * />
- *
- * // With pre-formatted content
- * <StateScreen
- *   icon="fa-solid fa-xmark"
- *   title="Failed to load"
- *   subtitle="Please try refreshing"
- *   preContent={{
- *     content: "Error: Failed to load",
- *     color: "#ff6b6b"
- *   }}
- * />
- * ```
- */
-const StateScreen: React.FC<StateScreenProps> = ({
-  icon,
-  title,
-  subtitle,
-  additionalContent,
-}) => {
+  children?: React.ReactNode;
+}> = ({ icon, title, subtitle, children }) => {
   return (
-    <div className="empty-state" style={{ padding: "1em" }}>
+    <div className="empty-state" style={{ padding: '1em' }}>
       <div className="empty-state__icon">
         <i className={icon} />
       </div>
       <h4>{title}</h4>
       <h5>{subtitle}</h5>
-      {additionalContent}
+      {children}
     </div>
   );
 };
