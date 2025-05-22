@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { ControlButton, Panel } from '@xyflow/react';
+import '../styles/index.scss';
 
 /**
  * ApplicationMapNavigationControls component provides zoom and fit view controls for the application map
