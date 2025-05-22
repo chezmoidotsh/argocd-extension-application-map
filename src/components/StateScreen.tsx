@@ -1,15 +1,8 @@
 import * as React from 'react';
 
 /**
- * This component provides a reusable, visually consistent way to present empty, error, or informational states
- * throughout the application. It displays an icon, a title, a subtitle, and optional additional content (such as
- * pre-formatted code, actions, or explanations).
- *
- * Typical use cases include:
- * - Empty data sets (e.g., no applications found)
- * - Error or warning screens
- * - Onboarding or instructional messages
- * - Maintenance or offline notifications
+ * The **StateScreen** component provides a **consistent and reusable interface** for displaying empty, error, or
+ * informational states across the application.
  */
 const StateScreen: React.FC<{
   icon: string;

@@ -5,15 +5,13 @@ import React from 'react';
 import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 
 const meta: Meta<typeof ApplicationMapNavigationControls> = {
-  title: 'ApplicationMap/NavigationControls',
+  title: 'Components/Application Map/ApplicationMapNavigationControls',
   component: ApplicationMapNavigationControls,
   tags: ['autodocs'],
   decorators: [
     (Story: any) => (
       <ReactFlowProvider>
-        <div style={{ padding: 24, background: '#f8f9fa', minHeight: 200 }}>
-          <Story />
-        </div>
+        <Story />
       </ReactFlowProvider>
     ),
   ],

@@ -6,9 +6,10 @@ import IconStatusHealth from './IconStatusHealth';
 import IconStatusSync from './IconStatusSync';
 
 /**
- * Displays an aggregated summary of ArgoCD application health states.
+ * The **StatusPanelHealth** summarizes the **health status** of one or more ArgoCD applications in order to help users
+ * quickly identify and focus on applications needing attention.
  */
-export const StatusPanelHealth: React.FC<{
+const StatusPanelHealth: React.FC<{
   statuses: HealthStatus[];
   onStatusClick: (status: HealthStatus) => void;
 }> = ({ statuses, onStatusClick: onHealthStatusClick }) => {
@@ -77,9 +78,10 @@ export const StatusPanelHealth: React.FC<{
 };
 
 /**
- * Displays an aggregated summary of ArgoCD application sync states.
+ * The **StatusPanelSync** summarizes the **synchronization status** of one or more ArgoCD applications in order to
+ * help users quickly spot and filter applications that are out of sync.
  */
-export const StatusPanelSync: React.FC<{
+const StatusPanelSync: React.FC<{
   statuses: SyncStatus[];
   onStatusClick: (status: SyncStatus) => void;
 }> = ({ statuses, onStatusClick: onSyncStatusClick }) => {
@@ -137,7 +139,8 @@ export const StatusPanelSync: React.FC<{
 };
 
 /**
- * Highlights circular dependency issues in the ArgoCD application graph.
+ * The **StatusPanelCycleWarning** displays a warning when a **circular dependency** is detected in the application
+ * graph alerting users to the risks of infinite loops and unstable states.
  */
 export const StatusPanelCycleWarning: React.FC = () => (
   <div className="application-status-panel__item" data-testid="cycle-warning-panel">
@@ -172,20 +175,18 @@ export const StatusPanelCycleWarning: React.FC = () => (
 );
 
 /**
- * StatusPanel component for displaying application health and sync status in ArgoCD
+ * The **StatusPanel** is a dashboard that provides an **at-a-glance summary** of all ArgoCD applications' states
+ * and **helps users monitor** and **interact** with the deployment state efficiently.
  *
- * This component provides a comprehensive dashboard for monitoring:
- * - **Health Status**: Aggregates and prioritizes application health states (Degraded, Missing, Progressing, etc.)
- * - **Sync Status**: Tracks synchronization between desired and actual states (OutOfSync, Synced, Unknown)
- * - **Dependency Warnings**: Detects and highlights circular dependencies that could cause instability
- *
- * The panel implements a priority-based status algorithm that surfaces the most critical issues first,
- * and provides interactive filtering capabilities to isolate applications by status.
+ * It is composed of 3 panels:
+ * - **HealthPanel**: Summarizes the health status of all applications
+ * - **SyncPanel**: Summarizes the synchronization status of all applications
+ * - **CycleWarningPanel**: Displays a warning when a circular dependency is detected
  */
 const StatusPanel: React.FC<{
   graph: ApplicationGraph;
-  onFilterUpdated: (selectedNodes: string[]) => void;
-}> = ({ graph, onFilterUpdated }) => {
+  onStatusClicked: (selectedNodes: string[]) => void;
+}> = ({ graph, onStatusClicked: onFilterUpdated }) => {
   const [healthStatuses, setHealthStatuses] = useState<HealthStatus[]>([]);
   const [syncStatuses, setSyncStatuses] = useState<SyncStatus[]>([]);
   const [hasCycle, setHasCycle] = useState<boolean>(false);

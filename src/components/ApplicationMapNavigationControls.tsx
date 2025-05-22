@@ -3,7 +3,11 @@ import { ControlButton, Panel } from '@xyflow/react';
 import '../styles/index.scss';
 
 /**
- * ApplicationMapNavigationControls component provides zoom and fit view controls for the application map
+ * The **ApplicationMapNavigationControls** provides **interactive controls** for navigating the application map with
+ * the following features:
+ * - **Zoom in** to focus on a specific area
+ * - **Zoom out** to view the entire map
+ * - **Fit view** to automatically adjust the zoom level to fit the entire map on the screen
  */
 const ApplicationMapNavigationControls: React.FC<{
   zoomIn: () => void;

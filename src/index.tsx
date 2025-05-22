@@ -115,7 +115,7 @@ const Extension: React.FC = () => {
   // Main application map view
   return (
     <div className="argocd-application-map__container">
-      <StatusPanel graph={graph} onFilterUpdated={setSelectedNodes} />
+      <StatusPanel graph={graph} onStatusClicked={setSelectedNodes} />
       <ReactFlowProvider>
         <ApplicationMap
           graph={graph}

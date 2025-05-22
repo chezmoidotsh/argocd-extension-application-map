@@ -1,5 +1,6 @@
 import { Handle, Node, NodeProps } from '@xyflow/react';
 import React from 'react';
+import '../styles/index.scss';
 import { HealthStatus, SyncStatus } from '../types/application';
 import { resourceId } from '../utils';
 import ApplicationNodeStatusIconHealth from './IconStatusHealth';
@@ -74,16 +75,9 @@ export type ApplicationMapNode = Node<
 >;
 
 /**
- * ApplicationMapNode component
- *
- * Main visual node renderer for the ArgoCD overview graph. Handles both Application and ApplicationSet resources polymorphically.
- *
- * Features:
- * - Renders either an Application or ApplicationSet node based on the resource type
- * - Integrates with @xyflow/react (via <Handle />) to provide invisible source/target connectors for graph edges
- * - Displays resource metadata (kind, namespace, name) as tooltip/title
- * - Handles click navigation to the detailed ArgoCD Application page (using namespace/name)
- * - Applies consistent sizing and styling for graph layout
+ * The **ApplicationMapNode** is a **polymorphic node renderer** for the **ArgoCD overview graph**. It helps users
+ * identify and interact with **resources** directly within the **application map**, supporting intuitive **exploration**
+ * of the **deployment topology**.
  */
 export default function ApplicationMapNode({ data, sourcePosition, targetPosition }: NodeProps<ApplicationMapNode>) {
   const onClick = React.useCallback(

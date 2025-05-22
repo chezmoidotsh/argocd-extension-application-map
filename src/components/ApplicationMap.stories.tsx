@@ -7,16 +7,14 @@ import { allStatusScenario, denseScenario } from './.storybook/scenarii';
 import Map, { RankDirection } from './ApplicationMap';
 
 const meta: Meta<typeof Map> = {
-  title: 'ApplicationMap/Map',
+  title: 'Components/Application Map/ApplicationMap',
   component: Map,
   tags: ['autodocs'],
   decorators: [
     (Story: any) => (
       <div className="argocd-application-map__container">
         <ReactFlowProvider>
-          <div style={{ width: '100vw', height: '60vh', background: '#f8f9fa' }}>
-            <Story />
-          </div>
+          <Story />
         </ReactFlowProvider>
       </div>
     ),
@@ -46,5 +44,7 @@ export const ComplexTopology: Story = {
     selectedEdges: [],
     onEdgeClick: action('onEdgeClick'),
     onPaneClick: action('onPaneClick'),
+    onApplicationClick: action('onApplicationClick'),
+    onApplicationSetClick: action('onApplicationSetClick'),
   },
 };

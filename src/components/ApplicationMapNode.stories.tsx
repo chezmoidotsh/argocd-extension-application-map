@@ -9,7 +9,7 @@ import { HealthStatus, SyncStatus } from '../types/application';
 import ApplicationMapNode from './ApplicationMapNode';
 
 const meta: Meta<typeof ApplicationMapNode> = {
-  title: 'ApplicationMap/Node',
+  title: 'Components/Application Map/ApplicationMapNode',
   component: ApplicationMapNode,
   tags: ['autodocs'],
   decorators: [

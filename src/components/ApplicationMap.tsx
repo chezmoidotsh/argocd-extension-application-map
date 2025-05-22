@@ -156,7 +156,12 @@ const preserveStyles = <T extends { id: string; style?: any }>(oldItems: T[], ne
 };
 
 /**
- * ApplicationMap component displays a graph visualization of ArgoCD applications and their relationships
+ * The **ApplicationMap** is a visual component that displays an **interactive graph** of ArgoCD applications and their
+ * relationships.
+ *
+ * It provides a way for users to quickly **visualize** application and ApplicationSet resources in a **graphical
+ * representation** and explore their **dependencies** and **relationships**, allowing them to understand the structure
+ * and status of their ArgoCD environment, making complex deployments more accessible and manageable.
  */
 const ApplicationMap: React.FC<ApplicationMapProps> = ({
   graph,
