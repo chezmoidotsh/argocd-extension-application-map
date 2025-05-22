@@ -23,6 +23,36 @@ const meta: Meta<typeof ApplicationMapNode> = {
 export default meta;
 type Story = StoryObj<typeof ApplicationMapNode>;
 
+// Default Application node props
+const applicationNodeProps = {
+  data: {
+    kind: 'Application' as const,
+    name: 'storybook-app',
+    namespace: 'default',
+    health: HealthStatus.Healthy,
+    sync: SyncStatus.Synced,
+
+    onApplicationClick: action('onApplicationClick'),
+    onApplicationSetClick: () => {
+      throw new Error('onApplicationSetClick must not be called on ApplicationNode');
+    },
+  },
+};
+
+// Default ApplicationSet node props
+const applicationSetNodeProps = {
+  data: {
+    kind: 'ApplicationSet' as const,
+    name: 'storybook-appset',
+    namespace: 'default',
+
+    onApplicationClick: () => {
+      throw new Error('onApplicationClick must not be called on ApplicationSetNode');
+    },
+    onApplicationSetClick: action('onApplicationSetClick'),
+  },
+};
+
 export const Application: Story = {
   parameters: {
     controls: {
@@ -49,24 +79,12 @@ export const Application: Story = {
     },
     deepControls: { enabled: true },
   },
-  args: {
-    data: {
-      kind: 'Application',
-      name: 'storybook-app',
-      namespace: 'default',
-      health: HealthStatus.Healthy,
-      sync: SyncStatus.Synced,
-
-      onApplicationClick: action('onApplicationClick'),
-      onApplicationSetClick: () => {
-        throw new Error('onApplicationSetClick must not be called on ApplicationNode');
-      },
-    },
-  },
+  args: applicationNodeProps,
   argTypes: {
     'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
     'data.health': { control: 'select', options: Object.values(HealthStatus) },
     'data.sync': { control: 'select', options: Object.values(SyncStatus) },
+    'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
   },
 
   play: async ({ canvasElement }: any) => {
@@ -130,20 +148,10 @@ export const ApplicationSet: Story = {
     },
     deepControls: { enabled: true },
   },
-  args: {
-    data: {
-      kind: 'ApplicationSet',
-      name: 'storybook-appset',
-      namespace: 'default',
-
-      onApplicationClick: () => {
-        throw new Error('onApplicationClick must not be called on ApplicationSetNode');
-      },
-      onApplicationSetClick: action('onApplicationSetClick'),
-    },
-  },
+  args: applicationSetNodeProps,
   argTypes: {
     'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
+    'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
   },
 
   play: async ({ canvasElement }: any) => {

@@ -70,6 +70,7 @@ export type ApplicationMapNode = Node<
   ) & {
     onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
     onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
+    selected?: boolean;
   },
   'application'
 >;
@@ -78,8 +79,19 @@ export type ApplicationMapNode = Node<
  * The **ApplicationMapNode** is a **polymorphic node renderer** for the **ArgoCD overview graph**. It helps users
  * identify and interact with **resources** directly within the **application map**, supporting intuitive **exploration**
  * of the **deployment topology**.
+ *
+ * The node supports three selection states:
+ * - **default**: Normal display with full opacity
+ * - **selected**: Highlighted with full opacity and a blue outline
+ * - **unselected**: Dimmed with reduced opacity
  */
-export default function ApplicationMapNode({ data, sourcePosition, targetPosition }: NodeProps<ApplicationMapNode>) {
+export default function ApplicationMapNode({
+  data,
+  sourcePosition,
+  targetPosition,
+  width,
+  height,
+}: NodeProps<ApplicationMapNode>) {
   const onClick = React.useCallback(
     (event: React.MouseEvent) => {
       if (data.kind === 'Application') {
@@ -91,12 +103,16 @@ export default function ApplicationMapNode({ data, sourcePosition, targetPositio
     [data]
   );
 
+  // Generate the CSS class for the node based on selection state
+  const selectionState = data.selected === true ? 'selected' : data.selected === false ? 'unselected' : 'default';
+  const selectionClass = `argocd-application-map__node--${selectionState}`;
+
   return (
     <div
-      className="application-resource-tree__node application-resource-tree__node--application"
+      className={`application-resource-tree__node application-resource-tree__node--application ${selectionClass}`}
       data-testid="application-map-node"
       title={`Kind: ${data.kind}\nNamespace: ${data.namespace}\nName: ${data.name}`}
-      style={{ width: NODE_WIDTH, height: NODE_HEIGHT }}
+      style={{ width: width ?? NODE_WIDTH, height: height ?? NODE_HEIGHT }}
       onClick={onClick}
     >
       {sourcePosition && (

@@ -21,18 +21,6 @@ import ApplicationMapNode, {
 } from './ApplicationMapNode';
 
 // Style constants
-const NODE_STYLES_DEFAULT = {
-  opacity: 1,
-};
-const NODE_STYLES = {
-  default: NODE_STYLES_DEFAULT,
-  selected: NODE_STYLES_DEFAULT,
-  unselected: {
-    ...NODE_STYLES_DEFAULT,
-    opacity: 0.25,
-  },
-} as const;
-
 const EDGE_STYLES_DEFAULT = {
   stroke: '#777',
   strokeWidth: 1,
@@ -259,18 +247,24 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
    * Handles node selection and updates the node styles accordingly
    */
   useEffect(() => {
+    console.log('selectedNodes', selectedNodes);
     if (!getNodes().length) return;
+    console.log('selectedNodes', selectedNodes);
 
     // If no nodes are selected, reset the node styles to the default state
     if (!selectedNodes?.length) {
       setNodes(
         getNodes().map((node) => ({
           ...node,
-          style: NODE_STYLES.default,
+          data: {
+            ...node.data,
+            selected: undefined,
+          },
           markerEnd: MARKER_END.default,
         }))
       );
     } else {
+      console.log('selectedNodes', selectedNodes);
       const selectedNodesIds = selectedNodes.reduce(
         (acc, id) => ({ ...acc, [id]: true }),
         {} as Record<string, boolean>
@@ -279,7 +273,10 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       setNodes(
         getNodes().map((node) => ({
           ...node,
-          style: selectedNodesIds[node.id] ? NODE_STYLES.selected : NODE_STYLES.unselected,
+          data: {
+            ...node.data,
+            selected: selectedNodesIds[node.id] ? true : false,
+          },
           markerEnd: selectedNodesIds[node.id] ? MARKER_END.selected : MARKER_END.unselected,
         }))
       );
