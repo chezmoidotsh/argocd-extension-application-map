@@ -42,7 +42,7 @@ jobs:
         run: pnpm install
 
       - name: 📸 Run Chromatic
-        uses: chromaui/action@e8cc4c31775280b175a3c440076c00d19a9014d7 # v11.28.2
+        uses: chromaui/action@2e159400ffb5a759b36dc3e08cee63a0fd2969f7 # v11.28.3
         with:
           exitOnceUploaded: true
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
