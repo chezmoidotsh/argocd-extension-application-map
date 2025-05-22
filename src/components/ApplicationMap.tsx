@@ -64,9 +64,7 @@ interface ApplicationMapProps {
   rankdir: RankDirectionType;
 
   selectedNodes?: string[];
-  selectedEdges?: string[];
 
-  onEdgeClick?: (event: React.MouseEvent, edge: Edge) => void;
   onPaneClick?: () => void;
   onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
   onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
@@ -154,17 +152,17 @@ const preserveStyles = <T extends { id: string; style?: any }>(oldItems: T[], ne
 const ApplicationMap: React.FC<ApplicationMapProps> = ({
   graph,
   rankdir,
-  onEdgeClick,
   onPaneClick,
   onApplicationClick,
   onApplicationSetClick,
   selectedNodes = [],
-  selectedEdges = [],
   ...props
 }) => {
+  const { getNodes, zoomIn, zoomOut, fitView } = useReactFlow();
+
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
-  const { getNodes, getEdges } = useReactFlow();
+  const { getNodes } = useReactFlow();
   const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
@@ -283,28 +281,6 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     }
   }, [selectedNodes]);
 
-  /**
-   * Handles edge selection and updates the edge styles accordingly
-   */
-  useEffect(() => {
-    if (!getEdges().length) return;
-    if (!selectedEdges?.length) {
-      setEdges(getEdges().map((edge) => ({ ...edge, style: EDGE_STYLES.default })));
-    } else {
-      const selectedEdgesIds = selectedEdges.reduce(
-        (acc, id) => ({ ...acc, [id]: true }),
-        {} as Record<string, boolean>
-      );
-
-      setEdges(
-        getEdges().map((edge) => ({
-          ...edge,
-          style: selectedEdgesIds[edge.id] ? EDGE_STYLES.selected : EDGE_STYLES.unselected,
-        }))
-      );
-    }
-  }, [selectedEdges]);
-
   return (
     <ReactFlow
       {...props}
@@ -314,7 +290,6 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
       style={{ width: '100%', height: '100%' }}
       fitView
       fitViewOptions={FIT_VIEW_OPTIONS}
-      onEdgeClick={onEdgeClick}
       onPaneClick={onPaneClick}
     >
       <MiniMap position="top-right" pannable={true} zoomable={true} aria-label="ArgoCD Application Map Mini Map" />

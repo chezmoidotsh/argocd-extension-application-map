@@ -15,7 +15,6 @@ import type { Application } from './types/application';
 const Extension: React.FC = () => {
   const { graph, isLoading, error } = useApplicationGraph();
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
-  const [selectedEdges, setSelectedEdges] = React.useState<string[]>([]);
 
   /**
    * Checks if the user is authenticated by calling the ArgoCD API
@@ -121,8 +120,6 @@ const Extension: React.FC = () => {
           graph={graph}
           rankdir={RankDirection.LR}
           selectedNodes={selectedNodes}
-          selectedEdges={selectedEdges}
-          onEdgeClick={onEdgeClick}
           onPaneClick={onPaneClick}
           onApplicationClick={onApplicationClick}
         />

@@ -29,8 +29,6 @@ export const Basic: Story = {
     graph: allStatusScenario,
     rankdir: RankDirection.LR,
     selectedNodes: [],
-    selectedEdges: [],
-    onEdgeClick: action('onEdgeClick'),
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
@@ -42,8 +40,6 @@ export const ComplexTopology: Story = {
     graph: complexTopology,
     rankdir: RankDirection.LR,
     selectedNodes: [],
-    selectedEdges: [],
-    onEdgeClick: action('onEdgeClick'),
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
@@ -57,8 +53,6 @@ export const TopologyWithSelection: Story = {
     selectedNodes: complexTopology.filterNodes(
       (_, attributes) => isApplication(attributes.data) && attributes.data.status.health === HealthStatus.Degraded
     ),
-    selectedEdges: [],
-    onEdgeClick: action('onEdgeClick'),
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
