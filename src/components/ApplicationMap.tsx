@@ -11,42 +11,6 @@ import ApplicationMapNode, {
   NODE_WIDTH,
 } from './ApplicationMapNode';
 
-// Style constants
-const EDGE_STYLES_DEFAULT = {
-  stroke: '#777',
-  strokeWidth: 1,
-  strokeDasharray: '3,3',
-  strokeOpacity: 1,
-};
-const EDGE_STYLES = {
-  default: EDGE_STYLES_DEFAULT,
-  selected: {
-    ...EDGE_STYLES_DEFAULT,
-    strokeDasharray: 'none',
-    strokeOpacity: 1,
-  },
-  unselected: {
-    ...EDGE_STYLES_DEFAULT,
-    strokeOpacity: 0.25,
-  },
-} as const;
-
-const MARKER_END_DEFAULT = {
-  type: MarkerType.ArrowClosed,
-  color: '#555',
-  strokeWidth: 3,
-};
-const MARKER_END = {
-  default: MARKER_END_DEFAULT,
-  selected: MARKER_END_DEFAULT,
-  unselected: {
-    ...MARKER_END_DEFAULT,
-    opacity: 0.5,
-  },
-} as const;
-
-const FIT_VIEW_OPTIONS = { maxZoom: 1, minZoom: 0.5 };
-
 /**
  * Generates a Dagre layout for the given graph
  * @param graph The application graph to layout
@@ -122,8 +86,8 @@ function generateFlowElementsFromGraph(
       type: 'smoothstep',
       source,
       target,
-      style: EDGE_STYLES.default,
-      markerEnd: MARKER_END.default,
+      style: { stroke: '#777', strokeWidth: 1, strokeDasharray: '3,3', strokeOpacity: 1 },
+      markerEnd: { type: MarkerType.ArrowClosed, color: '#555', strokeWidth: 3 },
     })
   );
 
@@ -144,7 +108,6 @@ function applySelectionToFlowNodes(
         ...node.data,
         selected: undefined as boolean | undefined,
       },
-      markerEnd: MARKER_END.default,
     }));
   } else {
     const selectedNodesIds = selectedApplications.reduce(
@@ -157,7 +120,6 @@ function applySelectionToFlowNodes(
         ...node.data,
         selected: selectedNodesIds[node.id] ? true : (false as boolean),
       },
-      markerEnd: selectedNodesIds[node.id] ? MARKER_END.selected : MARKER_END.unselected,
     }));
   }
 }
@@ -193,8 +155,9 @@ const ApplicationMap: React.FC<{
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
   const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
-  const { zoomIn, zoomOut, fitView } = useReactFlow();
 
+  // NOTE: Even if selectedApplications is used here, we don't want to generate again all nodes and edges
+  //       everytime the selectedApplications changes.
   useEffect(() => {
     if (!graph) return;
     const { nodes: layoutedNodes, edges: layoutedEdges } = generateFlowElementsFromGraph(
@@ -221,7 +184,7 @@ const ApplicationMap: React.FC<{
       nodeTypes={nodeTypes}
       style={{ width: '100%', height: '100%' }}
       fitView
-      fitViewOptions={FIT_VIEW_OPTIONS}
+      fitViewOptions={{ maxZoom: 1, minZoom: 0.5 }}
       onPaneClick={onPaneClick}
     >
       <MiniMap position="top-right" pannable={true} zoomable={true} aria-label="ArgoCD Application Map Mini Map" />
