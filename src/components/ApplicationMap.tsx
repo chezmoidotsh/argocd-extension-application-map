@@ -1,15 +1,6 @@
 import Dagre from '@dagrejs/dagre';
 import * as React from 'react';
-import {
-  Edge,
-  MarkerType,
-  MiniMap,
-  Position,
-  ReactFlow,
-  useEdgesState,
-  useNodesState,
-  useReactFlow,
-} from '@xyflow/react';
+import { Edge, MarkerType, MiniMap, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 import '../styles/index.scss';
 import { ApplicationGraph, HealthStatus, RankDirectionType, SyncStatus } from '../types';
@@ -78,19 +69,98 @@ const generateLayout = (graph: ApplicationGraph, rankdir: string): Dagre.graphli
 };
 
 /**
- * Generic function to preserve styles when updating nodes or edges
- * @param oldItems The existing items (nodes or edges)
- * @param newItems The new items to be set
- * @returns New items with preserved styles from old items
+ * Generates ReactFlow nodes and edges from the application graph and layout direction
  */
-const preserveStyles = <T extends { id: string; style?: any }>(oldItems: T[], newItems: T[]): T[] => {
-  const existingStyles = oldItems.reduce((acc, item) => ({ ...acc, [item.id]: item.style }), {} as Record<string, any>);
+function generateFlowElementsFromGraph(
+  graph: ApplicationGraph,
+  rankdir: RankDirectionType,
+  onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void,
+  onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void
+): { nodes: ApplicationMapNodeType[]; edges: Edge[] } {
+  const dagreGraph = generateLayout(graph, rankdir.rankdir);
 
-  return newItems.map((item) => ({
-    ...item,
-    style: existingStyles[item.id] || item.style,
-  }));
-};
+  const nodes = graph.mapNodes((node, attributes): ApplicationMapNodeType => {
+    const { x, y } = dagreGraph.node(node);
+    return {
+      id: node,
+      type: 'application',
+      data:
+        attributes.data.kind == 'Application'
+          ? {
+              kind: 'Application',
+              name: attributes.data.metadata.name,
+              namespace: attributes.data.metadata.namespace,
+              health: attributes.data.status?.health ?? HealthStatus.Unknown,
+              sync: attributes.data.status?.sync ?? SyncStatus.Unknown,
+              onApplicationClick: onApplicationClick,
+            }
+          : {
+              kind: 'ApplicationSet',
+              name: attributes.data.metadata.name,
+              namespace: attributes.data.metadata.namespace,
+              onApplicationSetClick: onApplicationSetClick,
+            },
+      width: NODE_WIDTH,
+      height: NODE_HEIGHT,
+      position: {
+        x: x - NODE_WIDTH / 2,
+        y: y - NODE_HEIGHT / 2,
+      },
+      sourcePosition: rankdir.sourcePosition,
+      targetPosition: rankdir.targetPosition,
+      selectable: attributes.data.kind !== 'ApplicationSet',
+      draggable: false,
+      connectable: false,
+      deletable: false,
+      hidden: false,
+    } as ApplicationMapNodeType;
+  });
+
+  const edges = graph.mapEdges(
+    (edge, _attributes, source, target): Edge => ({
+      id: edge,
+      type: 'smoothstep',
+      source,
+      target,
+      style: EDGE_STYLES.default,
+      markerEnd: MARKER_END.default,
+    })
+  );
+
+  return { nodes, edges };
+}
+
+/**
+ * Applies selection status to nodes based on selectedApplications
+ */
+function applySelectionToFlowNodes(
+  nodes: ApplicationMapNodeType[],
+  selectedApplications?: string[]
+): ApplicationMapNodeType[] {
+  if (!selectedApplications?.length) {
+    return nodes.map((node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        selected: undefined as boolean | undefined,
+      },
+      markerEnd: MARKER_END.default,
+    }));
+  } else {
+    const selectedNodesIds = selectedApplications.reduce(
+      (acc, id) => ({ ...acc, [id]: true }),
+      {} as Record<string, boolean>
+    );
+    return nodes.map((node) => ({
+      ...node,
+      data: {
+        ...node.data,
+        selected: selectedNodesIds[node.id] ? true : (false as boolean),
+      },
+      markerEnd: selectedNodesIds[node.id] ? MARKER_END.selected : MARKER_END.unselected,
+    }));
+  }
+}
 
 /**
  * The **ApplicationMap** is a visual component that displays an **interactive graph** of ArgoCD applications and their
@@ -122,123 +192,25 @@ const ApplicationMap: React.FC<{
 
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
-  const { getNodes } = useReactFlow();
   const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
-  /**
-   * Modifies where the nodes and edges are positioned in the graph based on the rank direction
-   */
   useEffect(() => {
     if (!graph) return;
-
-    const dagreGraph = generateLayout(graph, rankdir.rankdir);
-
-    // Generate the final nodes and edges
-    const layoutedNodes = graph.mapNodes((node, attributes): ApplicationMapNodeType => {
-      const { x, y } = dagreGraph.node(node);
-      return {
-        // Core properties
-        id: node,
-        type: 'application',
-
-        // Data properties
-        data:
-          attributes.data.kind == 'Application'
-            ? {
-                kind: 'Application',
-                name: attributes.data.metadata.name,
-                namespace: attributes.data.metadata.namespace,
-                health: attributes.data.status?.health ?? HealthStatus.Unknown,
-                sync: attributes.data.status?.sync ?? SyncStatus.Unknown,
-
-                onApplicationClick: onApplicationClick,
-              }
-            : {
-                kind: 'ApplicationSet',
-                name: attributes.data.metadata.name,
-                namespace: attributes.data.metadata.namespace,
-
-                onApplicationSetClick: onApplicationSetClick,
-              },
-
-        // Layout properties
-        width: NODE_WIDTH,
-        height: NODE_HEIGHT,
-        position: {
-          x: x - NODE_WIDTH / 2,
-          y: y - NODE_HEIGHT / 2,
-        },
-
-        // Connection properties
-        sourcePosition: rankdir.sourcePosition,
-        targetPosition: rankdir.targetPosition,
-
-        // Interaction properties
-        selectable: attributes.data.kind !== 'ApplicationSet',
-        draggable: false,
-        connectable: false,
-        deletable: false,
-        hidden: false,
-      } as ApplicationMapNodeType;
-    });
-
-    const layoutedEdges = graph.mapEdges(
-      (edge, _attributes, source, target): Edge => ({
-        // Core properties
-        id: edge,
-        type: 'smoothstep',
-        source,
-        target,
-
-        // Style properties
-        style: EDGE_STYLES.default,
-        markerEnd: MARKER_END.default,
-      })
+    const { nodes: layoutedNodes, edges: layoutedEdges } = generateFlowElementsFromGraph(
+      graph,
+      rankdir,
+      onApplicationClick,
+      onApplicationSetClick
     );
 
-    setNodes((old) => preserveStyles(old, layoutedNodes));
-    setEdges((old) => preserveStyles(old, layoutedEdges));
+    setNodes(applySelectionToFlowNodes(layoutedNodes, selectedApplications));
+    setEdges(layoutedEdges);
   }, [graph, rankdir, onApplicationClick, onApplicationSetClick]);
 
-  /**
-   * Handles node selection and updates the node styles accordingly
-   */
   useEffect(() => {
-    console.log('selectedNodes', selectedApplications);
     if (!getNodes().length) return;
-    console.log('selectedNodes', selectedApplications);
-
-    // If no nodes are selected, reset the node styles to the default state
-    if (!selectedApplications?.length) {
-      setNodes(
-        getNodes().map((node: ApplicationMapNodeType) => ({
-          ...node,
-          data: {
-            ...node.data,
-            selected: undefined,
-          },
-          markerEnd: MARKER_END.default,
-        }))
-      );
-    } else {
-      console.log('selectedNodes', selectedApplications);
-      const selectedNodesIds = selectedApplications.reduce(
-        (acc, id) => ({ ...acc, [id]: true }),
-        {} as Record<string, boolean>
-      );
-
-      setNodes(
-        getNodes().map((node) => ({
-          ...node,
-          data: {
-            ...node.data,
-            selected: selectedNodesIds[node.id] ? true : false,
-          },
-          markerEnd: selectedNodesIds[node.id] ? MARKER_END.selected : MARKER_END.unselected,
-        }))
-      );
-    }
+    setNodes(applySelectionToFlowNodes(getNodes() as ApplicationMapNodeType[], selectedApplications));
   }, [selectedApplications]);
 
   return (
