@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Edge, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import ApplicationMap, { RankDirection } from './components/ApplicationMap';
+import ApplicationMap from './components/ApplicationMap';
 import StateScreen from './components/StateScreen';
 import StatusPanel from './components/StatusPanel';
 import { useApplicationGraph } from './hooks/useApplicationGraph';
 import './styles/index.scss';
 import type { Application } from './types/application';
+import { RankDirection } from './types/graph';
 
 /**
  * Main Extension component for the ArgoCD Application Map
@@ -119,7 +120,7 @@ const Extension: React.FC = () => {
         <ApplicationMap
           graph={graph}
           rankdir={RankDirection.LR}
-          selectedNodes={selectedNodes}
+          selectedApplications={selectedNodes}
           onPaneClick={onPaneClick}
           onApplicationClick={onApplicationClick}
         />

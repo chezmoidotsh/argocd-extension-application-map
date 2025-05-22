@@ -12,7 +12,7 @@ import {
 } from '@xyflow/react';
 import { useEffect } from 'react';
 import '../styles/index.scss';
-import { ApplicationGraph, HealthStatus, SyncStatus } from '../types';
+import { ApplicationGraph, HealthStatus, RankDirectionType, SyncStatus } from '../types';
 import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 import ApplicationMapNode, {
   ApplicationMapNode as ApplicationMapNodeType,
@@ -55,55 +55,6 @@ const MARKER_END = {
 } as const;
 
 const FIT_VIEW_OPTIONS = { maxZoom: 1, minZoom: 0.5 };
-
-/**
- * Props for the ApplicationMap component
- */
-interface ApplicationMapProps {
-  graph: ApplicationGraph;
-  rankdir: RankDirectionType;
-
-  selectedNodes?: string[];
-
-  onPaneClick?: () => void;
-  onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
-  onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
-}
-
-/**
- * Constants defining different graph layout directions and their corresponding node positions
- * - LR: Left to Right
- * - RL: Right to Left
- * - TB: Top to Bottom
- * - BT: Bottom to Top
- */
-export const RankDirection = {
-  LR: {
-    rankdir: 'LR',
-    sourcePosition: Position.Right,
-    targetPosition: Position.Left,
-  },
-  RL: {
-    rankdir: 'RL',
-    sourcePosition: Position.Left,
-    targetPosition: Position.Right,
-  },
-  TB: {
-    rankdir: 'TB',
-    sourcePosition: Position.Bottom,
-    targetPosition: Position.Top,
-  },
-  BT: {
-    rankdir: 'BT',
-    sourcePosition: Position.Top,
-    targetPosition: Position.Bottom,
-  },
-} as const;
-
-/**
- * Type representing the direction of graph layout
- */
-export type RankDirectionType = (typeof RankDirection)[keyof typeof RankDirection];
 
 /**
  * Generates a Dagre layout for the given graph
@@ -149,13 +100,22 @@ const preserveStyles = <T extends { id: string; style?: any }>(oldItems: T[], ne
  * representation** and explore their **dependencies** and **relationships**, allowing them to understand the structure
  * and status of their ArgoCD environment, making complex deployments more accessible and manageable.
  */
-const ApplicationMap: React.FC<ApplicationMapProps> = ({
+const ApplicationMap: React.FC<{
+  graph: ApplicationGraph;
+  rankdir: RankDirectionType;
+
+  selectedApplications?: string[];
+
+  onPaneClick?: () => void;
+  onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
+  onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
+}> = ({
   graph,
   rankdir,
+  selectedApplications = [],
   onPaneClick,
   onApplicationClick,
   onApplicationSetClick,
-  selectedNodes = [],
   ...props
 }) => {
   const { getNodes, zoomIn, zoomOut, fitView } = useReactFlow();
@@ -245,14 +205,14 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
    * Handles node selection and updates the node styles accordingly
    */
   useEffect(() => {
-    console.log('selectedNodes', selectedNodes);
+    console.log('selectedNodes', selectedApplications);
     if (!getNodes().length) return;
-    console.log('selectedNodes', selectedNodes);
+    console.log('selectedNodes', selectedApplications);
 
     // If no nodes are selected, reset the node styles to the default state
-    if (!selectedNodes?.length) {
+    if (!selectedApplications?.length) {
       setNodes(
-        getNodes().map((node) => ({
+        getNodes().map((node: ApplicationMapNodeType) => ({
           ...node,
           data: {
             ...node.data,
@@ -262,8 +222,8 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
         }))
       );
     } else {
-      console.log('selectedNodes', selectedNodes);
-      const selectedNodesIds = selectedNodes.reduce(
+      console.log('selectedNodes', selectedApplications);
+      const selectedNodesIds = selectedApplications.reduce(
         (acc, id) => ({ ...acc, [id]: true }),
         {} as Record<string, boolean>
       );
@@ -279,7 +239,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
         }))
       );
     }
-  }, [selectedNodes]);
+  }, [selectedApplications]);
 
   return (
     <ReactFlow
