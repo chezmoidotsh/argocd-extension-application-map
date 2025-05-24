@@ -173,7 +173,7 @@ export const ApplicationSet: Story = {
     // Check if the ApplicationSet icon is rendered
     const icon = await canvas.findByLabelText('ApplicationSet icon');
     expect(icon).not.toBeNull();
-    expect(icon).toHaveClass('argocd-application-map__node-kind-icon-as');
+    expect(icon).toHaveClass('as-icon');
 
     // Check if the node kind text is rendered
     const nodeKind = await canvas.findByText('applicationset');

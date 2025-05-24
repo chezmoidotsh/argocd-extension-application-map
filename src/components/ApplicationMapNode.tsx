@@ -48,9 +48,9 @@ const ApplicationMapNode_ApplicationSet: React.FC<{
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
-        <div className="argocd-application-map__node-kind-icon-as" aria-label="ApplicationSet icon">
-          <span style={{ color: 'white', fontSize: '1em' }}>AS</span>
-        </div>
+        <span className="as-icon" aria-label="ApplicationSet icon">
+          AS
+        </span>
         <div className="application-resource-tree__node-kind">applicationset</div>
       </div>
 

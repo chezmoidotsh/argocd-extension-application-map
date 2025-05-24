@@ -15,8 +15,8 @@ $color-separator: #dee6eb;
 $color-secondary-text: #666666;
 $color-panel-title: #6d7f8b;
 $color-selection: #3872e0cc; // rgba(56, 114, 224, 0.8) as hex with alpha
-$color-shadow: #8fa4b1;
 $color-white: #ffffff;
+$color-as-icon-bg: #8fa4b1;
 
 // -----------------------------------------------------------------------------
 // Main Layout
@@ -93,22 +93,6 @@ $color-white: #ffffff;
   }
 
   // ---------------------------------------------------------------------------
-  // Node Kind Icon
-  // ---------------------------------------------------------------------------
-  &__node-kind-icon-as {
-    background-color: $color-shadow;
-    border-radius: 50%;
-    display: inline-block;
-    font-weight: 400;
-    height: 32px;
-    line-height: 30px;
-    padding: 2px 4px;
-    text-align: center;
-    vertical-align: middle;
-    width: 32px;
-  }
-
-  // ---------------------------------------------------------------------------
   // Node selection states
   // ---------------------------------------------------------------------------
   &__node {
@@ -156,6 +140,25 @@ $color-white: #ffffff;
       &--unselected {
         opacity: 0.5;
       }
+    }
+  }
+}
+
+.application-resource-tree {
+  &__node-kind-icon {
+    span.as-icon {
+      background: $color-as-icon-bg;
+      border-radius: 50%;
+      color: white;
+      display: inline-block;
+      font-size: 1em;
+      font-weight: 400;
+      height: 32px;
+      line-height: 30px;
+      padding: 2px 4px;
+      text-align: center;
+      vertical-align: middle;
+      width: 32px;
     }
   }
 }
