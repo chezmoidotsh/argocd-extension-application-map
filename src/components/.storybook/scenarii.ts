@@ -1,33 +1,24 @@
 import { DirectedGraph } from 'graphology';
-import type { ApplicationGraph, ApplicationGraphNode } from '../../types';
+import type { ApplicationGraph } from '../../types';
 import { HealthStatus, SyncStatus } from '../../types/application';
 import { createOrUpdateApplicationNode, resourceId, updateApplicationSubResources } from '../../utils';
-
-/**
- * ScenarioGraph utilities for Storybook scenarios.
- *
- * This file provides the ScenarioGraph class, which is used to programmatically construct and manipulate
- * ArgoCD Application and ApplicationSet graphs for use in Storybook stories and tests.
- *
- * The ScenarioGraph class allows you to:
- *   - Create Application and ApplicationSet nodes
- *   - Link nodes to represent relationships
- *   - Retrieve the resulting ApplicationGraph for use in UI components or tests
- *
- * Usage:
- *   const scenario = new ScenarioGraph();
- *   scenario.createApplication('my-app');
- *   scenario.createApplicationSet('my-appset');
- *   scenario.linkApplication(...);
- *   const graph = scenario.createScenarioGraph();
- *
- * This is intended for use in Storybook and test environments only.
- */
 
 /**
  * ScenarioGraph provides a fluent API to build and manipulate an ApplicationGraph
  * for Storybook scenarios and tests. It supports creating Application and ApplicationSet nodes,
  * linking them, and retrieving the resulting graph.
+ *
+ * Usage:
+ *
+ * ```ts
+ *   const scenario = new ScenarioGraph()
+ *     .createApplication(...)
+ *     .createApplicationSet(...)
+ *     .addParentRef(...)
+ *     .createScenarioGraph()
+ * ```
+ *
+ * This is intended for use in Storybook and test environments only.
  */
 export class ScenarioGraph {
   private graph: ApplicationGraph;
