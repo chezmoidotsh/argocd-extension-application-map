@@ -124,6 +124,13 @@ export const Application: Story = {
   },
 };
 
+export const ApplicationDark: Story = {
+  ...Application,
+  name: 'Application (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
+};
+
 export const ApplicationSet: Story = {
   parameters: {
     controls: {
@@ -180,4 +187,11 @@ export const ApplicationSet: Story = {
     await userEvent.click(node);
     // The onApplicationSetClick action will be called, which is tested by Storybook
   },
+};
+
+export const ApplicationSetDark: Story = {
+  ...ApplicationSet,
+  name: 'ApplicationSet (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
 };

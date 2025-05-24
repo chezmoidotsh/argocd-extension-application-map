@@ -66,6 +66,13 @@ export const Default: Story = {
   },
 };
 
+export const DefaultDark: Story = {
+  ...Default,
+  name: 'Default (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
+};
+
 export const WithCycleWarning: Story = {
   args: {
     graph: cyclicScenario,
@@ -77,4 +84,11 @@ export const WithCycleWarning: Story = {
     const cycleWarning = await canvas.findByTestId('cycle-warning-panel');
     expect(cycleWarning).not.toBeNull();
   },
+};
+
+export const WithCycleWarningDark: Story = {
+  ...WithCycleWarning,
+  name: 'With Cycle Warning (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
 };

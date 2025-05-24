@@ -23,10 +23,16 @@ const meta: Meta<typeof ApplicationMapNavigationControls> = {
 export default meta;
 type Story = StoryObj<typeof ApplicationMapNavigationControls>;
 
-export const Basic: Story = {
+export const Default: Story = {
   args: {
     zoomIn: action('zoomIn'),
     zoomOut: action('zoomOut'),
     fitView: action('fitView'),
   },
+};
+
+export const DefaultDark: Story = {
+  ...Default,
+  name: 'Default (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };

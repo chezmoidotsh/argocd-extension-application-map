@@ -21,26 +21,40 @@ const meta: Meta<typeof IconStatusHealth> = {
 export default meta;
 type Story = StoryObj<typeof IconStatusHealth>;
 
-export const Healthy: Story = {
-  args: { status: HealthStatus.Healthy },
-};
+export const Healthy: Story = { args: { status: HealthStatus.Healthy } };
+export const Degraded: Story = { args: { status: HealthStatus.Degraded } };
+export const Progressing: Story = { args: { status: HealthStatus.Progressing } };
+export const Suspended: Story = { args: { status: HealthStatus.Suspended } };
+export const Missing: Story = { args: { status: HealthStatus.Missing } };
+export const Unknown: Story = { args: { status: HealthStatus.Unknown } };
 
-export const Degraded: Story = {
-  args: { status: HealthStatus.Degraded },
+export const HealthyDark: Story = {
+  ...Healthy,
+  name: 'Healthy (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
-
-export const Progressing: Story = {
-  args: { status: HealthStatus.Progressing },
+export const DegradedDark: Story = {
+  ...Degraded,
+  name: 'Degraded (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
-
-export const Suspended: Story = {
-  args: { status: HealthStatus.Suspended },
+export const ProgressingDark: Story = {
+  ...Progressing,
+  name: 'Progressing (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
-
-export const Missing: Story = {
-  args: { status: HealthStatus.Missing },
+export const SuspendedDark: Story = {
+  ...Suspended,
+  name: 'Suspended (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
-
-export const Unknown: Story = {
-  args: { status: HealthStatus.Unknown },
+export const MissingDark: Story = {
+  ...Missing,
+  name: 'Missing (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+};
+export const UnknownDark: Story = {
+  ...Unknown,
+  name: 'Unknown (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };

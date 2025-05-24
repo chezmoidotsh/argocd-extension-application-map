@@ -22,14 +22,18 @@ const meta: Meta<typeof IconStatusSync> = {
 export default meta;
 type Story = StoryObj<typeof IconStatusSync>;
 
-export const Synced: Story = {
-  args: { status: SyncStatus.Synced },
-};
+export const Synced: Story = { args: { status: SyncStatus.Synced } };
+export const OutOfSync: Story = { args: { status: SyncStatus.OutOfSync } };
+export const Unknown: Story = { args: { status: SyncStatus.Unknown } };
 
-export const OutOfSync: Story = {
-  args: { status: SyncStatus.OutOfSync },
+export const SyncedDark: Story = { ...Synced, name: 'Synced (dark)', parameters: { backgrounds: { default: 'dark' } } };
+export const OutOfSyncDark: Story = {
+  ...OutOfSync,
+  name: 'OutOfSync (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
-
-export const Unknown: Story = {
-  args: { status: SyncStatus.Unknown },
+export const UnknownDark: Story = {
+  ...Unknown,
+  name: 'Unknown (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
