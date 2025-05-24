@@ -1,17 +1,31 @@
-// Variables
-$container-height: calc(100vh - 100px);
-$warning-bg-color: #fff8e1;
-$warning-border-color: #f4c030;
-$warning-text-color: #5c4c00;
-$control-text-color: #6d7f8b;
-$control-hover-bg: #d1d5d9;
-$separator-color: #dee6eb;
-$secondary-text-color: #666;
-$panel-title-text-color: rgb(109, 127, 139);
-$selection-color: rgba(56, 114, 224, 0.8);
+// -----------------------------------------------------------------------------
+// Global Variables
+// -----------------------------------------------------------------------------
 
-// Container
+// Layout
+$container-height: calc(100vh - 100px);
+
+// Colors
+$color-warning-bg: #fff8e1;
+$color-warning-border: #f4c030;
+$color-warning-text: #5c4c00;
+$color-control-text: #6d7f8b;
+$color-control-hover-bg: #d1d5d9;
+$color-separator: #dee6eb;
+$color-secondary-text: #666666;
+$color-panel-title: #6d7f8b;
+$color-selection: #3872e0cc; // rgba(56, 114, 224, 0.8) as hex with alpha
+$color-shadow: #8fa4b1;
+$color-white: #ffffff;
+
+// -----------------------------------------------------------------------------
+// Main Layout
+// -----------------------------------------------------------------------------
+
 .argocd-application-map {
+  // ---------------------------------------------------------------------------
+  // Main container for the application map
+  // ---------------------------------------------------------------------------
   &__container {
     height: $container-height;
     width: 100%;
@@ -19,18 +33,20 @@ $selection-color: rgba(56, 114, 224, 0.8);
     overflow: hidden;
   }
 
-  // Controls Panel
+  // ---------------------------------------------------------------------------
+  // Controls Panel (buttons, etc.)
+  // ---------------------------------------------------------------------------
   &__controls-panel {
     margin-left: 10px;
     padding: 5px;
-    box-shadow: 1px 1px 3px #8fa4b1;
-    background: #fff;
+    box-shadow: 1px 1px 3px $color-shadow;
+    background: $color-white;
   }
 
   &__control-button {
     padding: 5px;
     margin: 2px;
-    color: $control-text-color;
+    color: $color-control-text;
     border-radius: 5px;
     vertical-align: middle;
     font-weight: 500;
@@ -48,16 +64,18 @@ $selection-color: rgba(56, 114, 224, 0.8);
       color 0.2s;
 
     &:hover {
-      background-color: $control-hover-bg;
+      background-color: $color-control-hover-bg;
     }
   }
 
   &__separator {
-    border-right: 1px solid $separator-color;
+    border-right: 1px solid $color-separator;
     padding: 6px 0;
   }
 
+  // ---------------------------------------------------------------------------
   // Status Panel
+  // ---------------------------------------------------------------------------
   &__status-panel {
     &__title {
       line-height: 19.5px;
@@ -66,9 +84,8 @@ $selection-color: rgba(56, 114, 224, 0.8);
       & label {
         font-size: 12px;
         font-weight: 600;
-
         .theme-light & {
-          color: $panel-title-text-color;
+          color: $color-panel-title;
         }
       }
     }
@@ -77,13 +94,13 @@ $selection-color: rgba(56, 114, 224, 0.8);
       &-box {
         margin-top: 8px;
         padding: 8px 12px;
-        background-color: $warning-bg-color;
-        border-left: 4px solid $warning-border-color;
+        background-color: $color-warning-bg;
+        border-left: 4px solid $color-warning-border;
       }
 
       &-text {
         font-size: 12px;
-        color: $warning-text-color;
+        color: $color-warning-text;
       }
 
       &-header {
@@ -101,14 +118,17 @@ $selection-color: rgba(56, 114, 224, 0.8);
 
       &-footer {
         font-size: 11px;
-        color: $secondary-text-color;
+        color: $color-secondary-text;
         margin-top: 4px;
       }
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Node Kind Icon
+  // ---------------------------------------------------------------------------
   &__node-kind-icon-as {
-    background-color: #8fa4b1;
+    background-color: $color-shadow;
     border-radius: 50%;
     display: inline-block;
     font-weight: 400;
@@ -120,54 +140,51 @@ $selection-color: rgba(56, 114, 224, 0.8);
     width: 32px;
   }
 
+  // ---------------------------------------------------------------------------
   // Node selection states
+  // ---------------------------------------------------------------------------
   &__node {
     &--default {
       opacity: 1;
     }
-
     &--selected {
       opacity: 1;
       position: relative;
     }
-
     &--unselected {
       opacity: 0.25;
     }
   }
 
+  // ---------------------------------------------------------------------------
   // Edge selection states
+  // ---------------------------------------------------------------------------
   &__edge {
     &--default {
-      stroke: #777;
+      stroke: #777777;
       stroke-width: 1;
       stroke-dasharray: 3, 3;
       stroke-opacity: 1;
     }
-
     &--selected {
-      stroke: #777;
+      stroke: #777777;
       stroke-width: 1;
       stroke-dasharray: none;
       stroke-opacity: 1;
     }
-
     &--unselected {
-      stroke: #777;
+      stroke: #777777;
       stroke-width: 1;
       stroke-dasharray: 3, 3;
       stroke-opacity: 0.25;
     }
-
     &__marker {
       &--default {
         opacity: 1;
       }
-
       &--selected {
         opacity: 1;
       }
-
       &--unselected {
         opacity: 0.5;
       }
