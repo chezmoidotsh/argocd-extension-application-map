@@ -188,7 +188,6 @@ const ApplicationMap: React.FC<{
       fitViewOptions={{ maxZoom: 1, minZoom: 0.5 }}
       onPaneClick={onPaneClick}
     >
-      <MiniMap position="top-right" pannable={true} zoomable={true} aria-label="ArgoCD Application Map Mini Map" />
       <ApplicationMapNavigationControls
         zoomIn={zoomIn}
         zoomOut={zoomOut}
