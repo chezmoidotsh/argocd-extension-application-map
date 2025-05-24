@@ -25,20 +25,21 @@ lint:
     - osv-scanner@2.0.2
     - oxipng@9.1.5
     - yamllint@1.37.1
-    - checkov@3.2.427
+    - checkov@3.2.432
     - git-diff-check
     - markdownlint@0.45.0
     - prettier@3.5.3:
         packages:
           - '@trivago/prettier-plugin-sort-imports@5.2.2'
     - taplo@0.9.3
-    - trufflehog@3.88.31
+    - trufflehog@3.88.33
   ignore:
     - linters: [ALL]
       paths:
         - 'examples/**/*.yaml'
-        - 'examples/**/*.yml'
-        - 'examples/**/*.yaml.j2'
+    - linters: [markdownlint]
+      paths:
+        - 'src/**/*.mdx'
 actions:
   disabled:
     - trunk-announce

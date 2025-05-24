@@ -20,4 +20,5 @@ importOrder:
   - '^@xyflow/(.*)$'
   - '^[./]'
 importOrderGroupNamespaceSpecifiers: true
+importOrderSeparation: true
 importOrderSortSpecifiers: true

@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Edge, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import ApplicationMap, { RankDirection } from './components/ApplicationMap';
+
+import ApplicationMap from './components/ApplicationMap';
 import StateScreen from './components/StateScreen';
 import StatusPanel from './components/StatusPanel';
 import { useApplicationGraph } from './hooks/useApplicationGraph';
 import './styles/index.scss';
 import type { Application } from './types/application';
+import { RankDirection } from './types/graph';
 
 /**
  * Main Extension component for the ArgoCD Application Map
@@ -15,7 +17,6 @@ import type { Application } from './types/application';
 const Extension: React.FC = () => {
   const { graph, isLoading, error } = useApplicationGraph();
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
-  const [selectedEdges, setSelectedEdges] = React.useState<string[]>([]);
 
   /**
    * Checks if the user is authenticated by calling the ArgoCD API
@@ -115,14 +116,12 @@ const Extension: React.FC = () => {
   // Main application map view
   return (
     <div className="argocd-application-map__container">
-      <StatusPanel graph={graph} onFilterUpdated={setSelectedNodes} />
+      <StatusPanel graph={graph} onStatusClicked={setSelectedNodes} />
       <ReactFlowProvider>
         <ApplicationMap
           graph={graph}
           rankdir={RankDirection.LR}
-          selectedNodes={selectedNodes}
-          selectedEdges={selectedEdges}
-          onEdgeClick={onEdgeClick}
+          selectedApplications={selectedNodes}
           onPaneClick={onPaneClick}
           onApplicationClick={onApplicationClick}
         />

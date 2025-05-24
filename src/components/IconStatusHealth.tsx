@@ -1,10 +1,9 @@
 import React from 'react';
+
 import { HealthStatus, HealthStatuses } from '../types';
 
 /**
- * This component renders a FontAwesome icon representing the health status of an application.
- * It is used throughout the UI to provide a consistent, visual indicator of whether an application is
- * healthy, degraded, missing, progressing, unknown, or suspended.
+ * The **IconStatusHealth** displays a **visual indicator** of an application's health status.
  */
 const IconStatusHealth: React.FC<{ status?: HealthStatus }> = ({ status: rawStatus }) => {
   const status = rawStatus && HealthStatuses[rawStatus] ? rawStatus : HealthStatus.Unknown;

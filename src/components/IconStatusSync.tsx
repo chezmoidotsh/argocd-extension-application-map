@@ -1,10 +1,9 @@
 import React from 'react';
+
 import { SyncStatus, SyncStatuses } from '../types';
 
 /**
- * This component renders a FontAwesome icon representing the synchronization status of an application.
- * It is used throughout the UI to provide a consistent, visual indicator of whether an application is
- * in sync, out of sync, or in an unknown state.
+ * The **IconStatusSync** displays a **visual indicator** of an application's synchronization status.
  */
 const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({ status: rawStatus }) => {
   const status = rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;

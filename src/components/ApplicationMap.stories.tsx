@@ -1,22 +1,25 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
+import { expect, within } from '@storybook/test';
+
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
-import { allStatusScenario, denseScenario } from './.storybook/scenarii';
-import Map, { RankDirection } from './ApplicationMap';
+
+import '../styles/index.scss';
+import { HealthStatus, RankDirection, isApplication } from '../types';
+import { allStatusScenario, denseScenario as complexTopology } from './.storybook/scenarii';
+import Map from './ApplicationMap';
 
 const meta: Meta<typeof Map> = {
-  title: 'ApplicationMap/Map',
+  title: 'Components/Application Map/ApplicationMap',
   component: Map,
   tags: ['autodocs'],
   decorators: [
     (Story: any) => (
       <div className="argocd-application-map__container">
         <ReactFlowProvider>
-          <div style={{ width: '100vw', height: '60vh', background: '#f8f9fa' }}>
-            <Story />
-          </div>
+          <Story />
         </ReactFlowProvider>
       </div>
     ),
@@ -29,9 +32,7 @@ export const Basic: Story = {
   args: {
     graph: allStatusScenario,
     rankdir: RankDirection.LR,
-    selectedNodes: [],
-    selectedEdges: [],
-    onEdgeClick: action('onEdgeClick'),
+    selectedApplications: [],
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
@@ -40,11 +41,42 @@ export const Basic: Story = {
 
 export const ComplexTopology: Story = {
   args: {
-    graph: denseScenario,
+    graph: complexTopology,
     rankdir: RankDirection.LR,
-    selectedNodes: [],
-    selectedEdges: [],
-    onEdgeClick: action('onEdgeClick'),
+    selectedApplications: [],
     onPaneClick: action('onPaneClick'),
+    onApplicationClick: action('onApplicationClick'),
+    onApplicationSetClick: action('onApplicationSetClick'),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
+    expect(root_app_1.children[0]).toHaveClass('argocd-application-map__node--default');
+
+    const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
+    expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--default');
+  },
+};
+
+export const ComplexTopologyWithSelection: Story = {
+  args: {
+    graph: complexTopology,
+    rankdir: RankDirection.LR,
+    selectedApplications: complexTopology.filterNodes(
+      (_, attributes) => isApplication(attributes.data) && attributes.data.status.health === HealthStatus.Degraded
+    ),
+    onPaneClick: action('onPaneClick'),
+    onApplicationClick: action('onApplicationClick'),
+    onApplicationSetClick: action('onApplicationSetClick'),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
+    expect(root_app_1.children[0]).toHaveClass('argocd-application-map__node--unselected');
+
+    const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
+    expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--selected');
   },
 };

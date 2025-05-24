@@ -1,15 +1,17 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent } from '@storybook/test';
-import { within } from '@storybook/test';
-import { expect } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
+
 import { ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import React from 'react';
+
+import '../styles/index.scss';
 import { HealthStatus, SyncStatus } from '../types/application';
 import ApplicationMapNode from './ApplicationMapNode';
 
 const meta: Meta<typeof ApplicationMapNode> = {
-  title: 'ApplicationMap/Node',
+  title: 'Components/Application Map/ApplicationMapNode',
   component: ApplicationMapNode,
   tags: ['autodocs'],
   decorators: [
@@ -22,6 +24,36 @@ const meta: Meta<typeof ApplicationMapNode> = {
 };
 export default meta;
 type Story = StoryObj<typeof ApplicationMapNode>;
+
+// Default Application node props
+const applicationNodeProps = {
+  data: {
+    kind: 'Application' as const,
+    name: 'storybook-app',
+    namespace: 'default',
+    health: HealthStatus.Healthy,
+    sync: SyncStatus.Synced,
+
+    onApplicationClick: action('onApplicationClick'),
+    onApplicationSetClick: () => {
+      throw new Error('onApplicationSetClick must not be called on ApplicationNode');
+    },
+  },
+};
+
+// Default ApplicationSet node props
+const applicationSetNodeProps = {
+  data: {
+    kind: 'ApplicationSet' as const,
+    name: 'storybook-appset',
+    namespace: 'default',
+
+    onApplicationClick: () => {
+      throw new Error('onApplicationClick must not be called on ApplicationSetNode');
+    },
+    onApplicationSetClick: action('onApplicationSetClick'),
+  },
+};
 
 export const Application: Story = {
   parameters: {
@@ -49,24 +81,12 @@ export const Application: Story = {
     },
     deepControls: { enabled: true },
   },
-  args: {
-    data: {
-      kind: 'Application',
-      name: 'storybook-app',
-      namespace: 'default',
-      health: HealthStatus.Healthy,
-      sync: SyncStatus.Synced,
-
-      onApplicationClick: action('onApplicationClick'),
-      onApplicationSetClick: () => {
-        throw new Error('onApplicationSetClick must not be called on ApplicationNode');
-      },
-    },
-  },
+  args: applicationNodeProps,
   argTypes: {
     'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
     'data.health': { control: 'select', options: Object.values(HealthStatus) },
     'data.sync': { control: 'select', options: Object.values(SyncStatus) },
+    'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
   },
 
   play: async ({ canvasElement }: any) => {
@@ -130,20 +150,10 @@ export const ApplicationSet: Story = {
     },
     deepControls: { enabled: true },
   },
-  args: {
-    data: {
-      kind: 'ApplicationSet',
-      name: 'storybook-appset',
-      namespace: 'default',
-
-      onApplicationClick: () => {
-        throw new Error('onApplicationClick must not be called on ApplicationSetNode');
-      },
-      onApplicationSetClick: action('onApplicationSetClick'),
-    },
-  },
+  args: applicationSetNodeProps,
   argTypes: {
     'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
+    'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
   },
 
   play: async ({ canvasElement }: any) => {

@@ -6,21 +6,24 @@
 // External dependencies
 // Internal type imports
 import { DirectedGraph } from 'graphology';
+
 import { Node } from '@xyflow/react';
+
 import type { Application, ApplicationKind, ApplicationSet, ApplicationUnion } from './application';
 import { HealthStatus, SyncStatus } from './application';
 import type { ArgoApplication } from './argocd';
+import { RankDirection, RankDirectionType } from './graph';
 import { HealthStatuses, SyncStatuses } from './status';
 
 /**
  * Re-export application-related types
  */
-export type { Application, ApplicationSet, ApplicationKind };
+export type { Application, ApplicationSet, ApplicationKind, RankDirectionType };
 
 /**
  * Re-export application-related constants and interfaces
  */
-export { HealthStatus, SyncStatus, HealthStatuses, SyncStatuses };
+export { HealthStatus, SyncStatus, HealthStatuses, SyncStatuses, RankDirection };
 export type { ArgoApplication };
 
 /**
