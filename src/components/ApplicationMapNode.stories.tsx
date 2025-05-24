@@ -87,7 +87,7 @@ export const Application: Story = {
     'data.health': { control: 'select', options: Object.values(HealthStatus) },
     'data.sync': { control: 'select', options: Object.values(SyncStatus) },
     'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
-  },
+  } as any,
 
   play: async ({ canvasElement }: any) => {
     const canvas = within(canvasElement);
@@ -161,7 +161,7 @@ export const ApplicationSet: Story = {
   argTypes: {
     'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
     'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
-  },
+  } as any,
 
   play: async ({ canvasElement }: any) => {
     const canvas = within(canvasElement);
