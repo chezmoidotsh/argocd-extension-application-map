@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { ControlButton, Panel } from '@xyflow/react';
-import '../styles/index.scss';
 
 /**
  * The **ApplicationMapNavigationControls** provides **interactive controls** for navigating the application map with

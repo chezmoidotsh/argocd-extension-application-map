@@ -1,6 +1,6 @@
 import { Handle, Node, NodeProps } from '@xyflow/react';
 import React from 'react';
-import '../styles/index.scss';
+
 import { HealthStatus, SyncStatus } from '../types/application';
 import { resourceId } from '../utils';
 import ApplicationNodeStatusIconHealth from './IconStatusHealth';

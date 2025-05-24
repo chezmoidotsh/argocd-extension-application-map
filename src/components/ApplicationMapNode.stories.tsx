@@ -1,10 +1,12 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
-import { userEvent } from '@storybook/test';
-import { within } from '@storybook/test';
-import { expect } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
+
 import { ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import React from 'react';
+
+import '../styles/index.scss';
 import { HealthStatus, SyncStatus } from '../types/application';
 import ApplicationMapNode from './ApplicationMapNode';
 

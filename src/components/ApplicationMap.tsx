@@ -1,8 +1,9 @@
 import Dagre from '@dagrejs/dagre';
+
 import * as React from 'react';
 import { Edge, MarkerType, MiniMap, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
-import '../styles/index.scss';
+
 import { ApplicationGraph, HealthStatus, RankDirectionType, SyncStatus } from '../types';
 import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 import ApplicationMapNode, {

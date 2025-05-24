@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Edge, ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+
 import ApplicationMap from './components/ApplicationMap';
 import StateScreen from './components/StateScreen';
 import StatusPanel from './components/StatusPanel';

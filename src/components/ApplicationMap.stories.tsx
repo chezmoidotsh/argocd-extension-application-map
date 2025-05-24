@@ -1,10 +1,12 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/test';
-import { expect } from '@storybook/test';
+import { expect, within } from '@storybook/test';
+
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
+
+import '../styles/index.scss';
 import { HealthStatus, RankDirection, isApplication } from '../types';
 import { allStatusScenario, denseScenario as complexTopology } from './.storybook/scenarii';
 import Map from './ApplicationMap';

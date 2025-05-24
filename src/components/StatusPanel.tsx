@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import '../styles/index.scss';
+
 import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../types';
 import { hasCycle as hasCycleFn } from '../utils/has_cycle';
 import IconStatusHealth from './IconStatusHealth';

@@ -1,7 +1,11 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
+
 import { ReactFlowProvider } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 import React from 'react';
+
+import '../styles/index.scss';
 import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 
 const meta: Meta<typeof ApplicationMapNavigationControls> = {

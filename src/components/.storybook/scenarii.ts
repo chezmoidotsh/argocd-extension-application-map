@@ -1,4 +1,5 @@
 import { DirectedGraph } from 'graphology';
+
 import type { ApplicationGraph } from '../../types';
 import { HealthStatus, SyncStatus } from '../../types/application';
 import { createOrUpdateApplicationNode, resourceId, updateApplicationSubResources } from '../../utils';
