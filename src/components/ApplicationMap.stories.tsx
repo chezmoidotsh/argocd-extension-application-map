@@ -1,6 +1,7 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
+import { expect } from '@storybook/test';
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
@@ -45,9 +46,18 @@ export const ComplexTopology: Story = {
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
   },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
+    expect(root_app_1.children[0]).toHaveClass('argocd-application-map__node--default');
+
+    const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
+    expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--default');
+  },
 };
 
-export const TopologyWithSelection: Story = {
+export const ComplexTopologyWithSelection: Story = {
   args: {
     graph: complexTopology,
     rankdir: RankDirection.LR,
@@ -57,5 +67,14 @@ export const TopologyWithSelection: Story = {
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
+    expect(root_app_1.children[0]).toHaveClass('argocd-application-map__node--unselected');
+
+    const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
+    expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--selected');
   },
 };
