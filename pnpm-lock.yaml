@@ -91,8 +91,8 @@ importers:
         specifier: ^6.24.1
         version: 6.24.1
       chromatic:
-        specifier: ^11.28.2
-        version: 11.29.0
+        specifier: ^12.0.0
+        version: 12.0.0
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.99.9)
@@ -136,8 +136,8 @@ importers:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.99.9)
       task-master-ai:
-        specifier: ^0.14.0
-        version: 0.14.0(@types/node@22.15.21)(react@18.3.1)(ws@8.18.2)
+        specifier: ^0.15.0
+        version: 0.15.0(@types/node@22.15.21)(react@18.3.1)(ws@8.18.2)
       ts-jest:
         specifier: ^29.3.4
         version: 29.3.4(@babel/core@7.27.1)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.27.1))(esbuild@0.25.4)(jest@29.7.0(@types/node@22.15.21))(typescript@5.8.3)
@@ -2452,6 +2452,18 @@ packages:
 
   chromatic@11.29.0:
     resolution: {integrity: sha512-yisBlntp9hHVj19lIQdpTlcYIXuU9H/DbFuu6tyWHmj6hWT2EtukCCcxYXL78XdQt1vm2GfIrtgtKpj/Rzmo4A==}
+    hasBin: true
+    peerDependencies:
+      '@chromatic-com/cypress': ^0.*.* || ^1.0.0
+      '@chromatic-com/playwright': ^0.*.* || ^1.0.0
+    peerDependenciesMeta:
+      '@chromatic-com/cypress':
+        optional: true
+      '@chromatic-com/playwright':
+        optional: true
+
+  chromatic@12.0.0:
+    resolution: {integrity: sha512-X7v26BLfAzHCU92nxPsCuvt+MazmA7S6cN7pCRRhnDYChDxHES48YvXarOybLdlH9kNP/3lMyknu6iseTh0T9A==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -5085,8 +5097,8 @@ packages:
     resolution: {integrity: sha512-Re10+NauLTMCudc7T5WLFLAwDhQ0JWdrMK+9B2M8zR5hRExKmsRDCBA7/aV/pNJFltmBFO5BAMlQFi/vq3nKOg==}
     engines: {node: '>=6'}
 
-  task-master-ai@0.14.0:
-    resolution: {integrity: sha512-Z92IRKWwqdj2oThLwEnt9gHOy8lVVAabs4a6err18aTaEkTOKLmJ8AUKCrnQ+IXqnAt2Es0R2ZcKhg8Sud7egg==}
+  task-master-ai@0.15.0:
+    resolution: {integrity: sha512-eOekJUdFFuJBt0Q4BMD0qO18UuPLh9qloNDs5YG4JK8YsxP6yRUnvxXL7wShOJZ2rNKE9Q0jnKPbvcGafupd8w==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -8394,6 +8406,8 @@ snapshots:
 
   chromatic@11.29.0: {}
 
+  chromatic@12.0.0: {}
+
   chrome-trace-event@1.0.4: {}
 
   ci-info@3.9.0: {}
@@ -11320,7 +11334,7 @@ snapshots:
 
   tapable@2.2.2: {}
 
-  task-master-ai@0.14.0(@types/node@22.15.21)(react@18.3.1)(ws@8.18.2):
+  task-master-ai@0.15.0(@types/node@22.15.21)(react@18.3.1)(ws@8.18.2):
     dependencies:
       '@ai-sdk/anthropic': 1.2.11(zod@3.25.17)
       '@ai-sdk/azure': 1.3.23(zod@3.25.17)
