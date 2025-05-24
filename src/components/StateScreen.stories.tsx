@@ -19,12 +19,18 @@ const meta: Meta<typeof StateScreen> = {
 export default meta;
 type Story = StoryObj<typeof StateScreen>;
 
-export const Basic: Story = {
+export const Default: Story = {
   args: {
     icon: 'argo-icon-application',
     title: 'No applications available',
     subtitle: 'Create new application to start',
   },
+};
+
+export const DefaultDark: Story = {
+  ...Default,
+  name: 'Default (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };
 
 export const WithAdditionalContent: Story = {
@@ -45,4 +51,10 @@ export const WithAdditionalContent: Story = {
       </pre>
     ),
   },
+};
+
+export const WithAdditionalContentDark: Story = {
+  ...WithAdditionalContent,
+  name: 'With Additional Content (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
 };

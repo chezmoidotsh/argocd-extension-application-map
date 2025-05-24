@@ -28,7 +28,7 @@ const meta: Meta<typeof Map> = {
 export default meta;
 type Story = StoryObj<typeof Map>;
 
-export const Basic: Story = {
+export const Default: Story = {
   args: {
     graph: allStatusScenario,
     rankdir: RankDirection.LR,
@@ -37,6 +37,13 @@ export const Basic: Story = {
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: action('onApplicationSetClick'),
   },
+};
+
+export const DefaultDark: Story = {
+  ...Default,
+  name: 'Default (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
 };
 
 export const ComplexTopology: Story = {
@@ -59,6 +66,13 @@ export const ComplexTopology: Story = {
   },
 };
 
+export const ComplexTopologyDark: Story = {
+  ...ComplexTopology,
+  name: 'Complex Topology (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
+};
+
 export const ComplexTopologyWithSelection: Story = {
   args: {
     graph: complexTopology,
@@ -79,4 +93,11 @@ export const ComplexTopologyWithSelection: Story = {
     const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
     expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--selected');
   },
+};
+
+export const ComplexTopologyWithSelectionDark: Story = {
+  ...ComplexTopologyWithSelection,
+  name: 'Complex Topology With Selection (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
 };

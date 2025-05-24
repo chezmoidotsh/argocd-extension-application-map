@@ -15,8 +15,8 @@ $color-separator: #dee6eb;
 $color-secondary-text: #666666;
 $color-panel-title: #6d7f8b;
 $color-selection: #3872e0cc; // rgba(56, 114, 224, 0.8) as hex with alpha
-$color-shadow: #8fa4b1;
 $color-white: #ffffff;
+$color-as-icon-bg: #8fa4b1;
 
 // -----------------------------------------------------------------------------
 // Main Layout
@@ -31,46 +31,14 @@ $color-white: #ffffff;
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-  }
 
-  // ---------------------------------------------------------------------------
-  // Controls Panel (buttons, etc.)
-  // ---------------------------------------------------------------------------
-  &__controls-panel {
-    margin-left: 10px;
-    padding: 5px;
-    box-shadow: 1px 1px 3px $color-shadow;
-    background: $color-white;
-  }
-
-  &__control-button {
-    padding: 5px;
-    margin: 2px;
-    color: $color-control-text;
-    border-radius: 5px;
-    vertical-align: middle;
-    font-weight: 500;
-    line-height: 1.4;
-    text-align: center;
-    cursor: pointer;
-    font-size: 16px;
-    background: transparent;
-    border: 1px solid transparent !important;
-    user-select: none;
-    text-transform: uppercase;
-    transition:
-      background-color 0.2s,
-      border 0.2s,
-      color 0.2s;
-
-    &:hover {
-      background-color: $color-control-hover-bg;
+    // ---------------------------------------------------------------------------
+    // Graph options panel
+    // ---------------------------------------------------------------------------
+    & .graph-options-panel {
+      z-index: 5;
+      margin: 10px 0 0 10px;
     }
-  }
-
-  &__separator {
-    border-right: 1px solid $color-separator;
-    padding: 6px 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -125,22 +93,6 @@ $color-white: #ffffff;
   }
 
   // ---------------------------------------------------------------------------
-  // Node Kind Icon
-  // ---------------------------------------------------------------------------
-  &__node-kind-icon-as {
-    background-color: $color-shadow;
-    border-radius: 50%;
-    display: inline-block;
-    font-weight: 400;
-    height: 32px;
-    line-height: 30px;
-    padding: 2px 4px;
-    text-align: center;
-    vertical-align: middle;
-    width: 32px;
-  }
-
-  // ---------------------------------------------------------------------------
   // Node selection states
   // ---------------------------------------------------------------------------
   &__node {
@@ -188,6 +140,25 @@ $color-white: #ffffff;
       &--unselected {
         opacity: 0.5;
       }
+    }
+  }
+}
+
+.application-resource-tree {
+  &__node-kind-icon {
+    span.as-icon {
+      background: $color-as-icon-bg;
+      border-radius: 50%;
+      color: white;
+      display: inline-block;
+      font-size: 1em;
+      font-weight: 400;
+      height: 32px;
+      line-height: 30px;
+      padding: 2px 4px;
+      text-align: center;
+      vertical-align: middle;
+      width: 32px;
     }
   }
 }

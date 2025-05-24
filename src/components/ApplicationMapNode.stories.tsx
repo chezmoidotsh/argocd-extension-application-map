@@ -87,7 +87,7 @@ export const Application: Story = {
     'data.health': { control: 'select', options: Object.values(HealthStatus) },
     'data.sync': { control: 'select', options: Object.values(SyncStatus) },
     'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
-  },
+  } as any,
 
   play: async ({ canvasElement }: any) => {
     const canvas = within(canvasElement);
@@ -124,6 +124,13 @@ export const Application: Story = {
   },
 };
 
+export const ApplicationDark: Story = {
+  ...Application,
+  name: 'Application (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
+};
+
 export const ApplicationSet: Story = {
   parameters: {
     controls: {
@@ -154,7 +161,7 @@ export const ApplicationSet: Story = {
   argTypes: {
     'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
     'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
-  },
+  } as any,
 
   play: async ({ canvasElement }: any) => {
     const canvas = within(canvasElement);
@@ -166,7 +173,7 @@ export const ApplicationSet: Story = {
     // Check if the ApplicationSet icon is rendered
     const icon = await canvas.findByLabelText('ApplicationSet icon');
     expect(icon).not.toBeNull();
-    expect(icon).toHaveClass('argocd-application-map__node-kind-icon-as');
+    expect(icon).toHaveClass('as-icon');
 
     // Check if the node kind text is rendered
     const nodeKind = await canvas.findByText('applicationset');
@@ -180,4 +187,11 @@ export const ApplicationSet: Story = {
     await userEvent.click(node);
     // The onApplicationSetClick action will be called, which is tested by Storybook
   },
+};
+
+export const ApplicationSetDark: Story = {
+  ...ApplicationSet,
+  name: 'ApplicationSet (dark)',
+  parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
 };
