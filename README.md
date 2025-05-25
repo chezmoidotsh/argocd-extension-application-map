@@ -86,13 +86,17 @@ spec:
 
 ## Roadmap
 
-### v1.0 - Core Enhancements
+### v1.0 - MVP (2025-05-25)
 
-- [ ] UI/UX Improvements
-  - [ ] Add support for dark mode
-  - [ ] Add support for dynamic refresh of map
+- [x] Main features
+  - [x] Interactive, zoomable map of ArgoCD Applications and ApplicationSets
+  - [x] Visualizes dependencies and detects cycles
+  - [x] Filter by health and sync status
+  - [x] Status summary panel
+  - [x] Click on a node to open the native ArgoCD application page
+  - [x] Fully integrated with ArgoCD UI (supports dark mode)
 
-### v1.1 - Search and Filter
+### v1.1 - Search and Filter (TBD)
 
 - [ ] Advanced Filtering
   - [ ] Add support for filtering applications _(side panel like in the ArgoCD UI)_
@@ -103,9 +107,9 @@ spec:
   - [ ] Add fuzzy search support
   - [ ] Add search suggestions
 
-### Future Considerations
+### v1.2 - Dynamic Refresh (TBD)
 
-- [ ] Application clustering using ArgoCD projects, clusters or labels
+- [ ] Add support for dynamic refresh of map when ArgoCD applications are updated using SSE (Server-Sent Events)
 
 ## Contributing
 
