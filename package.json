@@ -1,6 +1,6 @@
 {
   "name": "@chezmoi-sh/argocd-extension-application-map",
-  "version": "0.2.1",
+  "version": "0.1.1",
   "private": false,
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
