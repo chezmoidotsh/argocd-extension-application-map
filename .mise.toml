@@ -2,7 +2,7 @@
 [tools]
 # Kubernetes tools
 argocd = "latest"
-helm = "3.18.0"
+helm = "3.18.1"
 kind = "0.29.0"
 kubectl = "1.33.1"
 
