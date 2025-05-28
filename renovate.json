@@ -26,6 +26,16 @@
     {
       "groupName": "jest",
       "matchPackageNames": ["/^jest/", "/^@jest//", "/^@types/jest/"]
+    },
+    {
+      "groupName": "storybook",
+      "matchPackageNames": [
+        "/^@storybook\\//",
+        "/^storybook$/",
+        "/^storybook-addon-/",
+        "/^chromatic$/",
+        "/^@chromatic-com\\/storybook$/"
+      ]
     }
   ]
 }
