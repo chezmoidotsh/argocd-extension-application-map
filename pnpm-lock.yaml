@@ -92,7 +92,7 @@ importers:
         version: 6.24.1
       chromatic:
         specifier: ^12.0.0
-        version: 12.1.0
+        version: 12.1.1
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.99.9)
@@ -2158,6 +2158,9 @@ packages:
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
 
+  '@types/estree@1.0.8':
+    resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
+
   '@types/graceful-fs@4.1.9':
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
 
@@ -2795,8 +2798,8 @@ packages:
       '@chromatic-com/playwright':
         optional: true
 
-  chromatic@12.1.0:
-    resolution: {integrity: sha512-X45IVEb8mX3J+iDEpb6dY6CUvqWm5jlo8QqzgUGFYlcO7A327Ve3G4dzuu96f/hcXifZ0T1E7BMN6/z0iO4V2A==}
+  chromatic@12.1.1:
+    resolution: {integrity: sha512-vNe/PU4EvPN4V+d03Ym2mWBxqEkfbTCSfd0Z+PUMir0S/gKjbFK72FgTYz64j3k31UtrzMarB8EIzwFMxsDbjg==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -8724,6 +8727,8 @@ snapshots:
 
   '@types/estree@1.0.7': {}
 
+  '@types/estree@1.0.8': {}
+
   '@types/graceful-fs@4.1.9':
     dependencies:
       '@types/node': 22.15.29
@@ -9495,7 +9500,7 @@ snapshots:
 
   chromatic@11.29.0: {}
 
-  chromatic@12.1.0: {}
+  chromatic@12.1.1: {}
 
   chrome-trace-event@1.0.4: {}
 
@@ -10029,7 +10034,7 @@ snapshots:
       '@humanfs/node': 0.16.6
       '@humanwhocodes/module-importer': 1.0.1
       '@humanwhocodes/retry': 0.4.3
-      '@types/estree': 1.0.7
+      '@types/estree': 1.0.8
       '@types/json-schema': 7.0.15
       ajv: 6.12.6
       chalk: 4.1.2
