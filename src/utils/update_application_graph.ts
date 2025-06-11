@@ -58,7 +58,7 @@ export function updateApplicationSubResources(
   appId: string | undefined,
   resourceTree: ArgoResourceTree
 ): void {
-  for (const node of resourceTree.nodes) {
+  for (const node of resourceTree?.nodes ?? []) {
     // We only care about Application and ApplicationSet resources
     if (node.group !== 'argoproj.io' || (node.kind !== 'Application' && node.kind !== 'ApplicationSet')) {
       continue;
