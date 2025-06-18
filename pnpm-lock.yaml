@@ -131,7 +131,7 @@ importers:
         version: 8.6.14
       storybook-addon-deep-controls:
         specifier: ^0.9.2
-        version: 0.9.3(@storybook/addon-controls@8.6.14(storybook@8.6.14))(@storybook/types@8.6.14(storybook@8.6.14))(storybook@8.6.14)
+        version: 0.9.4(@storybook/addon-controls@8.6.14(storybook@8.6.14))(@storybook/types@8.6.14(storybook@8.6.14))(storybook@8.6.14)
       style-loader:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.99.9)
@@ -5884,12 +5884,12 @@ packages:
     resolution: {integrity: sha512-UhDfHmA92YAlNnCfhmq0VeNL5bDbiZGg7sZ2IvPsXubGkiNa9EC+tUTsjBRsYUAz87btI6/1wf4XoVvQ3uRnmQ==}
     engines: {node: '>=18'}
 
-  storybook-addon-deep-controls@0.9.3:
-    resolution: {integrity: sha512-7CeO4YeTanMA6sLt2r59K6964yUBeFOBBaWSHku+ql270GSGU6oWm8K1wWoI2nqn9fG/M7MaPzTvlsNGUyh9VQ==}
+  storybook-addon-deep-controls@0.9.4:
+    resolution: {integrity: sha512-0iq9r9VyfifsapQT44sIQDALtA/jIiG1lIW4itR52i2qXCHEVEgvPMtZ4ZcMbajxZcajwlYsWxiQBeEgvnA6lQ==}
     peerDependencies:
-      '@storybook/addon-controls': 7.x.x || 8.x.x
-      '@storybook/types': 7.x.x || 8.x.x
-      storybook: 7.x.x || 8.x.x
+      '@storybook/addon-controls': 7.x.x || >= 8.0.0 < 8.5.0 || 9.x.x
+      '@storybook/types': 7.x.x || >= 8.0.0 < 8.5.0 || 9.x.x
+      storybook: 7.x.x || >= 8.0.0 < 8.5.0 || 9.x.x
 
   storybook@8.6.14:
     resolution: {integrity: sha512-sVKbCj/OTx67jhmauhxc2dcr1P+yOgz/x3h0krwjyMgdc5Oubvxyg4NYDZmzAw+ym36g/lzH8N0Ccp4dwtdfxw==}
@@ -13770,7 +13770,7 @@ snapshots:
 
   stdin-discarder@0.2.2: {}
 
-  storybook-addon-deep-controls@0.9.3(@storybook/addon-controls@8.6.14(storybook@8.6.14))(@storybook/types@8.6.14(storybook@8.6.14))(storybook@8.6.14):
+  storybook-addon-deep-controls@0.9.4(@storybook/addon-controls@8.6.14(storybook@8.6.14))(@storybook/types@8.6.14(storybook@8.6.14))(storybook@8.6.14):
     dependencies:
       '@storybook/addon-controls': 8.6.14(storybook@8.6.14)
       '@storybook/types': 8.6.14(storybook@8.6.14)
