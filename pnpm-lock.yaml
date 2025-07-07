@@ -38,7 +38,7 @@ importers:
         version: 7.27.1(@babel/core@7.28.0)
       '@chromatic-com/storybook':
         specifier: ^3.2.6
-        version: 3.2.6(react@18.3.1)(storybook@8.6.14)
+        version: 3.2.7(react@18.3.1)(storybook@8.6.14)
       '@jest/globals':
         specifier: ^30.0.0
         version: 30.0.4
@@ -92,7 +92,7 @@ importers:
         version: 6.24.1
       chromatic:
         specifier: ^13.0.0
-        version: 13.0.0
+        version: 13.1.2
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.99.9)
@@ -821,8 +821,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@chromatic-com/storybook@3.2.6':
-    resolution: {integrity: sha512-FDmn5Ry2DzQdik+eq2sp/kJMMT36Ewe7ONXUXM2Izd97c7r6R/QyGli8eyh/F0iyqVvbLveNYFyF0dBOJNwLqw==}
+  '@chromatic-com/storybook@3.2.7':
+    resolution: {integrity: sha512-fCGhk4cd3VA8RNg55MZL5CScdHqljsQcL9g6Ss7YuobHpSo9yytEWNdgMd5QxAHSPBlLGFHjnSmliM3G/BeBqw==}
     engines: {node: '>=16.0.0', yarn: '>=1.22.18'}
     peerDependencies:
       storybook: ^8.2.0 || ^8.3.0-0 || ^8.4.0-0 || ^8.5.0-0 || ^8.6.0-0
@@ -2606,8 +2606,8 @@ packages:
       '@chromatic-com/playwright':
         optional: true
 
-  chromatic@13.0.0:
-    resolution: {integrity: sha512-8YTaQx24NXDvMiwSBAbqQ6WUrg77A2MQks35LvIjJi4sfRK1ozFgSiVCzOxnwJMrE/j4vUzC8E48KW/2HwpgfQ==}
+  chromatic@13.1.2:
+    resolution: {integrity: sha512-jgVptQabJHOnzmmvLjbtfutREkWGhDDk2gVqMH6N+V7z56oIy4Sd2/U7ZxNvnVFPinZQMSjSdUce4b6JIP64Dg==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -6351,7 +6351,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@chromatic-com/storybook@3.2.6(react@18.3.1)(storybook@8.6.14)':
+  '@chromatic-com/storybook@3.2.7(react@18.3.1)(storybook@8.6.14)':
     dependencies:
       chromatic: 11.29.0
       filesize: 10.1.6
@@ -8479,7 +8479,7 @@ snapshots:
 
   chromatic@11.29.0: {}
 
-  chromatic@13.0.0: {}
+  chromatic@13.1.2: {}
 
   chrome-trace-event@1.0.4: {}
 
