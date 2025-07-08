@@ -1,7 +1,6 @@
 # Tiltfile for local ArgoCD development with Application Map extension
-# This configuration sets up a local ArgoCD environment with a custom extension that visualizes 
-# application interactions and dependencies. It provides a comprehensive view of Kubernetes 
-# resources and their communication patterns, helping users understand the application 
+# This configuration sets up a local ArgoCD environment with a custom extension that visualizes
+# application interactions and dependencies. It provides a comprehensive view of the application
 # architecture within ArgoCD.
 
 # Kubernetes context configuration
@@ -12,29 +11,48 @@ allow_k8s_contexts('argocd-dev')
 # -----------------------------------------------------------------------------
 
 EXTENSION_DIST = 'dist/resources/extension-application-map.js/extension-application-map.js'
+ARGOCD_VERSION = 'v3.0.6' # Corresponds to Helm Chart 8.1.2
+
+# -----------------------------------------------------------------------------
+# Development Setup
+# -----------------------------------------------------------------------------
+
+# This resource builds the extension for development and watches for changes.
+# It ensures that the extension is rebuilt whenever source files are modified.
+# These resources build the extension for development and production.
+# They are manually triggered from the Tilt UI.
+local_resource(
+    'build-extension',
+    cmd='pnpm run build:dev',
+    auto_init=True,
+    trigger_mode=TRIGGER_MODE_MANUAL
+)
+
+# This builds a new image named 'argocd-server-with-extension' that includes the UI extension.
+# It's configured to live_update, so changes to the extension are synced into the running container
+# without needing a full image rebuild and pod restart.
+docker_build(
+    'argocd-overview-extension/argocd-server',
+    '.',
+    dockerfile_contents="""
+ARG ARGOCD_VERSION
+FROM quay.io/argoproj/argocd:${ARGOCD_VERSION}
+RUN mkdir -p /tmp/extensions/extension-application-map
+COPY --chown=argocd:argocd """ + EXTENSION_DIST + """ /tmp/extensions/extension-application-map/extension-application-map.js
+""",
+    build_args={'ARGOCD_VERSION': ARGOCD_VERSION},
+    live_update=[
+        sync(
+            EXTENSION_DIST,
+            '/tmp/extensions/extension-application-map/extension-application-map.js'
+        )
+    ]
+)
 
 # -----------------------------------------------------------------------------
 # ArgoCD Deployment Configuration
 # -----------------------------------------------------------------------------
-
-# Create ConfigMap for the extension
-load('ext://configmap', 'configmap_create')
-configmap_create('argocd-extensions',
-    namespace='argocd',
-    from_file='extension-application-map.js=' + EXTENSION_DIST,
-    watch=True,
-)
-
-# Deploy ArgoCD via Helm
-load('ext://helm_remote', 'helm_remote')
-helm_remote('argo-cd', 
-    repo_url='https://argoproj.github.io/argo-helm', 
-    release_name='argocd',
-    namespace='argocd', 
-    create_namespace=True,
-    values=['examples/argocd-dev.helmvalues.yaml'],
-    set=["server.podAnnotations.cm-hash=" + str(hash(str(read_file(EXTENSION_DIST))))],
-)
+k8s_yaml(kustomize('examples/tilt-setup', flags=['--enable-helm']))
 
 # -----------------------------------------------------------------------------
 # Kubernetes Resources Configuration
@@ -43,7 +61,6 @@ helm_remote('argo-cd',
 # ArgoCD Server configuration
 k8s_resource('argocd-server',
     objects=[
-        'argocd-extensions:configmap',
         'argocd-server:serviceaccount',
         'argocd-server:role',
         'argocd-server:clusterrole',
@@ -86,13 +103,6 @@ k8s_resource('argocd-notifications-controller',
     ],
 )
 
-# Redis configuration
-k8s_resource('argocd-redis',
-    objects=[
-        'argocd-redis-health-configmap:configmap',
-    ],
-)
-
 # Redis Secret initialization configuration
 k8s_resource('argocd-redis-secret-init',
     objects=[
@@ -120,33 +130,3 @@ k8s_resource('argocd-applicationset-controller',
         'applicationsets.argoproj.io:customresourcedefinition',
     ],
 )
-
-# -----------------------------------------------------------------------------
-# Example Application
-# -----------------------------------------------------------------------------
-k8s_yaml(encode_yaml({
-    'apiVersion': 'argoproj.io/v1alpha1',
-    'kind': 'Application',
-    'metadata': {
-        'name': 'guestbook',
-        'namespace': 'argocd',
-    },
-    'spec': {
-        'destination': {
-            'namespace': 'default',
-            'server': 'https://kubernetes.default.svc',
-        },
-        'project': 'default',
-        'source': {
-            'path': 'guestbook',
-            'repoURL': 'https://github.com/argoproj/argocd-example-apps',
-            'targetRevision': 'master',
-        },
-        'syncPolicy': {
-            'automated': {
-                'selfHeal': True,
-                'prune': True,
-            },
-        },
-    },
-}))
