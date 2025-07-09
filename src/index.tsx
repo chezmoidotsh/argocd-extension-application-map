@@ -6,6 +6,7 @@ import ApplicationMap from './components/ApplicationMap';
 import StateScreen from './components/StateScreen';
 import StatusPanel from './components/StatusPanel';
 import { useApplicationGraph } from './hooks/useApplicationGraph';
+import { useApplicationSSE } from './hooks/useApplicationSSE';
 import './styles/index.scss';
 import type { Application } from './types/application';
 import { RankDirection } from './types/graph';
@@ -17,6 +18,12 @@ import { RankDirection } from './types/graph';
 const Extension: React.FC = () => {
   const { graph, isLoading, error } = useApplicationGraph();
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+
+  const { status: sseStatus } = useApplicationSSE({
+    onEvent: (_) => {},
+    endpoint: '/api/v1/stream/applications',
+  });
+  console.debug('[Validation 1.4] SSE Status:', sseStatus);
 
   /**
    * Checks if the user is authenticated by calling the ArgoCD API
