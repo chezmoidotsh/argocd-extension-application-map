@@ -203,6 +203,55 @@ describe('updateGraph', () => {
 
     const appA_v2 = createMockApp('appA', undefined, [{ kind: 'Application', name: 'appC', namespace: 'argocd' }]);
     updateGraph(graph, 'MODIFIED', appA_v2);
+
+    expect(graph.hasEdge('Application/argocd/appA', 'Application/argocd/appB')).toBe(false);
+    expect(graph.export()).toMatchSnapshot();
+  });
+
+  /**
+   * Diagram:
+   *   ┌────────────┐     ┌────────────┐
+   *   │ appA       │ ──▶ │ appB       │
+   *   └────────────┘     └────────────┘
+   *                      (status: Unknown/Unknown)
+   *
+   * After appA is processed, which lists appB as Healthy/Synced in its resources,
+   * appB's status in the graph should be updated.
+   *
+   *   ┌────────────┐     ┌────────────┐
+   *   │ appA       │ ──▶ │ appB       │
+   *   └────────────┘     └────────────┘
+   *                      (status: Healthy/Synced)
+   */
+  it("updates a child's unknown status from a parent's resource definition", () => {
+    const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+
+    const appA = createMockApp('appA', undefined, [
+      {
+        kind: 'Application',
+        name: 'appB',
+        namespace: 'argocd',
+        health: { status: HealthStatus.Unknown },
+        status: SyncStatus.Unknown,
+      },
+    ]);
+    updateGraph(graph, 'ADDED', appA);
+
+    expect(graph.export()).toMatchSnapshot();
+
+    // 2. Create appA, which lists appB as a resource with a known status
+    updateGraph(graph, 'MODIFIED', {
+      ...appA,
+      status: {
+        ...appA.status,
+        resources: appA.status.resources.map((resource) => ({
+          ...resource,
+          health: { status: HealthStatus.Healthy },
+          status: SyncStatus.Synced,
+        })),
+      },
+    });
+
     expect(graph.export()).toMatchSnapshot();
   });
 

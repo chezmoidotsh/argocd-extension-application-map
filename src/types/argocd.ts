@@ -175,9 +175,13 @@ export interface ArgoSyncPolicy {
  */
 export interface ManagedResource {
   group: string;
+  health?: {
+    status: HealthStatus;
+  };
   kind: string;
   name: string;
   namespace: string;
+  status?: SyncStatus;
   version: string;
 }
 

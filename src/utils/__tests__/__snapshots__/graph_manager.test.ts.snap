@@ -132,6 +132,12 @@ exports[`updateGraph adds an ApplicationSet referenced in resources 1`] = `
           "name": "appset1",
           "namespace": "argocd",
         },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
+        },
       },
       "key": "ApplicationSet/argocd/appset1",
     },
@@ -186,6 +192,12 @@ exports[`updateGraph adds resources from status.resources as stub nodes 1`] = `
         "metadata": {
           "name": "appB",
           "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
         },
       },
       "key": "Application/argocd/appB",
@@ -615,6 +627,140 @@ exports[`updateGraph should handle app-of-apps without ownerReferences 1`] = `
 }
 `;
 
+exports[`updateGraph updates a child's unknown status from a parent's resource definition 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "health": {
+                "status": "Unknown",
+              },
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+              "status": "Unknown",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Unknown",
+          },
+          "sync": {
+            "status": "Unknown",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph updates a child's unknown status from a parent's resource definition 2`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "health": {
+                "status": "Healthy",
+              },
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+              "status": "Synced",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
 exports[`updateGraph updates resources for a node on MODIFIED event 1`] = `
 {
   "attributes": {},
@@ -657,6 +803,12 @@ exports[`updateGraph updates resources for a node on MODIFIED event 1`] = `
         "metadata": {
           "name": "appB",
           "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
         },
       },
       "key": "Application/argocd/appB",
@@ -713,6 +865,12 @@ exports[`updateGraph updates resources for a node on MODIFIED event 2`] = `
           "name": "appB",
           "namespace": "argocd",
         },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
+        },
       },
       "key": "Application/argocd/appB",
     },
@@ -722,6 +880,12 @@ exports[`updateGraph updates resources for a node on MODIFIED event 2`] = `
         "metadata": {
           "name": "appC",
           "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
         },
       },
       "key": "Application/argocd/appC",

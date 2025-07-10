@@ -38,7 +38,8 @@ export function updateGraph(
 ): void {
   const appNodeId = getNodeId({
     kind: 'Application',
-    ...payload.metadata,
+    name: payload.metadata.name,
+    namespace: payload.metadata.namespace,
   });
 
   if (action === 'DELETED') {
@@ -60,7 +61,10 @@ export function updateGraph(
   }
 
   if (graph.hasNode(appNodeId)) {
-    graph.replaceNodeAttributes(appNodeId, payload);
+    graph.replaceNodeAttributes(appNodeId, {
+      kind: 'Application',
+      ...payload,
+    });
 
     // Remove stale outgoing edges (resources)
     const existingResourceEdges = graph.outEdges(appNodeId);
@@ -73,7 +77,7 @@ export function updateGraph(
           typeof res.name === 'string' &&
           typeof res.namespace === 'string'
         ) {
-          newResourceNodeIds.add(getNodeId({ name: res.name, namespace: res.namespace, kind: res.kind }));
+          newResourceNodeIds.add(getNodeId({ kind: res.kind, name: res.name, namespace: res.namespace }));
         }
       });
     }
@@ -114,7 +118,10 @@ export function updateGraph(
       }
     });
   } else {
-    graph.addNode(appNodeId, payload);
+    graph.addNode(appNodeId, {
+      kind: 'Application',
+      ...payload,
+    });
   }
 
   if (payload.metadata.ownerReferences) {
@@ -160,7 +167,36 @@ export function updateGraph(
               name: res.name,
               namespace: res.namespace,
             },
+            status: {
+              health: res.health,
+              sync: { status: res.status },
+            },
           });
+        } else {
+          const childAttrs = graph.getNodeAttributes(resNodeId) as ArgoApplication;
+          const currentHealth = childAttrs.status?.health;
+          const currentSyncStatus = childAttrs.status?.sync?.status;
+          const resourceHealth = res.health;
+          const resourceSyncStatus = res.status;
+
+          let hasChanges = false;
+
+          if (resourceHealth && (!currentHealth || currentHealth.status === 'Unknown')) {
+            if (!childAttrs.status) (childAttrs as any).status = {};
+            childAttrs.status.health = resourceHealth;
+            hasChanges = true;
+          }
+
+          if (resourceSyncStatus && (!currentSyncStatus || currentSyncStatus === 'Unknown')) {
+            if (!childAttrs.status) (childAttrs as any).status = {};
+            if (!childAttrs.status.sync) (childAttrs.status as any).sync = {};
+            childAttrs.status.sync.status = resourceSyncStatus;
+            hasChanges = true;
+          }
+
+          if (hasChanges) {
+            graph.replaceNodeAttributes(resNodeId, childAttrs);
+          }
         }
         graph.mergeDirectedEdgeWithKey(`${appNodeId}->${resNodeId}`, appNodeId, resNodeId);
       }
