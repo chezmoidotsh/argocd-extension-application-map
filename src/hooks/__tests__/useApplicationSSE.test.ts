@@ -1,5 +1,7 @@
-import { renderHook, act } from '@testing-library/react';
-import { useApplicationSSE, ConnectionStatus, SSEEvent } from '../useApplicationSSE';
+import { act, renderHook } from '@testing-library/react';
+
+import { SSEEvent } from '../../types/sse';
+import { ConnectionStatus, useApplicationSSE } from '../useApplicationSSE';
 
 /**
  * Mock EventSource implementation for testing
@@ -131,8 +133,18 @@ describe('useApplicationSSE', () => {
       const testEvent: SSEEvent = {
         result: {
           type: 'ADDED',
-          application: { name: 'test-app' }
-        }
+          application: {
+            metadata: {
+              name: 'test-app',
+              namespace: 'test-namespace',
+            },
+            status: {
+              health: { status: 'Healthy' },
+              sync: { status: 'Synced' },
+              resources: [],
+            },
+          },
+        },
       };
 
       renderHook(() => useApplicationSSE({ onEvent: mockOnEvent, endpoint: '/api/v1/stream/applications' }));
@@ -161,8 +173,8 @@ describe('useApplicationSSE', () => {
       });
 
       expect(mockOnEvent).not.toHaveBeenCalled();
-      expect(consoleSpy).toHaveBeenCalledWith('[useApplicationSSE] Failed to parse SSE event:', expect.any(Error), "invalid json");
-      
+      expect(consoleSpy).toHaveBeenCalledWith('[SSE] Failed to parse SSE event:', expect.any(Error), 'invalid json');
+
       consoleSpy.mockRestore();
     });
 

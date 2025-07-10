@@ -1,4 +1,5 @@
 import { DirectedGraph } from 'graphology';
+
 import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../../types';
 import { ArgoApplication, ArgoResourceNode, ArgoResourceTree } from '../../types/argocd';
 import { resourceId } from '../resource_id';
@@ -1337,7 +1338,6 @@ describe('updateApplicationSubResources', () => {
     } as any;
     updateApplicationSubResources(graph, appId, tree);
     updateApplicationSubResources(graph, appId, tree);
-    const dupId = resourceId('Application', 'ns', 'dup');
     expect(graph.order).toBe(2);
     expect(graph.size).toBe(1);
   });

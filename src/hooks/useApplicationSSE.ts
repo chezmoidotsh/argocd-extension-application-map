@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { SSEEvent } from '../types/sse';
+
 /**
  * Status of the SSE connection
  */
@@ -9,16 +11,6 @@ export enum ConnectionStatus {
   ERROR = 'ERROR',
   OPEN = 'OPEN',
   RETRYING = 'RETRYING',
-}
-
-/**
- * Shape of the SSE event received from the server
- */
-export interface SSEEvent {
-  result: {
-    type: 'ADDED' | 'MODIFIED' | 'DELETED';
-    application: any; // To be typed more precisely later
-  };
 }
 
 /**
