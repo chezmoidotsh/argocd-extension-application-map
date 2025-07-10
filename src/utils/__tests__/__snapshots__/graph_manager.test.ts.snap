@@ -13,19 +13,37 @@ exports[`updateGraph adds a node with ownerReferences 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appB",
     },
     {
       "attributes": {
         "kind": "ApplicationSet",
-        "name": "appset1",
-        "namespace": "argocd",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
       },
       "key": "ApplicationSet/argocd/appset1",
     },
@@ -45,11 +63,20 @@ exports[`updateGraph adds a simple application node 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
@@ -75,21 +102,36 @@ exports[`updateGraph adds an ApplicationSet referenced in resources 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset1",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "ApplicationSet",
-        "name": "appset1",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
       },
       "key": "ApplicationSet/argocd/appset1",
     },
@@ -115,21 +157,36 @@ exports[`updateGraph adds resources from status.resources as stub nodes 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
       },
       "key": "Application/argocd/appB",
     },
@@ -160,29 +217,62 @@ exports[`updateGraph correctly handles deletion of a node that is both a parent 
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appB",
     },
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
         "kind": "ApplicationSet",
-        "name": "appset1",
-        "namespace": "argocd",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
       },
       "key": "ApplicationSet/argocd/appset1",
     },
@@ -202,11 +292,20 @@ exports[`updateGraph correctly handles deletion of a node that is both a parent 
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appB",
     },
@@ -226,11 +325,20 @@ exports[`updateGraph handles incomplete or malformed SSE payloads gracefully 1`]
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "Application",
-        "name": "malformedApp",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "malformedApp",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": undefined,
+          },
+          "resources": [],
+          "sync": {
+            "status": undefined,
+          },
+        },
       },
       "key": "Application/argocd/malformedApp",
     },
@@ -250,21 +358,45 @@ exports[`updateGraph handles incomplete or malformed SSE payloads gracefully 2`]
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "Application",
-        "name": "malformedApp",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "malformedApp",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": undefined,
+          },
+          "resources": [],
+          "sync": {
+            "status": undefined,
+          },
+        },
       },
       "key": "Application/argocd/malformedApp",
     },
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appWithBadResource",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appWithBadResource",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": null,
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appWithBadResource",
     },
@@ -284,11 +416,20 @@ exports[`updateGraph removes a node on DELETED 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
@@ -319,29 +460,63 @@ exports[`updateGraph removes an ApplicationSet parent when it becomes orphaned 1
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
         "kind": "ApplicationSet",
-        "name": "appset1",
-        "namespace": "argocd",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
       },
       "key": "ApplicationSet/argocd/appset1",
     },
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appB",
     },
@@ -372,29 +547,62 @@ exports[`updateGraph should handle app-of-apps without ownerReferences 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "app-of-apps",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
         "kind": "ApplicationSet",
-        "name": "app-of-apps",
-        "namespace": "argocd",
+        "metadata": {
+          "name": "app-of-apps",
+          "namespace": "argocd",
+        },
       },
       "key": "ApplicationSet/argocd/app-of-apps",
     },
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appB",
     },
@@ -420,21 +628,36 @@ exports[`updateGraph updates resources for a node on MODIFIED event 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
       },
       "key": "Application/argocd/appB",
     },
@@ -460,31 +683,46 @@ exports[`updateGraph updates resources for a node on MODIFIED event 2`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appC",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "Application",
-        "name": "appB",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
       },
       "key": "Application/argocd/appB",
     },
     {
       "attributes": {
-        "healthStatus": "Unknown",
         "kind": "Application",
-        "name": "appC",
-        "namespace": "argocd",
-        "syncStatus": "Unknown",
+        "metadata": {
+          "name": "appC",
+          "namespace": "argocd",
+        },
       },
       "key": "Application/argocd/appC",
     },
@@ -504,11 +742,20 @@ exports[`updateGraph updates the attributes of an existing node 1`] = `
   "nodes": [
     {
       "attributes": {
-        "healthStatus": "Healthy",
         "kind": "Application",
-        "name": "appA",
-        "namespace": "argocd",
-        "syncStatus": "Synced",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
       },
       "key": "Application/argocd/appA",
     },

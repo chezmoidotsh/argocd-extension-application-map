@@ -11,12 +11,25 @@
  * 3. Configuration Types (Source, Destination, Sync Policy)
  * 4. Status Types (ResourceStatus, ApplicationStatus)
  */
-
-import { SyncStatus, HealthStatus } from "./application";
+import { HealthStatus, SyncStatus } from './application';
 
 // ============================================================================
 // Kubernetes Core Types
 // ============================================================================
+
+/**
+ * OwnerReference is a reference to the owner of the resource.
+ *
+ * **NOTE:** OwnerReferences cannot be cross-namespace.
+ * @property {string} apiVersion - The API version of the owner
+ * @property {string} kind - The kind of the owner
+ * @property {string} name - The name of the owner
+ */
+export interface OwnerReference {
+  apiVersion: string;
+  kind: string;
+  name: string;
+}
 
 /**
  * Common metadata fields for Kubernetes resources
@@ -30,6 +43,7 @@ export interface Metadata {
   namespace: string;
   labels?: Record<string, string>;
   annotations?: Record<string, string>;
+  ownerReferences?: OwnerReference[];
 }
 
 // ============================================================================
@@ -48,16 +62,53 @@ export interface Metadata {
  * @property {ApplicationStatus} status - Current status of the ArgoCD Application
  */
 export interface ArgoApplication {
-  kind: "Application";
+  kind: 'Application';
   metadata: Metadata;
-  spec: {
+  spec?: {
     source?: ArgoSource;
     sources?: ArgoSource[];
     destination: ArgoDestination;
     project: string;
     syncPolicy: ArgoSyncPolicy;
   };
-  status: ArgoApplicationStatus;
+  status?: {
+    health: {
+      status: HealthStatus;
+    };
+    reconciledAt?: string;
+    resources?: ManagedResource[];
+    sync: {
+      status: SyncStatus;
+      revision?: string;
+    };
+  };
+}
+
+/**
+ * Checks if a resource is an ArgoCD Application
+ * @param resource - The resource to check
+ * @returns True if the resource is an ArgoCD Application, false otherwise
+ */
+export function isArgoApplication(resource: ArgoApplication | ArgoApplicationSet): resource is ArgoApplication {
+  return resource.kind === 'Application';
+}
+
+/**
+ * Represents an ArgoCD ApplicationSet resource
+ * @property {Metadata} metadata - Metadata about the ArgoCD ApplicationSet
+ */
+export interface ArgoApplicationSet {
+  kind: 'ApplicationSet';
+  metadata: Metadata;
+}
+
+/**
+ * Checks if a resource is an ArgoCD ApplicationSet
+ * @param resource - The resource to check
+ * @returns True if the resource is an ArgoCD ApplicationSet, false otherwise
+ */
+export function isArgoApplicationSet(resource: ArgoApplication | ArgoApplicationSet): resource is ArgoApplicationSet {
+  return resource.kind === 'ApplicationSet';
 }
 
 // ============================================================================
@@ -114,28 +165,20 @@ export interface ArgoSyncPolicy {
   automated?: ArgoAutomatedSync;
 }
 
-// ============================================================================
-// Status Types
-// ============================================================================
-
 /**
- * Status information for an ArgoCD application
- * @property {Object} sync - Synchronization status information
- * @property {SyncStatus} sync.status - The current sync status
- * @property {string} sync.revision - The current revision being synced
- * @property {Object} health - Health status information
- * @property {HealthStatus} health.status - The current health status
- * @property {string} [reconciledAt] - Optional timestamp of the last reconciliation
+ * Represents a resource managed by an ArgoCD application
+ * @property {string} group - The API group of the resource
+ * @property {string} kind - The kind of the resource
+ * @property {string} name - The name of the resource
+ * @property {string} namespace - The namespace of the resource
+ * @property {string} version - The version of the resource
  */
-export interface ArgoApplicationStatus {
-  sync: {
-    status: SyncStatus;
-    revision: string;
-  };
-  health: {
-    status: HealthStatus;
-  };
-  reconciledAt?: string;
+export interface ManagedResource {
+  group: string;
+  kind: string;
+  name: string;
+  namespace: string;
+  version: string;
 }
 
 // ============================================================================
@@ -174,7 +217,7 @@ export interface ArgoResourceNode {
   // Resource identification
   group: string;
   version: string;
-  kind: "Application" | "ApplicationSet";
+  kind: 'Application' | 'ApplicationSet';
 
   // Resource metadata
   namespace: string;

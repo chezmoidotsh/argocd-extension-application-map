@@ -1,12 +1,7 @@
 import { DirectedGraph } from 'graphology';
 
-import {
-  HealthStatus,
-  StringToHealthStatus as StrToHealthStatus,
-  StringToSyncStatus as StrToSyncStatus,
-  SyncStatus,
-} from '../types/application';
-import { Resource, SSEApplication, SSEEventType } from '../types/sse';
+import { HealthStatus, SyncStatus } from '../types/application';
+import { ArgoApplication, ArgoApplicationSet, ManagedResource, isArgoApplicationSet } from '../types/argocd';
 
 /**
  * Defines the attributes stored for each node in the application graph.
@@ -37,9 +32,9 @@ function getNodeId(resource: { kind: string; name: string; namespace: string }):
  * @param payload - The application data from the event.
  */
 export function updateGraph(
-  graph: DirectedGraph<ApplicationNodeAttributes>,
-  action: SSEEventType,
-  payload: SSEApplication
+  graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>,
+  action: 'ADDED' | 'MODIFIED' | 'DELETED',
+  payload: ArgoApplication
 ): void {
   const appNodeId = getNodeId({
     kind: 'Application',
@@ -54,7 +49,7 @@ export function updateGraph(
       // Remove all parents that are ApplicationSets and have no children
       parents.forEach((parentNodeId) => {
         if (graph.hasNode(parentNodeId)) {
-          const isAppSet = graph.getNodeAttribute(parentNodeId, 'kind') === 'ApplicationSet';
+          const isAppSet = isArgoApplicationSet(graph.getNodeAttributes(parentNodeId));
           if (isAppSet && graph.outDegree(parentNodeId) === 0) {
             graph.dropNode(parentNodeId);
           }
@@ -64,16 +59,8 @@ export function updateGraph(
     return;
   }
 
-  const attributes: ApplicationNodeAttributes = {
-    kind: 'Application',
-    name: payload.metadata.name,
-    namespace: payload.metadata.namespace,
-    healthStatus: StrToHealthStatus(payload.status.health?.status ?? 'Unknown'),
-    syncStatus: StrToSyncStatus(payload.status.sync?.status ?? 'Unknown'),
-  };
-
   if (graph.hasNode(appNodeId)) {
-    graph.replaceNodeAttributes(appNodeId, attributes);
+    graph.replaceNodeAttributes(appNodeId, payload);
 
     // Remove stale outgoing edges (resources)
     const existingResourceEdges = graph.outEdges(appNodeId);
@@ -121,36 +108,40 @@ export function updateGraph(
         // This heuristic assumes that any 'ownerReference' managed dynamically
         // must come from an ApplicationSet. Resource dependencies from Applications
         // are managed by the parent's `outEdges` update logic.
-        if (sourceAttributes.kind === 'ApplicationSet' && !newOwnerNodeIds.has(sourceNodeId)) {
+        if (isArgoApplicationSet(sourceAttributes) && !newOwnerNodeIds.has(sourceNodeId)) {
           graph.dropEdge(edge);
         }
       }
     });
   } else {
-    graph.addNode(appNodeId, attributes);
+    graph.addNode(appNodeId, payload);
   }
 
   if (payload.metadata.ownerReferences) {
-    payload.metadata.ownerReferences.forEach((owner) => {
-      const parentNodeId = getNodeId({
-        kind: owner.kind,
-        name: owner.name,
-        namespace: payload.metadata.namespace, // Assuming parent is in the same namespace (cross-namespace OwnerReferences is not supported by Kubernetes)
-      });
-
-      if (!graph.hasNode(parentNodeId)) {
-        graph.addNode(parentNodeId, {
+    payload.metadata.ownerReferences
+      .filter((o) => o.kind === 'ApplicationSet' || o.kind === 'Application')
+      .forEach((owner) => {
+        const parentNodeId = getNodeId({
           kind: owner.kind,
           name: owner.name,
-          namespace: payload.metadata.namespace,
+          namespace: payload.metadata.namespace, // Assuming parent is in the same namespace (cross-namespace OwnerReferences is not supported by Kubernetes)
         });
-      }
-      graph.mergeDirectedEdgeWithKey(`${parentNodeId}->${appNodeId}`, parentNodeId, appNodeId);
-    });
+
+        if (!graph.hasNode(parentNodeId)) {
+          graph.addNode(parentNodeId, {
+            kind: owner.kind as 'Application' | 'ApplicationSet',
+            metadata: {
+              name: owner.name,
+              namespace: payload.metadata.namespace,
+            },
+          });
+        }
+        graph.mergeDirectedEdgeWithKey(`${parentNodeId}->${appNodeId}`, parentNodeId, appNodeId);
+      });
   }
 
   if (payload.status?.resources) {
-    payload.status.resources.forEach((res: Resource) => {
+    payload.status.resources.forEach((res: ManagedResource) => {
       if (
         (res.kind === 'Application' || res.kind === 'ApplicationSet') &&
         typeof res.name === 'string' &&
@@ -165,10 +156,10 @@ export function updateGraph(
         if (!graph.hasNode(resNodeId)) {
           graph.addNode(resNodeId, {
             kind: res.kind,
-            name: res.name,
-            namespace: res.namespace,
-            healthStatus: HealthStatus.Unknown,
-            syncStatus: SyncStatus.Unknown,
+            metadata: {
+              name: res.name,
+              namespace: res.namespace,
+            },
           });
         }
         graph.mergeDirectedEdgeWithKey(`${appNodeId}->${resNodeId}`, appNodeId, resNodeId);

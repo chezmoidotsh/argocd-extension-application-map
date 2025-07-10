@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { SSEEvent } from '../types/sse';
+import { ArgoApplication } from '../types/argocd';
 
 /**
  * Status of the SSE connection
@@ -11,6 +11,19 @@ export enum ConnectionStatus {
   ERROR = 'ERROR',
   OPEN = 'OPEN',
   RETRYING = 'RETRYING',
+}
+
+/**
+ * Represents the top-level event structure from the ArgoCD SSE stream.
+ * @property {Object} result - The result of the event
+ * @property {string} result.type - The type of the event
+ * @property {ArgoApplication} result.application - The application object
+ */
+export interface SSEEvent {
+  result: {
+    type: 'ADDED' | 'MODIFIED' | 'DELETED';
+    application: ArgoApplication;
+  };
 }
 
 /**

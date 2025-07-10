@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { SSEEvent } from '../../types/sse';
-import { ConnectionStatus, useApplicationSSE } from '../useApplicationSSE';
+import { HealthStatus, SyncStatus } from '../../types/application';
+import { ConnectionStatus, SSEEvent, useApplicationSSE } from '../useApplicationSSE';
 
 /**
  * Mock EventSource implementation for testing
@@ -134,13 +134,14 @@ describe('useApplicationSSE', () => {
         result: {
           type: 'ADDED',
           application: {
+            kind: 'Application',
             metadata: {
               name: 'test-app',
               namespace: 'test-namespace',
             },
             status: {
-              health: { status: 'Healthy' },
-              sync: { status: 'Synced' },
+              health: { status: HealthStatus.Healthy },
+              sync: { status: SyncStatus.Synced },
               resources: [],
             },
           },
