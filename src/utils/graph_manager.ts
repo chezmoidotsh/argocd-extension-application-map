@@ -36,6 +36,11 @@ export function updateGraph(
   action: 'ADDED' | 'MODIFIED' | 'DELETED',
   payload: ArgoApplication
 ): void {
+  if (payload.metadata.name === undefined || payload.metadata.namespace === undefined) {
+    console.warn('Skipping updateGraph: missing name or namespace', payload);
+    return;
+  }
+
   const appNodeId = getNodeId({
     kind: 'Application',
     name: payload.metadata.name,
