@@ -1,547 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`updateGraph adds a node with ownerReferences 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
-      "source": "ApplicationSet/argocd/appset1",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-          "ownerReferences": [
-            {
-              "apiVersion": "argoproj.io/v1alpha1",
-              "kind": "ApplicationSet",
-              "name": "appset1",
-            },
-          ],
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-    {
-      "attributes": {
-        "kind": "ApplicationSet",
-        "metadata": {
-          "name": "appset1",
-          "namespace": "argocd",
-        },
-      },
-      "key": "ApplicationSet/argocd/appset1",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph adds a simple application node 1`] = `
-{
-  "attributes": {},
-  "edges": [],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph adds an ApplicationSet referenced in resources 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "Application/argocd/appA->ApplicationSet/argocd/appset1",
-      "source": "Application/argocd/appA",
-      "target": "ApplicationSet/argocd/appset1",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "kind": "ApplicationSet",
-              "name": "appset1",
-              "namespace": "argocd",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "ApplicationSet",
-        "metadata": {
-          "name": "appset1",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": undefined,
-          "sync": {
-            "status": undefined,
-          },
-        },
-      },
-      "key": "ApplicationSet/argocd/appset1",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph adds resources from status.resources as stub nodes 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "Application/argocd/appA->Application/argocd/appB",
-      "source": "Application/argocd/appA",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "kind": "Application",
-              "name": "appB",
-              "namespace": "argocd",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": undefined,
-          "sync": {
-            "status": undefined,
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph correctly handles deletion of a node that is both a parent and a child 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "ApplicationSet/argocd/appset1->Application/argocd/appA",
-      "source": "ApplicationSet/argocd/appset1",
-      "target": "Application/argocd/appA",
-    },
-    {
-      "key": "Application/argocd/appA->Application/argocd/appB",
-      "source": "Application/argocd/appA",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-          "ownerReferences": [
-            {
-              "apiVersion": "argoproj.io/v1alpha1",
-              "kind": "ApplicationSet",
-              "name": "appset1",
-            },
-          ],
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "kind": "Application",
-              "name": "appB",
-              "namespace": "argocd",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "ApplicationSet",
-        "metadata": {
-          "name": "appset1",
-          "namespace": "argocd",
-        },
-      },
-      "key": "ApplicationSet/argocd/appset1",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph correctly handles deletion of a node that is both a parent and a child 2`] = `
-{
-  "attributes": {},
-  "edges": [],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph handles incomplete or malformed SSE payloads gracefully 1`] = `
-{
-  "attributes": {},
-  "edges": [],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "malformedApp",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": undefined,
-          },
-          "resources": [],
-          "sync": {
-            "status": undefined,
-          },
-        },
-      },
-      "key": "Application/argocd/malformedApp",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph handles incomplete or malformed SSE payloads gracefully 2`] = `
-{
-  "attributes": {},
-  "edges": [],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "malformedApp",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": undefined,
-          },
-          "resources": [],
-          "sync": {
-            "status": undefined,
-          },
-        },
-      },
-      "key": "Application/argocd/malformedApp",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appWithBadResource",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "kind": "Application",
-              "name": null,
-              "namespace": "argocd",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appWithBadResource",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph removes a node on DELETED 1`] = `
-{
-  "attributes": {},
-  "edges": [],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph removes an ApplicationSet parent when it becomes orphaned 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "ApplicationSet/argocd/appset1->Application/argocd/appA",
-      "source": "ApplicationSet/argocd/appset1",
-      "target": "Application/argocd/appA",
-    },
-    {
-      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
-      "source": "ApplicationSet/argocd/appset1",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-          "ownerReferences": [
-            {
-              "apiVersion": "argoproj.io/v1alpha1",
-              "kind": "ApplicationSet",
-              "name": "appset1",
-            },
-          ],
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "ApplicationSet",
-        "metadata": {
-          "name": "appset1",
-          "namespace": "argocd",
-        },
-      },
-      "key": "ApplicationSet/argocd/appset1",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-          "ownerReferences": [
-            {
-              "apiVersion": "argoproj.io/v1alpha1",
-              "kind": "ApplicationSet",
-              "name": "appset1",
-            },
-          ],
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph should handle app-of-apps without ownerReferences 1`] = `
+exports[`updateGraph App-of-Apps Scenarios should handle app-of-apps with ownerReferences 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -627,307 +86,7 @@ exports[`updateGraph should handle app-of-apps without ownerReferences 1`] = `
 }
 `;
 
-exports[`updateGraph should remove an ApplicationSet if it becomes an orphan after its parent Application is deleted 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "Application/argocd/appA->ApplicationSet/argocd/appset1",
-      "source": "Application/argocd/appA",
-      "target": "ApplicationSet/argocd/appset1",
-    },
-    {
-      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
-      "source": "ApplicationSet/argocd/appset1",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "kind": "ApplicationSet",
-              "name": "appset1",
-              "namespace": "argocd",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "ApplicationSet",
-        "metadata": {
-          "name": "appset1",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": undefined,
-          "sync": {
-            "status": undefined,
-          },
-        },
-      },
-      "key": "ApplicationSet/argocd/appset1",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-          "ownerReferences": [
-            {
-              "apiVersion": "argoproj.io/v1alpha1",
-              "kind": "ApplicationSet",
-              "name": "appset1",
-            },
-          ],
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph should remove an ApplicationSet if it becomes an orphan after its parent Application is deleted 2`] = `
-{
-  "attributes": {},
-  "edges": [],
-  "nodes": [],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph updates a child's unknown status from a parent's resource definition 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "Application/argocd/appA->Application/argocd/appB",
-      "source": "Application/argocd/appA",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "health": {
-                "status": "Unknown",
-              },
-              "kind": "Application",
-              "name": "appB",
-              "namespace": "argocd",
-              "status": "Unknown",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Unknown",
-          },
-          "sync": {
-            "status": "Unknown",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph updates a child's unknown status from a parent's resource definition 2`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "Application/argocd/appA->Application/argocd/appB",
-      "source": "Application/argocd/appA",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "health": {
-                "status": "Healthy",
-              },
-              "kind": "Application",
-              "name": "appB",
-              "namespace": "argocd",
-              "status": "Synced",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph updates resources for a node on MODIFIED event 1`] = `
-{
-  "attributes": {},
-  "edges": [
-    {
-      "key": "Application/argocd/appA->Application/argocd/appB",
-      "source": "Application/argocd/appA",
-      "target": "Application/argocd/appB",
-    },
-  ],
-  "nodes": [
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appA",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": {
-            "status": "Healthy",
-          },
-          "resources": [
-            {
-              "kind": "Application",
-              "name": "appB",
-              "namespace": "argocd",
-            },
-          ],
-          "sync": {
-            "status": "Synced",
-          },
-        },
-      },
-      "key": "Application/argocd/appA",
-    },
-    {
-      "attributes": {
-        "kind": "Application",
-        "metadata": {
-          "name": "appB",
-          "namespace": "argocd",
-        },
-        "status": {
-          "health": undefined,
-          "sync": {
-            "status": undefined,
-          },
-        },
-      },
-      "key": "Application/argocd/appB",
-    },
-  ],
-  "options": {
-    "allowSelfLoops": true,
-    "multi": false,
-    "type": "directed",
-  },
-}
-`;
-
-exports[`updateGraph updates resources for a node on MODIFIED event 2`] = `
+exports[`updateGraph App-of-Apps Scenarios updates resources for a node on MODIFIED event, orphaning old children 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -1004,7 +163,282 @@ exports[`updateGraph updates resources for a node on MODIFIED event 2`] = `
 }
 `;
 
-exports[`updateGraph updates the attributes of an existing node 1`] = `
+exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a node that is both a parent and a child 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appA",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appA",
+    },
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a node that is both a parent and a child 2`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appA",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appA",
+    },
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 2`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 3`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Basic Operations (Nodes & Edges) adds a simple application node 1`] = `
 {
   "attributes": {},
   "edges": [],
@@ -1027,6 +461,765 @@ exports[`updateGraph updates the attributes of an existing node 1`] = `
         },
       },
       "key": "Application/argocd/appA",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 1`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 2`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of an existing node on MODIFIED 1`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of an existing node on MODIFIED 2`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Progressing",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Edge Cases & Malformed Data handles cyclical dependencies gracefully 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+    {
+      "key": "Application/argocd/appB->Application/argocd/appA",
+      "source": "Application/argocd/appB",
+      "target": "Application/argocd/appA",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appA",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Edge Cases & Malformed Data handles incomplete or malformed SSE payloads gracefully 1`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appWithBadResource",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": null,
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appWithBadResource",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Edge Cases & Malformed Data handles self-referencing applications gracefully 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appA",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appA",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appA",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Resource and Ownership Handling (Edges) adds a node with ownerReferences, creating a parent 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Resource and Ownership Handling (Edges) adds an ApplicationSet referenced in resources 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->ApplicationSet/argocd/appset1",
+      "source": "Application/argocd/appA",
+      "target": "ApplicationSet/argocd/appset1",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset1",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Resource and Ownership Handling (Edges) adds resources from status.resources as stub nodes 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Resource and Ownership Handling (Edges) handles resources in different namespaces correctly 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/default/appA->Application/argocd/appB",
+      "source": "Application/default/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "default",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/default/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Status & Attribute Updates handles change of ownership (ownerReference) 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appA",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appA",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Status & Attribute Updates handles change of ownership (ownerReference) 2`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset2->Application/argocd/appA",
+      "source": "ApplicationSet/argocd/appset2",
+      "target": "Application/argocd/appA",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset2",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset2",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset2",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Status & Attribute Updates updates a child's unknown status from a parent's resource definition 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "health": {
+                "status": "Unknown",
+              },
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+              "status": "Unknown",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Unknown",
+          },
+          "sync": {
+            "status": "Unknown",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph Status & Attribute Updates updates a child's unknown status from a parent's resource definition 2`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->Application/argocd/appB",
+      "source": "Application/argocd/appA",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "health": {
+                "status": "Healthy",
+              },
+              "kind": "Application",
+              "name": "appB",
+              "namespace": "argocd",
+              "status": "Synced",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
     },
   ],
   "options": {
