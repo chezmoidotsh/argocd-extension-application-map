@@ -121,6 +121,7 @@ export function updateGraph(
       });
     }
 
+    const orphanedParents = new Set<string>();
     existingOwnerEdges.forEach((edge) => {
       const sourceNodeId = graph.source(edge);
       if (graph.hasNode(sourceNodeId)) {
@@ -130,7 +131,16 @@ export function updateGraph(
         // are managed by the parent's `outEdges` update logic.
         if (isArgoApplicationSet(sourceAttributes) && !newOwnerNodeIds.has(sourceNodeId)) {
           graph.dropEdge(edge);
+          // Track potentially orphaned ApplicationSets
+          orphanedParents.add(sourceNodeId);
         }
+      }
+    });
+
+    // Remove orphaned ApplicationSets (those with no children after edge removal)
+    orphanedParents.forEach((parentNodeId) => {
+      if (graph.hasNode(parentNodeId) && graph.outDegree(parentNodeId) === 0) {
+        graph.dropNode(parentNodeId);
       }
     });
   } else {
