@@ -45,6 +45,7 @@ export function updateGraph(
   if (action === 'DELETED') {
     if (graph.hasNode(appNodeId)) {
       const parents = graph.inNeighbors(appNodeId);
+      const children = graph.outNeighbors(appNodeId);
       graph.dropNode(appNodeId);
 
       // Remove all parents that are ApplicationSets and have no children
@@ -53,6 +54,16 @@ export function updateGraph(
           const isAppSet = isArgoApplicationSet(graph.getNodeAttributes(parentNodeId));
           if (isAppSet && graph.outDegree(parentNodeId) === 0) {
             graph.dropNode(parentNodeId);
+          }
+        }
+      });
+
+      // Remove all children that are ApplicationSets and have no parents
+      children.forEach((childNodeId) => {
+        if (graph.hasNode(childNodeId)) {
+          const isAppSet = isArgoApplicationSet(graph.getNodeAttributes(childNodeId));
+          if (isAppSet && graph.inDegree(childNodeId) === 0) {
+            graph.dropNode(childNodeId);
           }
         }
       });

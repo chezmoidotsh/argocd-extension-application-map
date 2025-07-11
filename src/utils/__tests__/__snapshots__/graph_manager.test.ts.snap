@@ -627,6 +627,111 @@ exports[`updateGraph should handle app-of-apps without ownerReferences 1`] = `
 }
 `;
 
+exports[`updateGraph should remove an ApplicationSet if it becomes an orphan after its parent Application is deleted 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/appA->ApplicationSet/argocd/appset1",
+      "source": "Application/argocd/appA",
+      "target": "ApplicationSet/argocd/appset1",
+    },
+    {
+      "key": "ApplicationSet/argocd/appset1->Application/argocd/appB",
+      "source": "ApplicationSet/argocd/appset1",
+      "target": "Application/argocd/appB",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appA",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset1",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appA",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset1",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
+        },
+      },
+      "key": "ApplicationSet/argocd/appset1",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "appB",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset1",
+            },
+          ],
+        },
+        "status": {
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/appB",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`updateGraph should remove an ApplicationSet if it becomes an orphan after its parent Application is deleted 2`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
 exports[`updateGraph updates a child's unknown status from a parent's resource definition 1`] = `
 {
   "attributes": {},

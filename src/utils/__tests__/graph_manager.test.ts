@@ -258,7 +258,7 @@ describe('updateGraph', () => {
   /**
    * Initial diagram:
    *   ┌────────────┐     ┌──────────────┐     ┌────────────┐
-   *   │ appset1    │ ◁── │ appA         │ ──▶ │ appB       │
+   *   │ appset1    │ ──▶ │ appA         │ ──▶ │ appB       │
    *   └────────────┘     └──────────────┘     └────────────┘
    * After DELETED appA:
    *                                              ┌────────────┐
@@ -305,6 +305,41 @@ describe('updateGraph', () => {
       { kind: 'Application', name: null, namespace: 'argocd' }, // name is null
     ]);
     updateGraph(graph, 'ADDED', appWithBadResource);
+    expect(graph.export()).toMatchSnapshot();
+  });
+
+  /**
+   * Initial diagram:
+   *   ┌────────────┐     ┌──────────────┐     ┌────────────┐
+   *   │ appA       │ ──▶ │ appset1      │ ──▶ │ appB       │
+   *   └────────────┘     └──────────────┘     └────────────┘
+   * After DELETED appA and appB:
+   *
+   *
+   *
+   *   (appset1 is removed as it's orphaned)
+   */
+  it('should remove an ApplicationSet if it becomes an orphan after its parent Application is deleted', () => {
+    // Test Plan:
+    // Initial state:
+    //   AppA -> AS01 -> App2
+    // Delete AppA.
+    // Expected: AppA and AS01 are removed. App2 remains as an orphan.
+    const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+
+    const appA = createMockApp('appA', undefined, [
+      { kind: 'ApplicationSet', name: 'appset1', namespace: 'argocd' },
+    ]);
+    const appB = createMockApp('appB', { kind: 'ApplicationSet', name: 'appset1' }, []);
+
+    updateGraph(graph, 'ADDED', appA);
+    updateGraph(graph, 'ADDED', appB); 
+
+    expect(graph.export()).toMatchSnapshot();
+
+    updateGraph(graph, 'DELETED', appA);
+    updateGraph(graph, 'DELETED', appB);
+
     expect(graph.export()).toMatchSnapshot();
   });
 });
