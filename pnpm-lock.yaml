@@ -13,7 +13,7 @@ importers:
         version: 1.1.5
       '@xyflow/react':
         specifier: ^12.6.4
-        version: 12.8.1(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 12.8.2(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       graphology:
         specifier: ^0.26.0
         version: 0.26.0(graphology-types@0.24.8)
@@ -2203,14 +2203,14 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@xyflow/react@12.8.1':
-    resolution: {integrity: sha512-t5Rame4Gc/540VcOZd28yFe9Xd8lyjKUX+VTiyb1x4ykNXZH5zyDmsu+lj9je2O/jGBVb0pj1Vjcxrxyn+Xk2g==}
+  '@xyflow/react@12.8.2':
+    resolution: {integrity: sha512-VifLpxOy74ck283NQOtBn1e8igmB7xo7ADDKxyBHkKd8IKpyr16TgaYOhzqVwNMdB4NT+m++zfkic530L+gEXw==}
     peerDependencies:
       react: '>=17'
       react-dom: '>=17'
 
-  '@xyflow/system@0.0.65':
-    resolution: {integrity: sha512-AliQPQeurQMoNlOdySnRoDQl9yDSA/1Lqi47Eo0m98lHcfrTdD9jK75H0tiGj+0qRC10SKNUXyMkT0KL0opg4g==}
+  '@xyflow/system@0.0.66':
+    resolution: {integrity: sha512-TTxESDwPsATnuDMUeYYtKe4wt9v8bRO29dgYBhR8HyhSCzipnAdIL/1CDfFd+WqS1srVreo24u6zZeVIDk4r3Q==}
 
   acorn-import-phases@1.0.3:
     resolution: {integrity: sha512-jtKLnfoOzm28PazuQ4dVBcE9Jeo6ha1GAJvq3N0LlNOszmTfx+wSycBehn+FN0RnyeR77IBxN/qVYMw0Rlj0Xw==}
@@ -7932,9 +7932,9 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@xyflow/react@12.8.1(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@xyflow/react@12.8.2(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@xyflow/system': 0.0.65
+      '@xyflow/system': 0.0.66
       classcat: 5.0.5
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -7943,7 +7943,7 @@ snapshots:
       - '@types/react'
       - immer
 
-  '@xyflow/system@0.0.65':
+  '@xyflow/system@0.0.66':
     dependencies:
       '@types/d3-drag': 3.0.7
       '@types/d3-interpolate': 3.0.4
