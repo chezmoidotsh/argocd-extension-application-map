@@ -193,22 +193,30 @@ const StatusPanel: React.FC<{
 
   // Update the statuses and cycle status when the graph changes
   useEffect(() => {
-    const appNodes = graph.mapNodes((_, attr) => attr.data).filter(isApplication);
-    setHealthStatuses(appNodes.map((node) => node.status.health));
-    setSyncStatuses(appNodes.map((node) => node.status.sync));
+    const appNodes = graph.mapNodes((_, attr) => attr).filter(isApplication);
+    setHealthStatuses(appNodes.map((node) => node.status?.health?.status || HealthStatus.Unknown));
+    setSyncStatuses(appNodes.map((node) => node.status?.sync?.status || SyncStatus.Unknown));
     setHasCycle(hasCycleFn(graph));
   }, [graph]);
 
   const onHealthStatusClick = useCallback(
     (status: HealthStatus) => {
-      onFilterUpdated(graph.filterNodes((_, attr) => isApplication(attr.data) && attr.data.status.health === status));
+      onFilterUpdated(
+        graph.filterNodes(
+          (_, attr) => isApplication(attr) && (attr.status?.health?.status || HealthStatus.Unknown) === status
+        )
+      );
     },
     [graph, onFilterUpdated]
   );
 
   const onSyncStatusClick = useCallback(
     (status: SyncStatus) => {
-      onFilterUpdated(graph.filterNodes((_, attr) => isApplication(attr.data) && attr.data.status.sync === status));
+      onFilterUpdated(
+        graph.filterNodes(
+          (_, attr) => isApplication(attr) && (attr.status?.sync?.status || SyncStatus.Unknown) === status
+        )
+      );
     },
     [graph, onFilterUpdated]
   );

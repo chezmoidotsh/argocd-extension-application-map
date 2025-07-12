@@ -2,6 +2,7 @@ import { Handle, Node, NodeProps } from '@xyflow/react';
 import React from 'react';
 
 import { HealthStatus, SyncStatus } from '../types/application';
+import { ArgoApplication, ArgoApplicationSet, isArgoApplication, isArgoApplicationSet } from '../types/argocd';
 import { resourceId } from '../utils';
 import ApplicationNodeStatusIconHealth from './IconStatusHealth';
 import ApplicationNodeStatusIconSync from './IconStatusSync';
@@ -13,11 +14,8 @@ export const NODE_HEIGHT = 52;
  * Renders a node for an ArgoCD Application resource (icon, name, status).
  */
 const ApplicationMapNode_Application: React.FC<{
-  name: string;
-  namespace: string;
-  health?: HealthStatus;
-  sync?: SyncStatus;
-}> = ({ name, namespace, health, sync }) => {
+  application: ArgoApplication;
+}> = ({ application }) => {
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -27,11 +25,11 @@ const ApplicationMapNode_Application: React.FC<{
 
       <div className="application-resource-tree__node-content">
         <div className="application-resource-tree__node-title application-resource-tree__direction-left">
-          {namespace}/{name}
+          {application.metadata.namespace}/{application.metadata.name}
         </div>
         <div className="application-resource-tree__node-status-icon">
-          <ApplicationNodeStatusIconHealth status={health || HealthStatus.Unknown} />
-          <ApplicationNodeStatusIconSync status={sync || SyncStatus.Unknown} />
+          <ApplicationNodeStatusIconHealth status={application.status?.health?.status || HealthStatus.Unknown} />
+          <ApplicationNodeStatusIconSync status={application.status?.sync?.status || SyncStatus.Unknown} />
         </div>
       </div>
     </>
@@ -42,9 +40,8 @@ const ApplicationMapNode_Application: React.FC<{
  * Renders a node for an ArgoCD ApplicationSet resource (icon, name).
  */
 const ApplicationMapNode_ApplicationSet: React.FC<{
-  name: string;
-  namespace: string;
-}> = ({ name, namespace }) => {
+  applicationSet: ArgoApplicationSet;
+}> = ({ applicationSet }) => {
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -56,7 +53,7 @@ const ApplicationMapNode_ApplicationSet: React.FC<{
 
       <div className="application-resource-tree__node-content">
         <div className="application-resource-tree__node-title application-resource-tree__direction-left">
-          {namespace}/{name}
+          {applicationSet.metadata.namespace}/{applicationSet.metadata.name}
         </div>
       </div>
     </>
@@ -64,14 +61,11 @@ const ApplicationMapNode_ApplicationSet: React.FC<{
 };
 
 export type ApplicationMapNode = Node<
-  (
-    | { kind: 'Application'; name: string; namespace: string; health: HealthStatus; sync: SyncStatus }
-    | { kind: 'ApplicationSet'; name: string; namespace: string }
-  ) & {
+  (ArgoApplication | ArgoApplicationSet) & {
     onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
     onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
     selected?: boolean;
-  },
+  } & Record<string, unknown>,
   'application'
 >;
 
@@ -94,10 +88,10 @@ export default function ApplicationMapNode({
 }: NodeProps<ApplicationMapNode>) {
   const onClick = React.useCallback(
     (event: React.MouseEvent) => {
-      if (data.kind === 'Application') {
-        data.onApplicationClick?.(event, resourceId(data.kind, data.namespace, data.name));
-      } else {
-        data.onApplicationSetClick?.(event, resourceId(data.kind, data.namespace, data.name));
+      if (isArgoApplication(data)) {
+        data.onApplicationClick?.(event, resourceId(data.kind, data.metadata.namespace, data.metadata.name));
+      } else if (isArgoApplicationSet(data)) {
+        data.onApplicationSetClick?.(event, resourceId(data.kind, data.metadata.namespace, data.metadata.name));
       }
     },
     [data]
@@ -111,7 +105,7 @@ export default function ApplicationMapNode({
     <div
       className={`application-resource-tree__node application-resource-tree__node--application ${selectionClass}`}
       data-testid="application-map-node"
-      title={`Kind: ${data.kind}\nNamespace: ${data.namespace}\nName: ${data.name}`}
+      title={`Kind: ${data.kind}\nNamespace: ${data.metadata.namespace}\nName: ${data.metadata.name}`}
       style={{ width: width ?? NODE_WIDTH, height: height ?? NODE_HEIGHT }}
       onClick={onClick}
     >
@@ -122,16 +116,11 @@ export default function ApplicationMapNode({
         <Handle type="target" position={targetPosition} style={{ opacity: 0, pointerEvents: 'none' }} />
       )}
 
-      {data.kind === 'Application' ? (
-        <ApplicationMapNode_Application
-          name={data.name}
-          namespace={data.namespace}
-          health={data.health}
-          sync={data.sync}
-        />
-      ) : (
-        <ApplicationMapNode_ApplicationSet name={data.name} namespace={data.namespace} />
-      )}
+      {isArgoApplication(data) ? (
+        <ApplicationMapNode_Application application={data as ArgoApplication} />
+      ) : isArgoApplicationSet(data) ? (
+        <ApplicationMapNode_ApplicationSet applicationSet={data as ArgoApplicationSet} />
+      ) : null}
     </div>
   );
 }

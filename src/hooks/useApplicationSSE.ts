@@ -140,7 +140,7 @@ export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplica
         setMessage(`Retrying in ${retryDelay}ms...`);
 
         connection.retryCount += 1;
-        connection.retryTimeout = setTimeout(connect, retryDelay);
+        connection.retryTimeout = setTimeout(connect, retryDelay) as unknown as number;
       };
 
       eventSource.onmessage = (event) => {

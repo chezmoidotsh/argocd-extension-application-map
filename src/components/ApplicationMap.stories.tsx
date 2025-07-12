@@ -78,7 +78,7 @@ export const ComplexTopologyWithSelection: Story = {
     graph: complexTopology,
     rankdir: RankDirection.LR,
     selectedApplications: complexTopology.filterNodes(
-      (_, attributes) => isApplication(attributes.data) && attributes.data.status.health === HealthStatus.Degraded
+      (_, attributes) => isApplication(attributes) && attributes.status?.health?.status === HealthStatus.Degraded
     ),
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
