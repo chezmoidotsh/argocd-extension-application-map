@@ -137,7 +137,7 @@ export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplica
         const retryDelay = getRetryDelay(connection.retryCount);
         console.debug(`[SSE] Retrying in ${retryDelay}ms`);
         setStatus(ConnectionStatus.RETRYING);
-        setMessage(`Retrying in ${retryDelay}ms...`);
+        setMessage(`Retrying at ${new Date(Date.now() + retryDelay).toLocaleTimeString()}...`);
 
         connection.retryCount += 1;
         connection.retryTimeout = setTimeout(connect, retryDelay) as unknown as number;

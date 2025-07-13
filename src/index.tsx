@@ -3,6 +3,7 @@ import { DirectedGraph } from 'graphology';
 import * as React from 'react';
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { useEffect, useRef } from 'react';
 
 import ApplicationMap from './components/ApplicationMap';
 import StateScreen from './components/StateScreen';
@@ -81,7 +82,7 @@ const Extension: React.FC = () => {
     graphRef.current = graph.graph;
   }, [graph.graph]);
 
-  const { status: sseStatus } = useApplicationSSE({
+  const { status: sseStatus, message: sseMessage } = useApplicationSSE({
     onEvent: (event) => {
       dispatch({ type: 'STREAM_EVENTS_RECEIVED', payload: event });
     },
@@ -106,12 +107,6 @@ const Extension: React.FC = () => {
       return false;
     }
   }, []);
-
-  /**
-   * Selects the edge and nodes associated with the clicked edge when the user clicks on an edge
-   * @param event The mouse event
-   * @param edge The edge that was clicked
-   */
 
   /**
    * Resets the selected nodes and edges when the pane is clicked
@@ -148,30 +143,6 @@ const Extension: React.FC = () => {
     }
   }, [sseStatus, checkAuth]);
 
-  // Loading state
-  if (sseStatus === ConnectionStatus.CONNECTING) {
-    return (
-      <StateScreen
-        icon="fa-solid fa-hourglass"
-        title="Loading applications..."
-        subtitle="Please wait while we fetch your application data"
-      />
-    );
-  }
-
-  // Error state
-  if (sseStatus === ConnectionStatus.ERROR) {
-    return (
-      <StateScreen
-        icon="fa-solid fa-xmark"
-        title="Failed to load applications"
-        subtitle="Please try refreshing the page or contact your administrator"
-      >
-        <pre style={{ color: '#ff6b6b' }}>Error connecting to SSE stream</pre>
-      </StateScreen>
-    );
-  }
-
   // Empty state
   if (graph.graph && graph.graph.order < 1) {
     return (
@@ -188,7 +159,12 @@ const Extension: React.FC = () => {
   console.debug('[Extension] Rendering ApplicationMap with throttledSelectedNodes ref:', throttledSelectedNodes);
   return (
     <div className="argocd-application-map__container application-details">
-      <StatusPanel graph={graph.graph} onStatusClicked={setSelectedNodes} />
+      <StatusPanel
+        graph={graph.graph}
+        onStatusClicked={setSelectedNodes}
+        sseStatus={sseStatus}
+        sseMessage={sseMessage}
+      />
       <ReactFlowProvider>
         <ApplicationMap
           graph={throttledGraph}
