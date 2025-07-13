@@ -1,10 +1,10 @@
 import Dagre from '@dagrejs/dagre';
 
 import * as React from 'react';
-import { Edge, MarkerType, MiniMap, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
+import { Edge, MarkerType, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 
-import { ApplicationGraph, HealthStatus, RankDirectionType, SyncStatus } from '../types';
+import { ApplicationGraph, RankDirectionType, isApplication, isApplicationSet } from '../types';
 import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 import ApplicationMapNode, {
   ApplicationMapNode as ApplicationMapNodeType,
@@ -49,22 +49,19 @@ function generateFlowElementsFromGraph(
     return {
       id: node,
       type: 'application',
-      data:
-        attributes.data.kind == 'Application'
+      data: isApplication(attributes)
+        ? {
+            ...attributes,
+            kind: 'Application',
+            onApplicationClick: onApplicationClick,
+          }
+        : isApplicationSet(attributes)
           ? {
-              kind: 'Application',
-              name: attributes.data.metadata.name,
-              namespace: attributes.data.metadata.namespace,
-              health: attributes.data.status?.health ?? HealthStatus.Unknown,
-              sync: attributes.data.status?.sync ?? SyncStatus.Unknown,
-              onApplicationClick: onApplicationClick,
-            }
-          : {
+              ...attributes,
               kind: 'ApplicationSet',
-              name: attributes.data.metadata.name,
-              namespace: attributes.data.metadata.namespace,
               onApplicationSetClick: onApplicationSetClick,
-            },
+            }
+          : ({} as any),
       width: NODE_WIDTH,
       height: NODE_HEIGHT,
       position: {
@@ -73,7 +70,7 @@ function generateFlowElementsFromGraph(
       },
       sourcePosition: rankdir.sourcePosition,
       targetPosition: rankdir.targetPosition,
-      selectable: attributes.data.kind !== 'ApplicationSet',
+      selectable: attributes.kind !== 'ApplicationSet',
       draggable: false,
       connectable: false,
       deletable: false,
@@ -151,16 +148,20 @@ const ApplicationMap: React.FC<{
   onApplicationSetClick,
   ...props
 }) => {
-  const { getNodes, zoomIn, zoomOut, fitView } = useReactFlow();
+  const { zoomIn, zoomOut, fitView } = useReactFlow();
 
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
   const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
 
-  // NOTE: Even if selectedApplications is used here, we don't want to generate again all nodes and edges
-  //       everytime the selectedApplications changes.
+  // Combine node and edge generation with selection application into a single effect
   useEffect(() => {
-    if (!graph) return;
+    if (!graph) {
+      setNodes([]);
+      setEdges([]);
+      return;
+    }
+
     const { nodes: layoutedNodes, edges: layoutedEdges } = generateFlowElementsFromGraph(
       graph,
       rankdir,
@@ -168,14 +169,11 @@ const ApplicationMap: React.FC<{
       onApplicationSetClick
     );
 
-    setNodes(applySelectionToFlowNodes(layoutedNodes, selectedApplications));
-    setEdges(layoutedEdges);
-  }, [graph, rankdir, onApplicationClick, onApplicationSetClick]);
+    const nodesWithSelection = applySelectionToFlowNodes(layoutedNodes, selectedApplications);
 
-  useEffect(() => {
-    if (!getNodes().length) return;
-    setNodes(applySelectionToFlowNodes(getNodes() as ApplicationMapNodeType[], selectedApplications));
-  }, [selectedApplications]);
+    setNodes(nodesWithSelection);
+    setEdges(layoutedEdges);
+  }, [graph, rankdir, onApplicationClick, onApplicationSetClick, selectedApplications]);
 
   return (
     <ReactFlow

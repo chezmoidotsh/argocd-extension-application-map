@@ -29,11 +29,11 @@ type Story = StoryObj<typeof ApplicationMapNode>;
 const applicationNodeProps = {
   data: {
     kind: 'Application' as const,
-    name: 'storybook-app',
-    namespace: 'default',
-    health: HealthStatus.Healthy,
-    sync: SyncStatus.Synced,
-
+    metadata: { name: 'storybook-app', namespace: 'default' },
+    status: {
+      health: { status: HealthStatus.Healthy },
+      sync: { status: SyncStatus.Synced },
+    },
     onApplicationClick: action('onApplicationClick'),
     onApplicationSetClick: () => {
       throw new Error('onApplicationSetClick must not be called on ApplicationNode');
@@ -45,9 +45,7 @@ const applicationNodeProps = {
 const applicationSetNodeProps = {
   data: {
     kind: 'ApplicationSet' as const,
-    name: 'storybook-appset',
-    namespace: 'default',
-
+    metadata: { name: 'storybook-appset', namespace: 'default' },
     onApplicationClick: () => {
       throw new Error('onApplicationClick must not be called on ApplicationSetNode');
     },
@@ -83,10 +81,12 @@ export const Application: Story = {
   },
   args: applicationNodeProps,
   argTypes: {
-    'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
-    'data.health': { control: 'select', options: Object.values(HealthStatus) },
-    'data.sync': { control: 'select', options: Object.values(SyncStatus) },
-    'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
+    'data.kind': { table: { disable: true } },
+    'data.metadata.name': { control: 'text' },
+    'data.metadata.namespace': { control: 'text' },
+    'data.status.health.status': { control: 'select', options: Object.values(HealthStatus) },
+    'data.status.sync.status': { control: 'select', options: Object.values(SyncStatus) },
+    'data.selected': { control: 'boolean' },
   } as any,
 
   play: async ({ canvasElement }: any) => {
@@ -159,8 +159,10 @@ export const ApplicationSet: Story = {
   },
   args: applicationSetNodeProps,
   argTypes: {
-    'data.kind': { table: { disable: true } }, // NOTE: disable kind to avoid changing the node property
-    'data.selectionState': { control: 'select', options: ['default', 'selected', 'unselected'] },
+    'data.kind': { table: { disable: true } },
+    'data.metadata.name': { control: 'text' },
+    'data.metadata.namespace': { control: 'text' },
+    'data.selected': { control: 'boolean' },
   } as any,
 
   play: async ({ canvasElement }: any) => {

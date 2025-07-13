@@ -1,8 +1,10 @@
 import { DirectedGraph } from 'graphology';
 
-import type { ApplicationGraph } from '../../types';
 import { HealthStatus, SyncStatus } from '../../types/application';
-import { createOrUpdateApplicationNode, resourceId, updateApplicationSubResources } from '../../utils';
+import { ArgoApplication, ArgoApplicationSet } from '../../types/argocd';
+import { resourceId } from '../../utils';
+
+export type ArgoApplicationGraph = DirectedGraph<ArgoApplication | ArgoApplicationSet>;
 
 /**
  * ScenarioGraph provides a fluent API to build and manipulate an ApplicationGraph
@@ -22,13 +24,13 @@ import { createOrUpdateApplicationNode, resourceId, updateApplicationSubResource
  * This is intended for use in Storybook and test environments only.
  */
 export class ScenarioGraph {
-  private graph: ApplicationGraph;
+  private graph: ArgoApplicationGraph;
 
   /**
    * Initializes a new, empty ScenarioGraph.
    */
   constructor() {
-    this.graph = new DirectedGraph() as ApplicationGraph;
+    this.graph = new DirectedGraph() as ArgoApplicationGraph;
   }
 
   /**
@@ -46,34 +48,28 @@ export class ScenarioGraph {
     syncStatus: SyncStatus = SyncStatus.Synced,
     parentRef?: { kind: 'Application' | 'ApplicationSet'; namespace: string; name: string }
   ): ScenarioGraph {
-    createOrUpdateApplicationNode(this.graph, {
+    const nodeId = resourceId('Application', namespace, name);
+    const app: ArgoApplication = {
       kind: 'Application',
-      metadata: {
-        name,
-        namespace,
-      },
+      metadata: { name, namespace },
       spec: {
-        destination: {
-          server: 'https://kubernetes.default.svc',
-          namespace,
-        },
         project: 'default',
-        sources: [
-          {
-            path: 'apps/hello-world',
-            repoURL: 'https://github.com/argoproj/argocd-example-apps.git',
-            targetRevision: 'HEAD',
-          },
-        ],
-        syncPolicy: {
-          automated: { prune: true, selfHeal: true },
-        },
+        source: { repoURL: 'http://localhost', path: '/', targetRevision: 'HEAD' },
+        destination: { server: 'https://kubernetes.default.svc', namespace: 'default' },
+        syncPolicy: {},
       },
       status: {
         health: { status: healthStatus },
-        sync: { status: syncStatus, revision: '' }, // TODO: currently, no revision is used
+        sync: { status: syncStatus },
       },
-    });
+    };
+
+    if (this.graph.hasNode(nodeId)) {
+      this.graph.replaceNodeAttributes(nodeId, app);
+    } else {
+      this.graph.addNode(nodeId, app);
+    }
+
     if (parentRef) {
       this.addParentRef(parentRef, { kind: 'Application', namespace, name });
     }
@@ -91,21 +87,18 @@ export class ScenarioGraph {
     namespace: string = 'default',
     parentRef?: { kind: 'Application'; namespace: string; name: string }
   ): ScenarioGraph {
-    updateApplicationSubResources(this.graph, undefined, {
-      nodes: [
-        {
-          group: 'argoproj.io',
-          version: 'v1alpha1',
-          kind: 'ApplicationSet',
-          namespace,
-          name,
-          uid: `${namespace}-${name}-uid`,
-          resourceVersion: '1',
-          createdAt: new Date().toISOString(),
-          parentRefs: [],
-        },
-      ],
-    });
+    const nodeId = resourceId('ApplicationSet', namespace, name);
+    const appSet: ArgoApplicationSet = {
+      kind: 'ApplicationSet',
+      metadata: { name, namespace },
+    };
+
+    if (this.graph.hasNode(nodeId)) {
+      this.graph.replaceNodeAttributes(nodeId, appSet);
+    } else {
+      this.graph.addNode(nodeId, appSet);
+    }
+
     if (parentRef) {
       this.addParentRef(parentRef, { kind: 'ApplicationSet', namespace, name });
     }
@@ -146,7 +139,7 @@ export class ScenarioGraph {
    *
    * @returns The constructed ApplicationGraph
    */
-  createScenarioGraph(): ApplicationGraph {
+  createScenarioGraph(): ArgoApplicationGraph {
     return this.graph;
   }
 }

@@ -1,22 +1,94 @@
+import { DirectedGraph } from 'graphology';
+
 import * as React from 'react';
-import { Edge, ReactFlowProvider } from '@xyflow/react';
+import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { useEffect, useRef } from 'react';
 
 import ApplicationMap from './components/ApplicationMap';
 import StateScreen from './components/StateScreen';
 import StatusPanel from './components/StatusPanel';
-import { useApplicationGraph } from './hooks/useApplicationGraph';
+import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
 import './styles/index.scss';
-import type { Application } from './types/application';
+import { ArgoApplication, ArgoApplicationSet, isArgoApplication } from './types/argocd';
 import { RankDirection } from './types/graph';
+import { updateGraph } from './utils/graph_manager';
 
 /**
- * Main Extension component for the ArgoCD Application Map
- * Displays a graph visualization of ArgoCD applications and their relationships
+ * Custom hook to throttle value updates
+ * @param value The value to throttle
+ * @param delay The throttle delay in milliseconds
+ * @returns The throttled value
  */
+const useThrottledValue = <T,>(value: T, delay: number): T => {
+  const [throttledValue, setThrottledValue] = React.useState<T>(value);
+  const lastUpdateRef = useRef<number>(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    const now = Date.now();
+    const timeSinceLastUpdate = now - lastUpdateRef.current;
+
+    if (timeSinceLastUpdate >= delay) {
+      setThrottledValue(value);
+      lastUpdateRef.current = now;
+    } else {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        setThrottledValue(value);
+        lastUpdateRef.current = Date.now();
+      }, delay - timeSinceLastUpdate);
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [value, delay]);
+
+  return throttledValue;
+};
+
 const Extension: React.FC = () => {
-  const { graph, isLoading, error } = useApplicationGraph();
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+
+  const [graph, dispatch] = React.useReducer(
+    function (
+      state: { graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>; version: number },
+      action: { type: string; payload: SSEEvent }
+    ) {
+      console.debug('[Extension] SSE Event Payload:', action.payload);
+      // Create a new graph instance by copying the old one to ensure reference change
+      const newGraph = state.graph.copy();
+
+      // Update the new graph instance
+      updateGraph(newGraph, action.payload.result.type, action.payload.result.application);
+
+      // Return a new state object with the new graph instance and updated version
+      return { graph: newGraph, version: state.version + 1 };
+    },
+    { graph: new DirectedGraph<ArgoApplication | ArgoApplicationSet>(), version: 0 }
+  );
+
+  // Use a ref to hold the latest graph object without triggering re-renders of callbacks
+  const graphRef = React.useRef(graph.graph);
+
+  // Update the ref whenever the graph.graph object itself changes
+  React.useEffect(() => {
+    graphRef.current = graph.graph;
+  }, [graph.graph]);
+
+  const { status: sseStatus, message: sseMessage } = useApplicationSSE({
+    onEvent: (event) => {
+      dispatch({ type: 'STREAM_EVENTS_RECEIVED', payload: event });
+    },
+    endpoint: '/api/v1/stream/applications',
+  });
+  console.debug('[Extension] SSE Status:', sseStatus);
 
   /**
    * Checks if the user is authenticated by calling the ArgoCD API
@@ -37,21 +109,10 @@ const Extension: React.FC = () => {
   }, []);
 
   /**
-   * Selects the edge and nodes associated with the clicked edge when the user clicks on an edge
-   * @param event The mouse event
-   * @param edge The edge that was clicked
-   */
-  const onEdgeClick = React.useCallback((event: React.MouseEvent, edge: Edge) => {
-    setSelectedEdges([edge.id]);
-    setSelectedNodes([edge.source, edge.target]);
-  }, []);
-
-  /**
    * Resets the selected nodes and edges when the pane is clicked
    */
   const onPaneClick = React.useCallback(() => {
     setSelectedNodes([]);
-    setSelectedEdges([]);
   }, []);
 
   /**
@@ -59,51 +120,31 @@ const Extension: React.FC = () => {
    */
   const onApplicationClick = React.useCallback(
     (_: React.MouseEvent, applicationId: string) => {
-      const application = graph?.getNodeAttribute(applicationId, 'data') as Application;
-      if (application) {
+      const application = graphRef.current.getNodeAttributes(applicationId);
+      if (isArgoApplication(application)) {
         window.location.href = `/applications/${application.metadata.namespace}/${application.metadata.name}?view=tree`;
       }
     },
-    [graph]
+    [] // No dependencies because it uses graphRef.current
   );
+
+  // Throttle graph and selectedNodes updates to prevent performance issues with high refresh rates
+  const throttledGraph = useThrottledValue(graph.graph, 250);
+  const throttledSelectedNodes = useThrottledValue(selectedNodes, 250);
 
   // Check authentication when there's an error
   React.useEffect(() => {
-    if (error) {
+    if (sseStatus === ConnectionStatus.ERROR) {
       checkAuth().then((isAuth) => {
         if (!isAuth) {
           window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
         }
       });
     }
-  }, [error, checkAuth]);
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <StateScreen
-        icon="fa-solid fa-hourglass"
-        title="Loading applications..."
-        subtitle="Please wait while we fetch your application data"
-      />
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <StateScreen
-        icon="fa-solid fa-xmark"
-        title="Failed to load applications"
-        subtitle="Please try refreshing the page or contact your administrator"
-      >
-        <pre style={{ color: '#ff6b6b' }}>{error.message}</pre>
-      </StateScreen>
-    );
-  }
+  }, [sseStatus, checkAuth]);
 
   // Empty state
-  if (!graph) {
+  if (graph.graph && graph.graph.order < 1) {
     return (
       <StateScreen
         icon="argo-icon-application"
@@ -114,14 +155,21 @@ const Extension: React.FC = () => {
   }
 
   // Main application map view
+  console.debug('[Extension] Rendering ApplicationMap with throttledGraph ref:', throttledGraph);
+  console.debug('[Extension] Rendering ApplicationMap with throttledSelectedNodes ref:', throttledSelectedNodes);
   return (
     <div className="argocd-application-map__container application-details">
-      <StatusPanel graph={graph} onStatusClicked={setSelectedNodes} />
+      <StatusPanel
+        graph={graph.graph}
+        onStatusClicked={setSelectedNodes}
+        sseStatus={sseStatus}
+        sseMessage={sseMessage}
+      />
       <ReactFlowProvider>
         <ApplicationMap
-          graph={graph}
+          graph={throttledGraph}
           rankdir={RankDirection.LR}
-          selectedApplications={selectedNodes}
+          selectedApplications={throttledSelectedNodes}
           onPaneClick={onPaneClick}
           onApplicationClick={onApplicationClick}
         />

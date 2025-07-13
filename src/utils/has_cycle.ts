@@ -1,4 +1,4 @@
-import { DirectedGraph } from "graphology";
+import { DirectedGraph } from 'graphology';
 
 /**
  * Checks if a graph contains cycles using DFS algorithm

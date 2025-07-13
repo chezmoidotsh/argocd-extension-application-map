@@ -1,14 +1,9 @@
-import {
-  Metadata,
-  ArgoDestination,
-  ArgoSyncPolicy,
-  ArgoSource,
-} from "./argocd";
+import { ArgoDestination, ArgoSource, ArgoSyncPolicy, Metadata } from './argocd';
 
 /**
  * Type representing the possible application kinds
  */
-export type ApplicationKind = "Application" | "ApplicationSet";
+export type ApplicationKind = 'Application' | 'ApplicationSet';
 
 /**
  * Enum representing the possible health status values
@@ -16,17 +11,35 @@ export type ApplicationKind = "Application" | "ApplicationSet";
  */
 export enum HealthStatus {
   /** Application is healthy and running as expected */
-  Healthy = "Healthy",
+  Healthy = 'Healthy',
   /** Application is suspended */
-  Suspended = "Suspended",
+  Suspended = 'Suspended',
   /** Application is in a degraded state */
-  Degraded = "Degraded",
+  Degraded = 'Degraded',
   /** Application is currently progressing */
-  Progressing = "Progressing",
+  Progressing = 'Progressing',
   /** Application is missing */
-  Missing = "Missing",
+  Missing = 'Missing',
   /** Application health status is unknown */
-  Unknown = "Unknown",
+  Unknown = 'Unknown',
+}
+
+/**
+ * Converts a string to a HealthStatus enum value.
+ * @param status - The string to convert.
+ * @returns The HealthStatus enum value.
+ */
+export function StringToHealthStatus(str: string): HealthStatus {
+  // Compatible with ES5/ES2015: use manual array
+  const values = [
+    HealthStatus.Healthy,
+    HealthStatus.Suspended,
+    HealthStatus.Degraded,
+    HealthStatus.Progressing,
+    HealthStatus.Missing,
+    HealthStatus.Unknown,
+  ];
+  return values.indexOf(str as HealthStatus) !== -1 ? (str as HealthStatus) : HealthStatus.Unknown;
 }
 
 /**
@@ -35,11 +48,21 @@ export enum HealthStatus {
  */
 export enum SyncStatus {
   /** Application is in sync with the desired state */
-  Synced = "Synced",
+  Synced = 'Synced',
   /** Application is out of sync with the desired state */
-  OutOfSync = "OutOfSync",
+  OutOfSync = 'OutOfSync',
   /** Application sync status is unknown */
-  Unknown = "Unknown",
+  Unknown = 'Unknown',
+}
+
+/**
+ * Converts a string to a SyncStatus enum value.
+ * @param status - The string to convert.
+ * @returns The SyncStatus enum value.
+ */
+export function StringToSyncStatus(str: string): SyncStatus {
+  const values = [SyncStatus.Synced, SyncStatus.OutOfSync, SyncStatus.Unknown];
+  return values.indexOf(str as SyncStatus) !== -1 ? (str as SyncStatus) : SyncStatus.Unknown;
 }
 
 /**
@@ -76,7 +99,7 @@ export interface ApplicationStatus {
  * @property {ApplicationStatus} status - Current status including health and sync state
  */
 export interface Application {
-  kind: "Application";
+  kind: 'Application';
   metadata: Metadata;
   spec: ApplicationSpec;
   status: ApplicationStatus;
@@ -89,7 +112,7 @@ export interface Application {
  * @property {Metadata} metadata - Application set metadata including name, namespace, and labels
  */
 export interface ApplicationSet {
-  kind: "ApplicationSet";
+  kind: 'ApplicationSet';
   metadata: Metadata;
 }
 

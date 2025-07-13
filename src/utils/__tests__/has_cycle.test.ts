@@ -1,28 +1,29 @@
-import { DirectedGraph } from "graphology";
-import { hasCycle } from "../has_cycle";
+import { DirectedGraph } from 'graphology';
 
-describe("hasCycle function", () => {
+import { hasCycle } from '../has_cycle';
+
+describe('hasCycle function', () => {
   // ACYCLIC GRAPHS (Should return false)
-  describe("Acyclic Graphs", () => {
-    it("should return false for an empty graph", () => {
+  describe('Acyclic Graphs', () => {
+    it('should return false for an empty graph', () => {
       // Diagram:
       // []  (Empty graph)
       const graph = new DirectedGraph();
       expect(hasCycle(graph)).toBe(false);
     });
 
-    it("should return false for a graph with a single node", () => {
+    it('should return false for a graph with a single node', () => {
       // Diagram:
       //   ┌─┐
       //   │A│
       //   └─┘
       // (Single node, no edges)
       const graph = new DirectedGraph();
-      graph.addNode("A");
+      graph.addNode('A');
       expect(hasCycle(graph)).toBe(false);
     });
 
-    it("should return false for a linear graph", () => {
+    it('should return false for a linear graph', () => {
       // Diagram:
       //   ┌─┐
       //   │A│
@@ -38,17 +39,17 @@ describe("hasCycle function", () => {
       //   └─┘
       // (Linear path)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
       expect(hasCycle(graph)).toBe(false);
     });
 
-    it("should return false for a tree structure", () => {
+    it('should return false for a tree structure', () => {
       // Diagram:
       //   ┌───────┐
       //   │A      │
@@ -61,21 +62,21 @@ describe("hasCycle function", () => {
       //   └─┘└─┘└─┘
 
       const graph = new DirectedGraph();
-      graph.addNode("A"); // root
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
-      graph.addNode("F");
-      graph.addEdge("A", "B");
-      graph.addEdge("A", "C");
-      graph.addEdge("B", "D");
-      graph.addEdge("B", "E");
-      graph.addEdge("C", "F");
+      graph.addNode('A'); // root
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
+      graph.addNode('F');
+      graph.addEdge('A', 'B');
+      graph.addEdge('A', 'C');
+      graph.addEdge('B', 'D');
+      graph.addEdge('B', 'E');
+      graph.addEdge('C', 'F');
       expect(hasCycle(graph)).toBe(false);
     });
 
-    it("should return false for a complex DAG (Directed Acyclic Graph)", () => {
+    it('should return false for a complex DAG (Directed Acyclic Graph)', () => {
       // Diagram:
       //   ┌────┐
       //   │A   │
@@ -92,24 +93,24 @@ describe("hasCycle function", () => {
       // (DAG with multiple paths)
 
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
-      graph.addNode("F");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
+      graph.addNode('F');
       // Multiple paths but no cycles
-      graph.addEdge("A", "B");
-      graph.addEdge("A", "C");
-      graph.addEdge("B", "D");
-      graph.addEdge("C", "D");
-      graph.addEdge("B", "E");
-      graph.addEdge("D", "F");
-      graph.addEdge("E", "F");
+      graph.addEdge('A', 'B');
+      graph.addEdge('A', 'C');
+      graph.addEdge('B', 'D');
+      graph.addEdge('C', 'D');
+      graph.addEdge('B', 'E');
+      graph.addEdge('D', 'F');
+      graph.addEdge('E', 'F');
       expect(hasCycle(graph)).toBe(false);
     });
 
-    it("should return false for a diamond shape graph", () => {
+    it('should return false for a diamond shape graph', () => {
       // Diagram:
       //   ┌────┐
       //   │A   │
@@ -122,18 +123,18 @@ describe("hasCycle function", () => {
       //   └────┘
       // (Diamond shape)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addEdge("A", "B");
-      graph.addEdge("A", "C");
-      graph.addEdge("B", "D");
-      graph.addEdge("C", "D");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addEdge('A', 'B');
+      graph.addEdge('A', 'C');
+      graph.addEdge('B', 'D');
+      graph.addEdge('C', 'D');
       expect(hasCycle(graph)).toBe(false);
     });
 
-    it("should return false for multiple disconnected acyclic components", () => {
+    it('should return false for multiple disconnected acyclic components', () => {
       // Diagram:
       //   ┌──┐┌──┐
       //   │A1││A2│
@@ -147,22 +148,22 @@ describe("hasCycle function", () => {
       // (Disconnected acyclic graphs)
       const graph = new DirectedGraph();
       // Component 1
-      graph.addNode("A1");
-      graph.addNode("B1");
-      graph.addEdge("A1", "B1");
+      graph.addNode('A1');
+      graph.addNode('B1');
+      graph.addEdge('A1', 'B1');
       // Component 2
-      graph.addNode("A2");
-      graph.addNode("B2");
-      graph.addNode("C2");
-      graph.addEdge("A2", "B2");
-      graph.addEdge("B2", "C2");
+      graph.addNode('A2');
+      graph.addNode('B2');
+      graph.addNode('C2');
+      graph.addEdge('A2', 'B2');
+      graph.addEdge('B2', 'C2');
       expect(hasCycle(graph)).toBe(false);
     });
   });
 
   // CYCLIC GRAPHS (Should return true)
-  describe("Cyclic Graphs", () => {
-    it("should return true for a self-loop", () => {
+  describe('Cyclic Graphs', () => {
+    it('should return true for a self-loop', () => {
       // Diagram:
       //   ┌─┐
       //   │A◁─┐
@@ -170,12 +171,12 @@ describe("hasCycle function", () => {
       //    └──┘
       // (Self-loop - A points to itself)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addEdge("A", "A");
+      graph.addNode('A');
+      graph.addEdge('A', 'A');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a simple 2-node cycle", () => {
+    it('should return true for a simple 2-node cycle', () => {
       // Diagram:
       //   ┌─┐
       //   │A◁─┐
@@ -186,14 +187,14 @@ describe("hasCycle function", () => {
       //    └──┘
       // (2-node cycle: A → B → A)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "A");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'A');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a simple 3-node cycle", () => {
+    it('should return true for a simple 3-node cycle', () => {
       // Diagram:
       //   ┌─┐
       //   │A◁─┐
@@ -207,16 +208,16 @@ describe("hasCycle function", () => {
       //    └──┘
       // (3-node cycle: A → B → C → A)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "A");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'A');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a long cycle", () => {
+    it('should return true for a long cycle', () => {
       // Diagram:
       //   ┌─┐
       //   │A◁─┐
@@ -236,20 +237,20 @@ describe("hasCycle function", () => {
       //    └──┘
       // (5-node cycle: A → B → C → D → E → A)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "E");
-      graph.addEdge("E", "A");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'E');
+      graph.addEdge('E', 'A');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a graph with branches and a cycle", () => {
+    it('should return true for a graph with branches and a cycle', () => {
       // Diagram:
       //   ┌────┐
       //   │A   ◁─┐
@@ -265,24 +266,24 @@ describe("hasCycle function", () => {
       //   └────┘
       // (Cycle: B → C → D → B with a branch A → E → F)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
-      graph.addNode("F");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
+      graph.addNode('F');
       // Main path with a cycle
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "B"); // This creates a cycle B->C->D->B
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'B'); // This creates a cycle B->C->D->B
       // Branch without a cycle
-      graph.addEdge("A", "E");
-      graph.addEdge("E", "F");
+      graph.addEdge('A', 'E');
+      graph.addEdge('E', 'F');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for multiple cycles in the same graph", () => {
+    it('should return true for multiple cycles in the same graph', () => {
       // Diagram:
       //   ┌─┐    ┌─┐
       //   │A◁─┐  │C◁─┐
@@ -296,22 +297,22 @@ describe("hasCycle function", () => {
       //           └──┘
       // (Two separate cycles: A → B → A and C → D → E → C)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
       // Cycle 1: A->B->A
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "A");
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'A');
       // Cycle 2: C->D->E->C
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "E");
-      graph.addEdge("E", "C");
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'E');
+      graph.addEdge('E', 'C');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a graph with nested cycles", () => {
+    it('should return true for a graph with nested cycles', () => {
       // Diagram:
       //     ┌─┐
       //   ┌─▷A│
@@ -329,23 +330,23 @@ describe("hasCycle function", () => {
       // (Outer cycle: A → B → C → D → A)
       // (Inner cycle: B → C → E → B)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
       // Outer cycle: A->B->C->D->A
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "A");
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'A');
       // Inner cycle: B->C->E->B
-      graph.addEdge("C", "E");
-      graph.addEdge("E", "B");
+      graph.addEdge('C', 'E');
+      graph.addEdge('E', 'B');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a complex graph with multiple paths and a cycle", () => {
+    it('should return true for a complex graph with multiple paths and a cycle', () => {
       // Diagram:
       //   ┌────┐
       //   │A   │
@@ -362,25 +363,25 @@ describe("hasCycle function", () => {
       //    └─────┘
       // (Cycle: B → D → E → B)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
-      graph.addNode("F");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
+      graph.addNode('F');
       // Multiple paths
-      graph.addEdge("A", "B");
-      graph.addEdge("A", "C");
-      graph.addEdge("B", "D");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "E");
-      graph.addEdge("D", "F");
+      graph.addEdge('A', 'B');
+      graph.addEdge('A', 'C');
+      graph.addEdge('B', 'D');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'E');
+      graph.addEdge('D', 'F');
       // Add an edge that creates a cycle
-      graph.addEdge("E", "B");
+      graph.addEdge('E', 'B');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a graph with a cycle at the end", () => {
+    it('should return true for a graph with a cycle at the end', () => {
       // Diagram:
       //   ┌─┐
       //   │A│
@@ -400,22 +401,22 @@ describe("hasCycle function", () => {
       //    └──┘
       // (Linear path A → B → C → D → E with a cycle D ⇄ E at the end)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
       // Linear path: A->B->C->D->E
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "E");
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'E');
       // Add cycle at the end: D->E->D
-      graph.addEdge("E", "D");
+      graph.addEdge('E', 'D');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true if one of multiple disconnected components has a cycle", () => {
+    it('should return true if one of multiple disconnected components has a cycle', () => {
       // Diagram:
       //   ┌──┐┌──┐
       //   │A1││A2◁─┐
@@ -430,24 +431,24 @@ describe("hasCycle function", () => {
       // (Component 1: No cycle, Component 2: A2 → B2 → C2 → A2 has a cycle)
       const graph = new DirectedGraph();
       // Component 1 (acyclic)
-      graph.addNode("A1");
-      graph.addNode("B1");
-      graph.addNode("C1");
-      graph.addEdge("A1", "B1");
-      graph.addEdge("B1", "C1");
+      graph.addNode('A1');
+      graph.addNode('B1');
+      graph.addNode('C1');
+      graph.addEdge('A1', 'B1');
+      graph.addEdge('B1', 'C1');
 
       // Component 2 (cyclic)
-      graph.addNode("A2");
-      graph.addNode("B2");
-      graph.addNode("C2");
-      graph.addEdge("A2", "B2");
-      graph.addEdge("B2", "C2");
-      graph.addEdge("C2", "A2");
+      graph.addNode('A2');
+      graph.addNode('B2');
+      graph.addNode('C2');
+      graph.addEdge('A2', 'B2');
+      graph.addEdge('B2', 'C2');
+      graph.addEdge('C2', 'A2');
 
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should return true for a graph with self-loop in middle of a path", () => {
+    it('should return true for a graph with self-loop in middle of a path', () => {
       // Diagram:
       //   ┌─┐
       //   │A│
@@ -464,21 +465,21 @@ describe("hasCycle function", () => {
       //   └─┘
       // (Path A → B → C → D with self-loop at B: B → B)
       const graph = new DirectedGraph();
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "B"); // Self-loop
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'B'); // Self-loop
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
       expect(hasCycle(graph)).toBe(true);
     });
   });
 
   // EDGE CASES AND SPECIAL SCENARIOS
-  describe("Edge Cases", () => {
-    it("should handle a complex graph with many nodes", () => {
+  describe('Edge Cases', () => {
+    it('should handle a complex graph with many nodes', () => {
       // Diagram: (simplified, as it has 100 nodes)
       //   ┌──┐
       //   │00│
@@ -510,11 +511,11 @@ describe("hasCycle function", () => {
       expect(hasCycle(graph)).toBe(false);
 
       // Add a cycle
-      graph.addEdge("99", "50");
+      graph.addEdge('99', '50');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should handle a graph with obscure cycle", () => {
+    it('should handle a graph with obscure cycle', () => {
       // Diagram: (Complex graph with many connections)
       //     ┌─────┐
       //   ┌─▷A    │
@@ -554,40 +555,40 @@ describe("hasCycle function", () => {
       // (Multiple paths without cycle, then adding H → A creates a cycle)
       const graph = new DirectedGraph();
       // Create a complex path
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
-      graph.addNode("F");
-      graph.addNode("G");
-      graph.addNode("H");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
+      graph.addNode('F');
+      graph.addNode('G');
+      graph.addNode('H');
 
       // Main path
-      graph.addEdge("A", "B");
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "E");
-      graph.addEdge("E", "F");
-      graph.addEdge("F", "G");
-      graph.addEdge("G", "H");
+      graph.addEdge('A', 'B');
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'E');
+      graph.addEdge('E', 'F');
+      graph.addEdge('F', 'G');
+      graph.addEdge('G', 'H');
 
       // Lots of distracting edges
-      graph.addEdge("A", "D");
-      graph.addEdge("B", "E");
-      graph.addEdge("C", "F");
-      graph.addEdge("A", "F");
-      graph.addEdge("B", "G");
-      graph.addEdge("C", "H");
+      graph.addEdge('A', 'D');
+      graph.addEdge('B', 'E');
+      graph.addEdge('C', 'F');
+      graph.addEdge('A', 'F');
+      graph.addEdge('B', 'G');
+      graph.addEdge('C', 'H');
 
       expect(hasCycle(graph)).toBe(false);
 
       // Add an obscure edge creating a cycle
-      graph.addEdge("H", "A");
+      graph.addEdge('H', 'A');
       expect(hasCycle(graph)).toBe(true);
     });
 
-    it("should correctly identify a graph with multiple entry points to a cycle", () => {
+    it('should correctly identify a graph with multiple entry points to a cycle', () => {
       // Diagram:
       //   ┌───┐
       //   │A  │
@@ -609,21 +610,21 @@ describe("hasCycle function", () => {
       // (Cycle: B → C → D → B with multiple entry points A → B, A → C, E → D)
       const graph = new DirectedGraph();
       // Create cycle: B->C->D->B
-      graph.addNode("A");
-      graph.addNode("B");
-      graph.addNode("C");
-      graph.addNode("D");
-      graph.addNode("E");
+      graph.addNode('A');
+      graph.addNode('B');
+      graph.addNode('C');
+      graph.addNode('D');
+      graph.addNode('E');
 
       // The cycle
-      graph.addEdge("B", "C");
-      graph.addEdge("C", "D");
-      graph.addEdge("D", "B");
+      graph.addEdge('B', 'C');
+      graph.addEdge('C', 'D');
+      graph.addEdge('D', 'B');
 
       // Multiple entry points to the cycle
-      graph.addEdge("A", "B");
-      graph.addEdge("A", "C");
-      graph.addEdge("E", "D");
+      graph.addEdge('A', 'B');
+      graph.addEdge('A', 'C');
+      graph.addEdge('E', 'D');
 
       expect(hasCycle(graph)).toBe(true);
     });

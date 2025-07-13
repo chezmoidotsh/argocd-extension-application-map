@@ -42,3 +42,6 @@ yarn-error.log*
 
 # Project specific
 .misenv/
+
+# Kustomize charts
+**/charts/
