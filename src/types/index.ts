@@ -10,7 +10,6 @@ import { DirectedGraph } from 'graphology';
 import { HealthStatus, SyncStatus } from './application';
 import { ArgoApplication, ArgoApplicationSet } from './argocd';
 import { RankDirection, RankDirectionType } from './graph';
-import { HealthStatuses, SyncStatuses } from './status';
 
 /**
  * Re-export application-related types
@@ -20,7 +19,7 @@ export type { RankDirectionType };
 /**
  * Re-export application-related constants and interfaces
  */
-export { HealthStatus, SyncStatus, HealthStatuses, SyncStatuses, RankDirection };
+export { HealthStatus, SyncStatus, RankDirection };
 
 /**
  * Represents a directed graph of applications where nodes are applications

@@ -106,7 +106,7 @@ describe('useApplicationSSE', () => {
         })
       );
 
-      expect(result.current.status).toBe(ConnectionStatus.CONNECTING);
+      expect(result.current.status).toBe(ConnectionStatus.Connecting);
     });
 
     it('should transition to OPEN status when connection succeeds', async () => {
@@ -117,7 +117,7 @@ describe('useApplicationSSE', () => {
         })
       );
 
-      expect(result.current.status).toBe(ConnectionStatus.CONNECTING);
+      expect(result.current.status).toBe(ConnectionStatus.Connecting);
 
       // Simulate successful connection
       act(() => {
@@ -125,7 +125,7 @@ describe('useApplicationSSE', () => {
         instance.simulateOpen();
       });
 
-      expect(result.current.status).toBe(ConnectionStatus.OPEN);
+      expect(result.current.status).toBe(ConnectionStatus.Open);
     });
 
     it('should call onEvent callback when receiving messages', async () => {
@@ -196,7 +196,7 @@ describe('useApplicationSSE', () => {
         instance.simulateError();
       });
 
-      expect(result.current.status).toBe(ConnectionStatus.RETRYING);
+      expect(result.current.status).toBe(ConnectionStatus.Retrying);
 
       // Fast-forward the initial retry delay
       act(() => {
@@ -239,7 +239,7 @@ describe('useApplicationSSE', () => {
         instance.simulateError();
       });
 
-      expect(result.current.status).toBe(ConnectionStatus.RETRYING);
+      expect(result.current.status).toBe(ConnectionStatus.Retrying);
 
       // Should wait 500ms for first retry
       act(() => {

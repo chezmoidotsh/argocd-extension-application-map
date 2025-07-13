@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { ConnectionStatus } from '../../hooks/useApplicationSSE';
+import IconStatusSSE from '../icons/IconStatusSSE';
 
 export interface StatusPanelSSEStatusProps {
   status: ConnectionStatus;
@@ -10,41 +11,23 @@ export interface StatusPanelSSEStatusProps {
 const StatusPanelSSEStatus: React.FC<StatusPanelSSEStatusProps> = ({ status, message }) => {
   const [showTooltip, setShowTooltip] = useState(false);
   const statusConfig: Record<ConnectionStatus, { color: string; label: string }> = {
-    [ConnectionStatus.OPEN]: { color: '#4caf50', label: 'Connected' },
-    [ConnectionStatus.CONNECTING]: { color: '#fbc02d', label: 'Connecting…' },
-    [ConnectionStatus.CLOSED]: { color: '#e53935', label: 'Disconnected' },
-    [ConnectionStatus.ERROR]: { color: '#e53935', label: 'Error' },
-    [ConnectionStatus.RETRYING]: { color: '#1976d2', label: 'Reconnecting…' },
+    [ConnectionStatus.Open]: { color: '#4caf50', label: 'Connected' },
+    [ConnectionStatus.Connecting]: { color: '#fbc02d', label: 'Connecting…' },
+    [ConnectionStatus.Closed]: { color: '#e53935', label: 'Disconnected' },
+    [ConnectionStatus.Error]: { color: '#e53935', label: 'Error' },
+    [ConnectionStatus.Retrying]: { color: '#1976d2', label: 'Reconnecting…' },
   };
-  const iconMap: Record<ConnectionStatus, { icon: string; color: string; title: string; fontSize?: number }> = {
-    [ConnectionStatus.OPEN]: { icon: 'fa-circle', color: '#4caf50', title: 'Connected', fontSize: 12 },
-    [ConnectionStatus.CONNECTING]: { icon: 'fa-spinner fa-spin', color: '#fbc02d', title: 'Connecting…', fontSize: 18 },
-    [ConnectionStatus.CLOSED]: { icon: 'fa-circle', color: '#e53935', title: 'Disconnected', fontSize: 12 },
-    [ConnectionStatus.ERROR]: { icon: 'fa-exclamation-circle', color: '#e53935', title: 'Error', fontSize: 18 },
-    [ConnectionStatus.RETRYING]: {
-      icon: 'fa-rotate-right fa-spin',
-      color: '#1976d2',
-      title: 'Reconnecting…',
-      fontSize: 18,
-    },
-  };
-  const { icon, color, title, fontSize } = iconMap[status] || iconMap[ConnectionStatus.CLOSED];
-  const { label } = statusConfig[status] || statusConfig[ConnectionStatus.CLOSED];
+  const { label } = statusConfig[status] || statusConfig[ConnectionStatus.Closed];
   return (
     <div style={{ position: 'relative', display: 'inline-block', marginRight: 8, marginTop: 5 }}>
       <span
-        style={{ color, fontSize: fontSize || 18, cursor: 'pointer', padding: 2, display: 'inline-block' }}
+        style={{ cursor: 'pointer', padding: 2, display: 'inline-block' }}
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         tabIndex={0}
         aria-label={label}
       >
-        <i
-          className={`fa ${icon} utils-sse-status-icon`}
-          title={title}
-          style={{ color, fontSize: fontSize || 18, marginRight: 0, verticalAlign: 'middle' }}
-          aria-label={title}
-        />
+        <IconStatusSSE status={status} />
       </span>
       {showTooltip && (
         <div

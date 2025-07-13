@@ -1,21 +1,44 @@
 import React from 'react';
 
-import { SyncStatus, SyncStatuses } from '../../types';
+import { SyncStatus } from '../../types';
+
+/**
+ * Mapping of sync statuses to their corresponding icons, colors, and titles.
+ */
+const iconMappings: {
+  [K in SyncStatus]: {
+    readonly color: string;
+    readonly icon: string;
+    readonly title?: string;
+  };
+} = {
+  [SyncStatus.Synced]: {
+    color: '#18be94',
+    icon: 'fa-check-circle',
+    title: 'Synced',
+  },
+  [SyncStatus.OutOfSync]: {
+    color: '#f4c030',
+    icon: 'fa-arrow-alt-circle-up',
+    title: 'OutOfSync',
+  },
+  [SyncStatus.Unknown]: {
+    color: '#ccd6dd',
+    icon: 'fa-circle-notch fa-spin',
+  },
+} as const;
 
 /**
  * The **IconStatusSync** displays a **visual indicator** of an application's synchronization status.
  */
-const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({ status: rawStatus }) => {
-  const status = rawStatus && SyncStatuses[rawStatus] ? rawStatus : SyncStatus.Unknown;
+const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({ status }) => {
+  const { icon, color, title } = iconMappings[status] || iconMappings[SyncStatus.Unknown];
   return (
     <i
       qe-id="utils-sync-status-title"
-      title={SyncStatuses[status].title}
-      className={`fa ${SyncStatuses[status].icon} utils-sync-status-icon`}
-      style={{
-        color: SyncStatuses[status].color,
-        marginRight: 4,
-      }}
+      title={title}
+      className={`fa ${icon} utils-sync-status-icon`}
+      style={{ color, marginRight: 4 }}
     ></i>
   );
 };

@@ -13,7 +13,7 @@ const StatusPanel: React.FC<{
   onStatusClicked: (selectedNodes: string[]) => void;
   sseStatus?: ConnectionStatus;
   sseMessage?: string;
-}> = ({ graph, onStatusClicked: onFilterUpdated, sseStatus = ConnectionStatus.CONNECTING, sseMessage }) => {
+}> = ({ graph, onStatusClicked: onFilterUpdated, sseStatus = ConnectionStatus.Connecting, sseMessage }) => {
   const [healthStatuses, setHealthStatuses] = useState<HealthStatus[]>([]);
   const [syncStatuses, setSyncStatuses] = useState<SyncStatus[]>([]);
   const [hasCycle, setHasCycle] = useState<boolean>(false);

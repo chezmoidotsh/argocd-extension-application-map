@@ -6,11 +6,11 @@ import { ArgoApplication } from '../types/argocd';
  * Status of the SSE connection
  */
 export enum ConnectionStatus {
-  CLOSED = 'CLOSED',
-  CONNECTING = 'CONNECTING',
-  ERROR = 'ERROR',
-  OPEN = 'OPEN',
-  RETRYING = 'RETRYING',
+  Closed = 'CLOSED',
+  Connecting = 'CONNECTING',
+  Error = 'ERROR',
+  Open = 'OPEN',
+  Retrying = 'RETRYING',
 }
 
 /**
@@ -60,7 +60,7 @@ interface UseApplicationSSEReturn {
 export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplicationSSEReturn => {
   const { onEvent, endpoint, initialRetryDelay = 1000, maxRetryDelay = 15000, retryMultiplier = 2 } = options;
 
-  const [status, setStatus] = useState<ConnectionStatus>(ConnectionStatus.CONNECTING);
+  const [status, setStatus] = useState<ConnectionStatus>(ConnectionStatus.Connecting);
   const [message, setMessage] = useState<string>('Connecting to ArgoCD API...');
 
   // Stable ref for onEvent to avoid unnecessary reconnections
@@ -116,7 +116,7 @@ export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplica
 
       const connection = connectionRef.current;
       console.debug(`[SSE] Connecting (attempt #${connection.retryCount + 1})...`);
-      setStatus(ConnectionStatus.CONNECTING);
+      setStatus(ConnectionStatus.Connecting);
       setMessage(`Connecting to ArgoCD API (attempt #${connection.retryCount + 1})...`);
 
       const eventSource = new EventSource(endpoint, { withCredentials: true });
@@ -124,19 +124,19 @@ export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplica
 
       eventSource.onopen = () => {
         console.debug('[SSE] Connection established');
-        setStatus(ConnectionStatus.OPEN);
+        setStatus(ConnectionStatus.Open);
         setMessage('Connected to ArgoCD API');
         connection.retryCount = 0;
       };
 
       eventSource.onerror = (error) => {
         console.error('[SSE] Connection failed:', error);
-        setStatus(ConnectionStatus.CLOSED);
+        setStatus(ConnectionStatus.Closed);
         setMessage('Connection to ArgoCD API failed');
 
         const retryDelay = getRetryDelay(connection.retryCount);
         console.debug(`[SSE] Retrying in ${retryDelay}ms`);
-        setStatus(ConnectionStatus.RETRYING);
+        setStatus(ConnectionStatus.Retrying);
         setMessage(`Retrying at ${new Date(Date.now() + retryDelay).toLocaleTimeString()}...`);
 
         connection.retryCount += 1;
@@ -149,7 +149,7 @@ export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplica
           onEventRef.current?.(data); // Use stable ref
         } catch (error) {
           console.error('[SSE] Failed to parse SSE event:', error, event.data);
-          setStatus(ConnectionStatus.ERROR);
+          setStatus(ConnectionStatus.Error);
           setMessage(`Failed to parse SSE event: ${error}`);
         }
       };

@@ -134,7 +134,7 @@ const Extension: React.FC = () => {
 
   // Check authentication when there's an error
   React.useEffect(() => {
-    if (sseStatus === ConnectionStatus.ERROR) {
+    if (sseStatus === ConnectionStatus.Error) {
       checkAuth().then((isAuth) => {
         if (!isAuth) {
           window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
