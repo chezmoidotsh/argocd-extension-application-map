@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ConnectionStatus } from '../hooks/useApplicationSSE';
-import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../types';
-import { hasCycle as hasCycleFn } from '../utils/has_cycle';
-import StatusPanelCycleWarning from './StatusPanel/StatusPanelCycleWarning';
-import StatusPanelHealth from './StatusPanel/StatusPanelHealth';
-import StatusPanelSSEStatus from './StatusPanel/StatusPanelSSEStatus';
-import StatusPanelSync from './StatusPanel/StatusPanelSync';
+import { ConnectionStatus } from '../../hooks/useApplicationSSE';
+import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../../types';
+import { hasCycle as hasCycleFn } from '../../utils/has_cycle';
+import StatusPanelCycleWarning from './StatusPanelCycleWarning';
+import StatusPanelHealth from './StatusPanelHealth';
+import StatusPanelSSEStatus from './StatusPanelSSEStatus';
+import StatusPanelSync from './StatusPanelSync';
 
 const StatusPanel: React.FC<{
   graph: ApplicationGraph;

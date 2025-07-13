@@ -6,8 +6,8 @@ import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
 
-import '../styles/index.scss';
-import { HealthStatus, SyncStatus } from '../types/application';
+import '../../styles/index.scss';
+import { HealthStatus, SyncStatus } from '../../types/application';
 import ApplicationMapNode from './ApplicationMapNode';
 
 const meta: Meta<typeof ApplicationMapNode> = {

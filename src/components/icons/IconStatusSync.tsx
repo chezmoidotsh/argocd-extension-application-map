@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SyncStatus, SyncStatuses } from '../types';
+import { SyncStatus, SyncStatuses } from '../../types';
 
 /**
  * The **IconStatusSync** displays a **visual indicator** of an application's synchronization status.

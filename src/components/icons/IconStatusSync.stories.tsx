@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import '../styles/index.scss';
-import { SyncStatus } from '../types/application';
+import '../../styles/index.scss';
+import { SyncStatus } from '../../types/application';
 import IconStatusSync from './IconStatusSync';
 
 const meta: Meta<typeof IconStatusSync> = {

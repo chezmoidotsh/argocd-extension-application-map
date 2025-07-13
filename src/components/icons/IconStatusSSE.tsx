@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ConnectionStatus } from '../hooks/useApplicationSSE';
+import { ConnectionStatus } from '../../hooks/useApplicationSSE';
 
 // FontAwesome icon mapping for each status
 const iconMap: Record<ConnectionStatus, { icon: string; color: string; title: string; fontSize?: number }> = {

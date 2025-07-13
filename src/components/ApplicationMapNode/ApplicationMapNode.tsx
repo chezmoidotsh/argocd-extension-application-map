@@ -1,11 +1,11 @@
 import { Handle, Node, NodeProps } from '@xyflow/react';
 import React from 'react';
 
-import { HealthStatus, SyncStatus } from '../types/application';
-import { ArgoApplication, ArgoApplicationSet, isArgoApplication, isArgoApplicationSet } from '../types/argocd';
-import { resourceId } from '../utils';
-import ApplicationNodeStatusIconHealth from './IconStatusHealth';
-import ApplicationNodeStatusIconSync from './IconStatusSync';
+import { HealthStatus, SyncStatus } from '../../types/application';
+import { ArgoApplication, ArgoApplicationSet, isArgoApplication, isArgoApplicationSet } from '../../types/argocd';
+import { resourceId } from '../../utils';
+import ApplicationNodeStatusIconHealth from '../icons/IconStatusHealth';
+import ApplicationNodeStatusIconSync from '../icons/IconStatusSync';
 
 export const NODE_WIDTH = 282;
 export const NODE_HEIGHT = 52;

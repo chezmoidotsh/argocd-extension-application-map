@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { HealthStatus, HealthStatuses } from '../types';
+import { HealthStatus, HealthStatuses } from '../../types';
 
 /**
  * The **IconStatusHealth** displays a **visual indicator** of an application's health status.

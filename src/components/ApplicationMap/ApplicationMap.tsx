@@ -4,13 +4,10 @@ import * as React from 'react';
 import { Edge, MarkerType, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 
-import { ApplicationGraph, RankDirectionType, isApplication, isApplicationSet } from '../types';
-import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
-import ApplicationMapNode, {
-  ApplicationMapNode as ApplicationMapNodeType,
-  NODE_HEIGHT,
-  NODE_WIDTH,
-} from './ApplicationMapNode';
+import { ApplicationGraph, RankDirectionType, isApplication, isApplicationSet } from '../../types';
+import { ApplicationMapNavigationControls } from '../ApplicationMapNavigationControls';
+import { ApplicationMapNode, NODE_HEIGHT, NODE_WIDTH } from '../ApplicationMapNode';
+import type { ApplicationMapNodeType } from '../ApplicationMapNode';
 
 /**
  * Generates a Dagre layout for the given graph

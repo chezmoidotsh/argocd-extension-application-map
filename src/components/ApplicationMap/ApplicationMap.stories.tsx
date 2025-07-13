@@ -6,9 +6,9 @@ import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
 
-import '../styles/index.scss';
-import { HealthStatus, RankDirection, isApplication } from '../types';
-import { allStatusScenario, denseScenario as complexTopology } from './.storybook/scenarii';
+import '../../styles/index.scss';
+import { HealthStatus, RankDirection, isApplication } from '../../types';
+import { allStatusScenario, denseScenario as complexTopology } from '../.storybook/scenarii';
 import Map from './ApplicationMap';
 
 const meta: Meta<typeof Map> = {
