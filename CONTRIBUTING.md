@@ -142,7 +142,6 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/chezmo
 1. **Setup Development Environment**
 
    Before starting development, ensure you have:
-
    - [mise](https://mise.jdx.dev/) for local Kubernetes cluster
 
 2. **Start Development Environment**
@@ -153,7 +152,6 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/chezmo
    ```
 
 3. **Make Your Changes**
-
    - Create a new branch for your changes
    - Make your changes to the code
    - Follow the TypeScript and React style guidelines
@@ -169,7 +167,6 @@ Enhancement suggestions are tracked as [GitHub issues](https://github.com/chezmo
    Access the ArgoCD UI at [https://localhost:8080/map](https://localhost:8080/map) to test your changes.
 
 5. **Submit Your Changes**
-
    - Ensure all tests pass
    - Update documentation if necessary
    - Create a pull request with a clear description of your changes

@@ -2,13 +2,12 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
-import { ConnectionStatus } from '../hooks/useApplicationSSE';
-import '../styles/index.scss';
-import { allStatusScenario, cyclicScenario } from './.storybook/scenarii';
+import '../../styles/index.scss';
+import { allStatusScenario, cyclicScenario } from '../.storybook/scenarii';
 import StatusPanel from './StatusPanel';
 
 const meta: Meta<typeof StatusPanel> = {
-  title: 'Components/StatusPanel',
+  title: 'Components/Status Panel',
   component: StatusPanel,
   tags: ['autodocs'],
   argTypes: {
@@ -92,45 +91,4 @@ export const WithCycleWarningDark: Story = {
   name: 'With Cycle Warning (dark)',
   parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
-};
-
-export const SSEOpen: Story = {
-  args: {
-    graph: allStatusScenario,
-    onStatusClicked: action('onStatusClicked'),
-    sseStatus: ConnectionStatus.OPEN,
-    sseMessage: 'Connected to ArgoCD API',
-  },
-};
-export const SSEConnecting: Story = {
-  args: {
-    graph: allStatusScenario,
-    onStatusClicked: action('onStatusClicked'),
-    sseStatus: ConnectionStatus.CONNECTING,
-    sseMessage: 'Connecting to ArgoCD API…',
-  },
-};
-export const SSEClosed: Story = {
-  args: {
-    graph: allStatusScenario,
-    onStatusClicked: action('onStatusClicked'),
-    sseStatus: ConnectionStatus.CLOSED,
-    sseMessage: 'Disconnected from server',
-  },
-};
-export const SSERetrying: Story = {
-  args: {
-    graph: allStatusScenario,
-    onStatusClicked: action('onStatusClicked'),
-    sseStatus: ConnectionStatus.RETRYING,
-    sseMessage: 'Retrying…',
-  },
-};
-export const SSEError: Story = {
-  args: {
-    graph: allStatusScenario,
-    onStatusClicked: action('onStatusClicked'),
-    sseStatus: ConnectionStatus.ERROR,
-    sseMessage: 'Connection error',
-  },
 };

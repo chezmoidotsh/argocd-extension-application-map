@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import '../styles/index.scss';
-import { HealthStatus } from '../types/application';
+import '../../styles/index.scss';
+import { HealthStatus } from '../../types/application';
 import IconStatusHealth from './IconStatusHealth';
 
 const meta: Meta<typeof IconStatusHealth> = {
-  title: 'Icons/IconStatusHealth',
+  title: 'Icons/Status Health',
   component: IconStatusHealth,
   tags: ['autodocs'],
   argTypes: {

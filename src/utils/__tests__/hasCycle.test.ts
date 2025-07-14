@@ -1,6 +1,6 @@
 import { DirectedGraph } from 'graphology';
 
-import { hasCycle } from '../has_cycle';
+import { hasCycle } from '../hasCycle';
 
 describe('hasCycle function', () => {
   // ACYCLIC GRAPHS (Should return false)

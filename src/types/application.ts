@@ -1,9 +1,152 @@
-import { ArgoDestination, ArgoSource, ArgoSyncPolicy, Metadata } from './argocd';
+/**
+ * Type definitions for ArgoCD resources and configurations
+ *
+ * This file contains TypeScript interfaces that define the structure of ArgoCD resources
+ * and their configurations. These types are used throughout the application to ensure
+ * type safety when working with ArgoCD resources.
+ *
+ * The types are organized in the following sections:
+ * 1. Kubernetes Core Types (Metadata)
+ * 2. Core ArgoCD Resources (Application, ApplicationSet)
+ * 3. Configuration Types (Source, Destination, Sync Policy)
+ * 4. Status Types (ResourceStatus, ApplicationStatus)
+ */
+import { Metadata } from './kubernetes';
 
 /**
- * Type representing the possible application kinds
+ * Represents an ArgoCD Application resource
+ * @property {Metadata} metadata - Metadata about the ArgoCD Application
+ * @property {Object} spec - Specification of the ArgoCD Application
+ * @property {Source} spec.source - Optional source configuration for the application
+ * @property {Source[]} spec.sources - Optional sources configuration for the application
+ * @property {Destination} spec.destination - Destination configuration for the application
+ * @property {string} spec.project - ArgoCD project name
+ * @property {SyncPolicy} spec.syncPolicy - Synchronization policy configuration
+ * @property {ApplicationStatus} status - Current status of the ArgoCD Application
  */
-export type ApplicationKind = 'Application' | 'ApplicationSet';
+export interface Application {
+  kind: 'Application';
+  metadata: Metadata;
+  spec?: {
+    source?: ApplicationSource;
+    sources?: ApplicationSource[];
+    destination: ApplicationDestination;
+    project: string;
+    syncPolicy: SyncPolicy;
+  };
+  status?: {
+    health: {
+      status: HealthStatus;
+    };
+    reconciledAt?: string;
+    resources?: ManagedResource[];
+    sync: {
+      status: SyncStatus;
+      revision?: string;
+    };
+  };
+}
+
+/**
+ * Checks if a resource is an ArgoCD Application
+ * @param resource - The resource to check
+ * @returns True if the resource is an ArgoCD Application, false otherwise
+ */
+export function isApplication(resource: Application | ApplicationSet): resource is Application {
+  return resource.kind === 'Application';
+}
+
+/**
+ * Represents an ArgoCD ApplicationSet resource
+ * @property {Metadata} metadata - Metadata about the ArgoCD ApplicationSet
+ */
+export interface ApplicationSet {
+  kind: 'ApplicationSet';
+  metadata: Metadata;
+}
+
+/**
+ * Checks if a resource is an ArgoCD ApplicationSet
+ * @param resource - The resource to check
+ * @returns True if the resource is an ArgoCD ApplicationSet, false otherwise
+ */
+export function isApplicationSet(resource: Application | ApplicationSet): resource is ApplicationSet {
+  return resource.kind === 'ApplicationSet';
+}
+
+// ============================================================================
+// Configuration Types
+// ============================================================================
+
+/**
+ * Configuration for an ArgoCD source
+ * @property {string} repoURL - The URL of the Git repository
+ * @property {string} path - The path within the repository
+ * @property {string} targetRevision - The target revision to sync to (branch, tag, or commit)
+ * @property {object} [helm] - Optional Helm chart configuration
+ * @property {object} [kustomize] - Optional Kustomize configuration
+ * @property {object} [directory] - Optional directory configuration
+ * @property {object} [plugin] - Optional plugin configuration
+ */
+interface ApplicationSource {
+  repoURL: string;
+  path: string;
+  targetRevision: string;
+  helm?: object | undefined;
+  kustomize?: object | undefined;
+  directory?: object | undefined;
+  plugin?: object | undefined;
+}
+
+/**
+ * Configuration for the destination cluster
+ * @property {string} server - The Kubernetes server URL
+ * @property {string} namespace - The target namespace in the cluster
+ */
+interface ApplicationDestination {
+  server: string;
+  namespace: string;
+}
+
+/**
+ * Configuration for automated synchronization
+ * @interface AutomatedSync
+ * @property {boolean} prune - Whether to prune resources that are no longer in the source
+ * @property {boolean} selfHeal - Whether to automatically heal when drift is detected
+ */
+interface AutomatedSync {
+  prune: boolean;
+  selfHeal: boolean;
+}
+
+/**
+ * Configuration for synchronization policy
+ * @interface SyncPolicy
+ * @property {AutomatedSync} [automated] - Optional automated sync configuration
+ */
+interface SyncPolicy {
+  automated?: AutomatedSync;
+}
+
+/**
+ * Represents a resource managed by an ArgoCD application
+ * @property {string} group - The API group of the resource
+ * @property {string} kind - The kind of the resource
+ * @property {string} name - The name of the resource
+ * @property {string} namespace - The namespace of the resource
+ * @property {string} version - The version of the resource
+ */
+export interface ManagedResource {
+  group: string;
+  health?: {
+    status: HealthStatus;
+  };
+  kind: string;
+  name: string;
+  namespace: string;
+  status?: SyncStatus;
+  version: string;
+}
 
 /**
  * Enum representing the possible health status values
@@ -25,24 +168,6 @@ export enum HealthStatus {
 }
 
 /**
- * Converts a string to a HealthStatus enum value.
- * @param status - The string to convert.
- * @returns The HealthStatus enum value.
- */
-export function StringToHealthStatus(str: string): HealthStatus {
-  // Compatible with ES5/ES2015: use manual array
-  const values = [
-    HealthStatus.Healthy,
-    HealthStatus.Suspended,
-    HealthStatus.Degraded,
-    HealthStatus.Progressing,
-    HealthStatus.Missing,
-    HealthStatus.Unknown,
-  ];
-  return values.indexOf(str as HealthStatus) !== -1 ? (str as HealthStatus) : HealthStatus.Unknown;
-}
-
-/**
  * Enum representing the possible sync status values
  * @enum {string}
  */
@@ -54,87 +179,3 @@ export enum SyncStatus {
   /** Application sync status is unknown */
   Unknown = 'Unknown',
 }
-
-/**
- * Converts a string to a SyncStatus enum value.
- * @param status - The string to convert.
- * @returns The SyncStatus enum value.
- */
-export function StringToSyncStatus(str: string): SyncStatus {
-  const values = [SyncStatus.Synced, SyncStatus.OutOfSync, SyncStatus.Unknown];
-  return values.indexOf(str as SyncStatus) !== -1 ? (str as SyncStatus) : SyncStatus.Unknown;
-}
-
-/**
- * Interface for application specification
- * @interface ApplicationSpec
- * @property {ArgoDestination} destination - The destination configuration for the application
- * @property {string} project - The ArgoCD project name
- * @property {ArgoSyncPolicy} syncPolicy - The synchronization policy configuration
- */
-export interface ApplicationSpec {
-  sources: ArgoSource[];
-  destination: ArgoDestination;
-  project: string;
-  syncPolicy: ArgoSyncPolicy;
-}
-
-/**
- * Interface for application status
- * @interface ApplicationStatus
- * @property {HealthStatus} health - The current health status of the application
- * @property {SyncStatus} sync - The current sync status of the application
- */
-export interface ApplicationStatus {
-  health: HealthStatus;
-  sync: SyncStatus;
-}
-
-/**
- * Interface representing a single ArgoCD application
- * @interface Application
- * @property {string} kind - The kind of the application, always "Application"
- * @property {Metadata} metadata - Application metadata including name, namespace, and labels
- * @property {ApplicationSpec} spec - Application specification including sources, destination, project, and sync policy
- * @property {ApplicationStatus} status - Current status including health and sync state
- */
-export interface Application {
-  kind: 'Application';
-  metadata: Metadata;
-  spec: ApplicationSpec;
-  status: ApplicationStatus;
-}
-
-/**
- * Interface representing an ArgoCD ApplicationSet
- * @interface ApplicationSet
- * @property {string} kind - The kind of the application set, always "ApplicationSet"
- * @property {Metadata} metadata - Application set metadata including name, namespace, and labels
- */
-export interface ApplicationSet {
-  kind: 'ApplicationSet';
-  metadata: Metadata;
-}
-
-/**
- * Interface representing an ArgoCD application or application set
- * @interface ApplicationUnion
- *
- * This is a discriminated union type with two variants:
- *
- * 1. Application:
- *    - Represents a single ArgoCD application
- *    - Contains a complete specification including sources, destination, project and sync policy
- *    - Used for managing individual application deployments
- *
- * 2. ApplicationSet:
- *    - Represents an ArgoCD ApplicationSet
- *    - Does not contain a spec as ApplicationSets are managed differently
- *    - Used for managing multiple applications through templates
- *
- * @property {ApplicationKind} kind - The kind of application (Application or ApplicationSet)
- * @property {Metadata} metadata - Application metadata including name, namespace, and labels
- * @property {ApplicationSpec} [spec] - Application specification (only present for Application kind)
- * @property {ApplicationStatus} [status] - Current status including health and sync state (only present for Application kind)
- */
-export type ApplicationUnion = Application | ApplicationSet;

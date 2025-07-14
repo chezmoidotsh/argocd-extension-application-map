@@ -1,7 +1,65 @@
 import { DirectedGraph } from 'graphology';
 
-import { HealthStatus, SyncStatus } from '../types/application';
-import { ArgoApplication, ArgoApplicationSet, ManagedResource, isArgoApplicationSet } from '../types/argocd';
+import { HealthStatus, SyncStatus } from '../types';
+import { Application, ApplicationSet, isApplicationSet } from '../types';
+import { ManagedResource } from '../types/application';
+
+/**
+ * Updates the graph based on the action and payload.
+ *
+ * @param graph - The graphology instance.
+ * @param action - The action to perform (ADDED, MODIFIED, DELETED).
+ * @param payload - The application data from the event.
+ * ---
+ * How the graph is updated when an SSE event is received from ArgoCD:
+ *
+ * 1. processSSEEvent() is called with action and payload
+ * 2. Validate payload (name & namespace must exist)
+ * 3. Switch on action:
+ *
+ *    IF action = DELETED:
+ *    └─ handleDelete()
+ *       ├─ Check if node exists (exit if not)
+ *       ├─ Get parent nodes
+ *       ├─ Drop the main node
+ *       └─ For each parent: if it's an orphaned ApplicationSet, drop it
+ *
+ *    IF action = ADDED or MODIFIED:
+ *    └─ handleAddOrModify()
+ *       ├─ Add new node OR replace existing node attributes
+ *       ├─ updateOwnerReferences()
+ *       │  ├─ Create/update parent nodes from ownerReferences
+ *       │  ├─ Create edges from parents to current node
+ *       │  └─ Clean up stale owner references (drop orphaned ApplicationSets)
+ *       └─ updateResourceReferences()
+ *          ├─ For each resource in status.resources:
+ *          │  ├─ Create new stub node OR updateChildNodeStatus()
+ *          │  └─ Create edge from current node to resource
+ *          └─ Clean up stale resource references (drop unused edges)
+ *
+ * The updateChildNodeStatus() function is only called when a resource node
+ * already exists and we need to update its status from Unknown to Known.
+ */
+export function processSSEEvent(
+  graph: DirectedGraph<Application | ApplicationSet>,
+  action: 'ADDED' | 'MODIFIED' | 'DELETED',
+  payload: Application
+): void {
+  if (!payload.metadata?.name || !payload.metadata?.namespace) {
+    console.warn('Skipping processing SSE event: missing name or namespace in metadata', payload);
+    return;
+  }
+
+  switch (action) {
+    case 'DELETED':
+      handleDelete(graph, payload);
+      break;
+    case 'ADDED':
+    case 'MODIFIED':
+      handleAddOrModify(graph, payload);
+      break;
+  }
+}
 
 /**
  * Generates a unique node identifier from a resource's properties.
@@ -18,7 +76,7 @@ function getNodeId(resource: { kind: string; name: string; namespace: string }):
  * @param graph - The graphology instance to update.
  * @param payload - The application data from the event.
  */
-function handleDelete(graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>, payload: ArgoApplication) {
+function handleDelete(graph: DirectedGraph<Application | ApplicationSet>, payload: Application) {
   if (!payload.metadata.name || !payload.metadata.namespace) return;
 
   const appNodeId = getNodeId({
@@ -37,7 +95,7 @@ function handleDelete(graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>
   parents.forEach((parentNodeId) => {
     if (
       graph.hasNode(parentNodeId) &&
-      isArgoApplicationSet(graph.getNodeAttributes(parentNodeId)) &&
+      isApplicationSet(graph.getNodeAttributes(parentNodeId)) &&
       graph.outDegree(parentNodeId) === 0
     ) {
       graph.dropNode(parentNodeId);
@@ -51,7 +109,7 @@ function handleDelete(graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>
  * @param graph - The graphology instance to update.
  * @param payload - The application data from the event.
  */
-function handleAddOrModify(graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>, payload: ArgoApplication) {
+function handleAddOrModify(graph: DirectedGraph<Application | ApplicationSet>, payload: Application) {
   if (!payload.metadata.name || !payload.metadata.namespace) return;
 
   const appNodeId = getNodeId({
@@ -78,8 +136,8 @@ function handleAddOrModify(graph: DirectedGraph<ArgoApplication | ArgoApplicatio
  * @param appNodeId - The ID of the current application node.
  */
 function updateOwnerReferences(
-  graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>,
-  payload: ArgoApplication,
+  graph: DirectedGraph<Application | ApplicationSet>,
+  payload: Application,
   appNodeId: string
 ) {
   const newOwnerIds = new Set<string>();
@@ -107,7 +165,7 @@ function updateOwnerReferences(
   // Clean up stale owner references
   const currentOwners = new Set(graph.inNeighbors(appNodeId));
   for (const ownerId of currentOwners) {
-    if (!newOwnerIds.has(ownerId) && isArgoApplicationSet(graph.getNodeAttributes(ownerId))) {
+    if (!newOwnerIds.has(ownerId) && isApplicationSet(graph.getNodeAttributes(ownerId))) {
       graph.dropEdge(ownerId, appNodeId);
       if (graph.outDegree(ownerId) === 0) {
         graph.dropNode(ownerId);
@@ -125,8 +183,8 @@ function updateOwnerReferences(
  * @param appNodeId - The ID of the current application node.
  */
 function updateResourceReferences(
-  graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>,
-  payload: ArgoApplication,
+  graph: DirectedGraph<Application | ApplicationSet>,
+  payload: Application,
   appNodeId: string
 ) {
   const newResourceNodeIds = new Set<string>();
@@ -172,11 +230,11 @@ function updateResourceReferences(
  * @param resource - The resource data from the parent.
  */
 function updateChildNodeStatus(
-  graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>,
+  graph: DirectedGraph<Application | ApplicationSet>,
   childNodeId: string,
   resource: ManagedResource
 ) {
-  const childAttrs = graph.getNodeAttributes(childNodeId) as ArgoApplication;
+  const childAttrs = graph.getNodeAttributes(childNodeId) as Application;
   const currentHealth = childAttrs.status?.health?.status;
   const currentSync = childAttrs.status?.sync?.status;
 
@@ -195,62 +253,5 @@ function updateChildNodeStatus(
 
   if (hasChanges) {
     graph.replaceNodeAttributes(childNodeId, childAttrs);
-  }
-}
-
-/**
- * Updates the graph based on the action and payload.
- *
- * @param graph - The graphology instance.
- * @param action - The action to perform (ADDED, MODIFIED, DELETED).
- * @param payload - The application data from the event.
- * ---
- * How the graph is updated when an SSE event is received from ArgoCD:
- *
- * 1. updateGraph() is called with action and payload
- * 2. Validate payload (name & namespace must exist)
- * 3. Switch on action:
- *
- *    IF action = DELETED:
- *    └─ handleDelete()
- *       ├─ Check if node exists (exit if not)
- *       ├─ Get parent nodes
- *       ├─ Drop the main node
- *       └─ For each parent: if it's an orphaned ApplicationSet, drop it
- *
- *    IF action = ADDED or MODIFIED:
- *    └─ handleAddOrModify()
- *       ├─ Add new node OR replace existing node attributes
- *       ├─ updateOwnerReferences()
- *       │  ├─ Create/update parent nodes from ownerReferences
- *       │  ├─ Create edges from parents to current node
- *       │  └─ Clean up stale owner references (drop orphaned ApplicationSets)
- *       └─ updateResourceReferences()
- *          ├─ For each resource in status.resources:
- *          │  ├─ Create new stub node OR updateChildNodeStatus()
- *          │  └─ Create edge from current node to resource
- *          └─ Clean up stale resource references (drop unused edges)
- *
- * The updateChildNodeStatus() function is only called when a resource node
- * already exists and we need to update its status from Unknown to Known.
- */
-export function updateGraph(
-  graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>,
-  action: 'ADDED' | 'MODIFIED' | 'DELETED',
-  payload: ArgoApplication
-): void {
-  if (!payload.metadata?.name || !payload.metadata?.namespace) {
-    console.warn('Skipping updateGraph: missing name or namespace in metadata', payload);
-    return;
-  }
-
-  switch (action) {
-    case 'DELETED':
-      handleDelete(graph, payload);
-      break;
-    case 'ADDED':
-    case 'MODIFIED':
-      handleAddOrModify(graph, payload);
-      break;
   }
 }

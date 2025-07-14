@@ -72,17 +72,14 @@ The arrows indicate dependency relationships between applications, showing how d
 The graph above illustrates the relationships between different ArgoCD applications. Here's a detailed explanation:
 
 - `App of Apps 01` deploys:
-
   - `guestbook-app-01`
   - `appset-01` and `appset-02` (ApplicationSets)
 
 - `appset-01` deploys:
-
   - `guestbook-app-02` and `guestbook-app-03`
   - `App of Apps 02`
 
 - `appset-02` deploys:
-
   - `blue-green` (blue-green deployment)
   - `guestbook` (standard guestbook)
   - `helm-hooks` (Helm hooks demo)
@@ -93,7 +90,6 @@ The graph above illustrates the relationships between different ArgoCD applicati
   - `sync-waves` (sync waves demo)
 
 - `App of Apps 02` deploys:
-
   - `appset-03`
 
 - `appset-03` deploys:
