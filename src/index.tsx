@@ -5,9 +5,9 @@ import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useEffect, useRef } from 'react';
 
-import { ApplicationMap } from './components/ApplicationMap';
 import { StateScreen } from './components/StateScreen';
 import { StatusPanel } from './components/StatusPanel';
+import { ApplicationMap } from './components/application-map';
 import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
 import './styles/index.scss';
 import { ArgoApplication, ArgoApplicationSet, isArgoApplication } from './types/argocd';

@@ -35,7 +35,6 @@ export const Default: Story = {
     selectedApplications: [],
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
-    onApplicationSetClick: action('onApplicationSetClick'),
   },
 };
 
@@ -53,7 +52,6 @@ export const ComplexTopology: Story = {
     selectedApplications: [],
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
-    onApplicationSetClick: action('onApplicationSetClick'),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -82,7 +80,6 @@ export const ComplexTopologyWithSelection: Story = {
     ),
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
-    onApplicationSetClick: action('onApplicationSetClick'),
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

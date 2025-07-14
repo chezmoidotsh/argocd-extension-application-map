@@ -8,6 +8,7 @@ import React from 'react';
 
 import '../../../styles/index.scss';
 import { HealthStatus, SyncStatus } from '../../../types/application';
+import { NODE_HEIGHT, NODE_WIDTH } from '../ApplicationMap';
 import ApplicationMapNode from './ApplicationMapNode';
 
 const meta: Meta<typeof ApplicationMapNode> = {
@@ -39,6 +40,8 @@ const applicationNodeProps = {
       throw new Error('onApplicationSetClick must not be called on ApplicationNode');
     },
   },
+  width: NODE_WIDTH,
+  height: NODE_HEIGHT,
 };
 
 // Default ApplicationSet node props
@@ -51,6 +54,8 @@ const applicationSetNodeProps = {
     },
     onApplicationSetClick: action('onApplicationSetClick'),
   },
+  width: NODE_WIDTH,
+  height: NODE_HEIGHT,
 };
 
 export const Application: Story = {

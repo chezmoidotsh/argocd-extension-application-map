@@ -7,9 +7,6 @@ import { resourceId } from '../../../utils';
 import IconStatusHealth from '../../icons/IconStatusHealth';
 import IconStatusSync from '../../icons/IconStatusSync';
 
-export const NODE_WIDTH = 282;
-export const NODE_HEIGHT = 52;
-
 /**
  * Renders a node for an ArgoCD Application resource (icon, name, status).
  *
