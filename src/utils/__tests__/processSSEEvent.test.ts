@@ -1,7 +1,7 @@
 import { DirectedGraph } from 'graphology';
 
-import { HealthStatus, SyncStatus } from '../../types/application';
-import { ArgoApplication, ArgoApplicationSet } from '../../types/argocd';
+import { HealthStatus, SyncStatus } from '../../types';
+import { Application, ApplicationSet } from '../../types';
 import { processSSEEvent } from '../processSSEEvent';
 
 // Helper to create a mock application payload
@@ -10,8 +10,8 @@ const createMockApp = (
   namespace: string = 'argocd',
   owner?: { kind: 'Application' | 'ApplicationSet'; name: string },
   resources?: any[]
-): ArgoApplication => {
-  const app: ArgoApplication = {
+): Application => {
+  const app: Application = {
     kind: 'Application',
     metadata: {
       name,
@@ -47,7 +47,7 @@ describe('updateGraph', () => {
      * (A single node is added to the graph)
      */
     it('adds a simple application node', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA');
       processSSEEvent(graph, 'ADDED', appA);
 
@@ -66,11 +66,11 @@ describe('updateGraph', () => {
      *   └────────────┘
      */
     it('updates the attributes of an existing node on MODIFIED', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       let appA = createMockApp('appA');
       processSSEEvent(graph, 'ADDED', appA);
 
-      const initialAttrs = graph.getNodeAttributes('Application/argocd/appA') as ArgoApplication;
+      const initialAttrs = graph.getNodeAttributes('Application/argocd/appA') as Application;
       expect(initialAttrs.status.health.status).toBe(HealthStatus.Healthy);
       expect(graph.export()).toMatchSnapshot();
 
@@ -81,7 +81,7 @@ describe('updateGraph', () => {
       };
       processSSEEvent(graph, 'MODIFIED', appA);
 
-      const updatedAttrs = graph.getNodeAttributes('Application/argocd/appA') as ArgoApplication;
+      const updatedAttrs = graph.getNodeAttributes('Application/argocd/appA') as Application;
       expect(updatedAttrs.status.health.status).toBe(HealthStatus.Progressing);
       expect(graph.export()).toMatchSnapshot();
     });
@@ -95,7 +95,7 @@ describe('updateGraph', () => {
      *   (Graph is empty)
      */
     it('removes a node on DELETED', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA');
       processSSEEvent(graph, 'ADDED', appA);
 
@@ -113,7 +113,7 @@ describe('updateGraph', () => {
      * Expected: The function should not throw an error and the graph remains unchanged.
      */
     it('handles deletion of a non-existent node gracefully', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA');
 
       // Attempt to delete a node that was never added
@@ -134,7 +134,7 @@ describe('updateGraph', () => {
      * (appB is owned by appset1, creating an incoming edge to appset1)
      */
     it('adds a node with ownerReferences, creating a parent', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const app = createMockApp('appB', 'argocd', { kind: 'ApplicationSet', name: 'appset1' });
       processSSEEvent(graph, 'ADDED', app);
 
@@ -152,7 +152,7 @@ describe('updateGraph', () => {
      * (appA references appB in status.resources, creating an outgoing edge from appA)
      */
     it('adds resources from status.resources as stub nodes', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const app = createMockApp('appA', 'argocd', undefined, [
         { kind: 'Application', name: 'appB', namespace: 'argocd' },
       ]);
@@ -172,7 +172,7 @@ describe('updateGraph', () => {
      * (appA references appset1 in status.resources)
      */
     it('adds an ApplicationSet referenced in resources', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const app = createMockApp('appA', 'argocd', undefined, [
         { kind: 'ApplicationSet', name: 'appset1', namespace: 'argocd' },
       ]);
@@ -191,7 +191,7 @@ describe('updateGraph', () => {
      *   └──────────────────────────┘     └──────────────────────────┘
      */
     it('handles resources in different namespaces correctly', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA', 'default', undefined, [
         { kind: 'Application', name: 'appB', namespace: 'argocd' },
       ]);
@@ -225,7 +225,7 @@ describe('updateGraph', () => {
      *   (appset1 is removed as it has no children left)
      */
     it('removes an ApplicationSet parent when it becomes orphaned', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA', 'argocd', { kind: 'ApplicationSet', name: 'appset1' });
       const appB = createMockApp('appB', 'argocd', { kind: 'ApplicationSet', name: 'appset1' });
 
@@ -260,7 +260,7 @@ describe('updateGraph', () => {
      *                                              └────────────┘
      */
     it('correctly handles deletion of a node that is both a parent and a child', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA', 'argocd', { kind: 'ApplicationSet', name: 'appset1' }, [
         { kind: 'Application', name: 'appB', namespace: 'argocd' },
       ]);
@@ -293,7 +293,7 @@ describe('updateGraph', () => {
      * (app-of-apps owns appA, which in turn references appB)
      */
     it('should handle app-of-apps with ownerReferences', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA', 'argocd', { kind: 'ApplicationSet', name: 'app-of-apps' }, [
         { kind: 'Application', name: 'appB', namespace: 'argocd' },
       ]);
@@ -321,7 +321,7 @@ describe('updateGraph', () => {
      *   └────────────┘
      */
     it('updates resources for a node on MODIFIED event, orphaning old children', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA_v1 = createMockApp('appA', 'argocd', undefined, [
         { kind: 'Application', name: 'appB', namespace: 'argocd' },
       ]);
@@ -355,7 +355,7 @@ describe('updateGraph', () => {
      *   └────────────┘     └────────────┘
      */
     it("updates a child's unknown status from a parent's resource definition", () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
 
       // 1. Add appA, which creates appB as a stub with "Unknown" status
       const appA_v1 = createMockApp('appA', 'argocd', undefined, [
@@ -369,7 +369,7 @@ describe('updateGraph', () => {
       ]);
       processSSEEvent(graph, 'ADDED', appA_v1);
 
-      const initialAttrs = graph.getNodeAttributes('Application/argocd/appB') as ArgoApplication;
+      const initialAttrs = graph.getNodeAttributes('Application/argocd/appB') as Application;
       expect(initialAttrs.status.health.status).toBe(HealthStatus.Unknown);
       expect(initialAttrs.status.sync.status).toBe(SyncStatus.Unknown);
       expect(graph.export()).toMatchSnapshot();
@@ -390,7 +390,7 @@ describe('updateGraph', () => {
       };
       processSSEEvent(graph, 'MODIFIED', appA_v2);
 
-      const updatedAttrs = graph.getNodeAttributes('Application/argocd/appB') as ArgoApplication;
+      const updatedAttrs = graph.getNodeAttributes('Application/argocd/appB') as Application;
       expect(updatedAttrs.status.health.status).toBe(HealthStatus.Healthy);
       expect(updatedAttrs.status.sync.status).toBe(SyncStatus.Synced);
       expect(graph.export()).toMatchSnapshot();
@@ -409,7 +409,7 @@ describe('updateGraph', () => {
      *   (appset1 is removed as it's now orphaned)
      */
     it('handles change of ownership (ownerReference)', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
 
       // 1. appA is owned by appset1
       let appA = createMockApp('appA', 'argocd', { kind: 'ApplicationSet', name: 'appset1' });
@@ -436,7 +436,7 @@ describe('updateGraph', () => {
      * The update function should not crash and should handle the bad data gracefully.
      */
     it('handles incomplete or malformed SSE payloads gracefully', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const malformedApp: any = {
         kind: 'Application',
         metadata: {
@@ -474,7 +474,7 @@ describe('updateGraph', () => {
      * (A references B, B references A)
      */
     it('handles cyclical dependencies gracefully', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA', 'argocd', undefined, [
         { kind: 'Application', name: 'appB', namespace: 'argocd' },
       ]);
@@ -501,7 +501,7 @@ describe('updateGraph', () => {
      * (A references itself in its resources)
      */
     it('handles self-referencing applications gracefully', () => {
-      const graph = new DirectedGraph<ArgoApplication | ArgoApplicationSet>();
+      const graph = new DirectedGraph<Application | ApplicationSet>();
       const appA = createMockApp('appA', 'argocd', undefined, [
         { kind: 'Application', name: 'appA', namespace: 'argocd' },
       ]);

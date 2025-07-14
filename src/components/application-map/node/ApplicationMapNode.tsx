@@ -1,8 +1,8 @@
 import { Handle, NodeProps, Node as ReactFlowNode } from '@xyflow/react';
 import React from 'react';
 
-import { HealthStatus, SyncStatus } from '../../../types/application';
-import { ArgoApplication, ArgoApplicationSet, isArgoApplication } from '../../../types/argocd';
+import { HealthStatus, SyncStatus } from '../../../types';
+import { Application, ApplicationSet, isApplication } from '../../../types';
 import { resourceId } from '../../../utils';
 import IconStatusHealth from '../../icons/IconStatusHealth';
 import IconStatusSync from '../../icons/IconStatusSync';
@@ -12,7 +12,7 @@ import IconStatusSync from '../../icons/IconStatusSync';
  *
  * @param application - The ArgoCD Application resource to render.
  */
-const ApplicationMapNode_Application: React.FC<{ application: ArgoApplication }> = ({ application }) => {
+const ApplicationMapNode_Application: React.FC<{ application: Application }> = ({ application }) => {
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -38,7 +38,7 @@ const ApplicationMapNode_Application: React.FC<{ application: ArgoApplication }>
  *
  * @param applicationSet - The ArgoCD ApplicationSet resource to render.
  */
-const ApplicationMapNode_ApplicationSet: React.FC<{ applicationSet: ArgoApplicationSet }> = ({ applicationSet }) => {
+const ApplicationMapNode_ApplicationSet: React.FC<{ applicationSet: ApplicationSet }> = ({ applicationSet }) => {
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -57,11 +57,11 @@ const ApplicationMapNode_ApplicationSet: React.FC<{ applicationSet: ArgoApplicat
   );
 };
 
-type ApplicationMapNodeData_Application = ArgoApplication & {
+type ApplicationMapNodeData_Application = Application & {
   onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
   selected?: boolean;
 };
-type ApplicationMapNodeData_ApplicationSet = ArgoApplicationSet;
+type ApplicationMapNodeData_ApplicationSet = ApplicationSet;
 type ApplicationMapNodeData = ApplicationMapNodeData_Application | ApplicationMapNodeData_ApplicationSet;
 
 /**
@@ -86,7 +86,7 @@ export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>)
 
   const onClick = React.useCallback(
     (event: React.MouseEvent) => {
-      if (isArgoApplication(data)) {
+      if (isApplication(data)) {
         data.onApplicationClick?.(event, resourceId(data.kind, data.metadata.namespace, data.metadata.name));
       }
     },
@@ -112,10 +112,10 @@ export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>)
         <Handle type="target" position={targetPosition} style={{ opacity: 0, pointerEvents: 'none' }} />
       )}
 
-      {isArgoApplication(data) ? (
-        <ApplicationMapNode_Application application={data as ArgoApplication} />
+      {isApplication(data) ? (
+        <ApplicationMapNode_Application application={data as Application} />
       ) : (
-        <ApplicationMapNode_ApplicationSet applicationSet={data as ArgoApplicationSet} />
+        <ApplicationMapNode_ApplicationSet applicationSet={data as ApplicationSet} />
       )}
     </div>
   );

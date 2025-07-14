@@ -1,7 +1,7 @@
 import Dagre from '@dagrejs/dagre';
 import { DirectedGraph } from 'graphology';
 
-import { RankDirection } from '../types/graph';
+import { RankDirection } from '../types/rankdirection';
 
 /**
  * Automatically computes and applies a DAG layout to the given graph, using the specified direction ("LR", "TB", etc).

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { ArgoApplication } from '../types/argocd';
+import { Application } from '../types/application';
 
 /**
  * Status of the SSE connection
@@ -22,7 +22,7 @@ export enum ConnectionStatus {
 export interface SSEEvent {
   result: {
     type: 'ADDED' | 'MODIFIED' | 'DELETED';
-    application: ArgoApplication;
+    application: Application;
   };
 }
 

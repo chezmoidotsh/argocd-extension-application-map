@@ -1,10 +1,10 @@
 import { DirectedGraph } from 'graphology';
 
 import { HealthStatus, SyncStatus } from '../../types/application';
-import { ArgoApplication, ArgoApplicationSet } from '../../types/argocd';
+import { Application, ArgoApplicationSet } from '../../types/application';
 import { resourceId } from '../../utils';
 
-export type ArgoApplicationGraph = DirectedGraph<ArgoApplication | ArgoApplicationSet>;
+export type ArgoApplicationGraph = DirectedGraph<Application | ArgoApplicationSet>;
 
 /**
  * ScenarioGraph provides a fluent API to build and manipulate an ApplicationGraph
@@ -49,7 +49,7 @@ export class ScenarioGraph {
     parentRef?: { kind: 'Application' | 'ApplicationSet'; namespace: string; name: string }
   ): ScenarioGraph {
     const nodeId = resourceId('Application', namespace, name);
-    const app: ArgoApplication = {
+    const app: Application = {
       kind: 'Application',
       metadata: { name, namespace },
       spec: {

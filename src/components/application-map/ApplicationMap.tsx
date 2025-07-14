@@ -5,7 +5,7 @@ import { Edge, MarkerType, ReactFlow, useEdgesState, useNodesState, useReactFlow
 import { useEffect } from 'react';
 
 import { RankDirectionType, isApplication } from '../../types';
-import { ArgoApplication, ArgoApplicationSet } from '../../types/argocd';
+import { Application, ApplicationSet } from '../../types/application';
 import { applyLayoutToGraph } from '../../utils/applyLayoutToGraph';
 import { ApplicationMapNavigationControls } from './navigation-controls';
 import { ApplicationMapNode } from './node';
@@ -29,7 +29,7 @@ export const NODE_HEIGHT = 52;
  * @property onApplicationClick - Callback function triggered when an application node is clicked.
  */
 type ApplicationMapProps = {
-  graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>;
+  graph: DirectedGraph<Application | ApplicationSet>;
   rankdir: RankDirectionType;
 
   selectedApplications?: string[];
@@ -71,9 +71,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     }
 
     console.debug('[Extension] Generating ApplicationMap nodes and edges from graph:', graph);
-    const spatialized = graph as DirectedGraph<
-      (ArgoApplication | ArgoApplicationSet) & { width: number; height: number }
-    >;
+    const spatialized = graph as DirectedGraph<(Application | ApplicationSet) & { width: number; height: number }>;
 
     // NOTE: inject width and height attributes to the graph nodes in order to be able to use them in the layout
     spatialized.forEachNode((node, attributes) => {

@@ -10,8 +10,8 @@ import { StatusPanel } from './components/status-panel';
 import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
 import { useThrottledValue } from './hooks/useThrottledValue';
 import './styles/index.scss';
-import { ArgoApplication, ArgoApplicationSet, isArgoApplication } from './types/argocd';
-import { RankDirection } from './types/graph';
+import { Application, ApplicationSet, isApplication } from './types/application';
+import { RankDirection } from './types/rankdirection';
 import { processSSEEvent } from './utils/processSSEEvent';
 
 /**
@@ -22,7 +22,7 @@ import { processSSEEvent } from './utils/processSSEEvent';
  * @returns The new state of the graph
  */
 function graphReducer(
-  state: { graph: DirectedGraph<ArgoApplication | ArgoApplicationSet>; version: number },
+  state: { graph: DirectedGraph<Application | ApplicationSet>; version: number },
   action: { type: string; payload: SSEEvent }
 ) {
   const newGraph = state.graph.copy();
@@ -51,15 +51,15 @@ async function checkAuth(): Promise<boolean> {
  * Main component for the ArgoCD Application Map extension.
  */
 const Extension: React.FC = () => {
+  const [graph, dispatch] = React.useReducer(graphReducer, {
+    graph: new DirectedGraph<Application | ApplicationSet>(),
+    version: 0,
+  });
+
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
   const { status: sseStatus, message: sseMessage } = useApplicationSSE({
     onEvent: (event) => dispatch({ type: 'STREAM_EVENTS_RECEIVED', payload: event }),
     endpoint: '/api/v1/stream/applications',
-  });
-
-  const [graph, dispatch] = React.useReducer(graphReducer, {
-    graph: new DirectedGraph<ArgoApplication | ArgoApplicationSet>(),
-    version: 0,
   });
 
   const graphRef = React.useRef(graph.graph);
@@ -86,7 +86,7 @@ const Extension: React.FC = () => {
   const onPaneClick = React.useCallback(() => setSelectedNodes([]), []);
   const onApplicationClick = React.useCallback((event: React.MouseEvent, applicationId: string) => {
     const application = graphRef.current.getNodeAttributes(applicationId);
-    if (isArgoApplication(application)) {
+    if (isApplication(application)) {
       window.location.href = `/applications/${application.metadata.namespace}/${application.metadata.name}?view=tree`;
     }
   }, []);

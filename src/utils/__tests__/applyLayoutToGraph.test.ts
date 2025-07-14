@@ -1,6 +1,6 @@
 import { DirectedGraph } from 'graphology';
 
-import { RankDirection } from '../../types/graph';
+import { RankDirection } from '../../types/rankdirection';
 import { applyLayoutToGraph } from '../applyLayoutToGraph';
 
 type NodeAttributes = {
