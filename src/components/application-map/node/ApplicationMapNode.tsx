@@ -1,21 +1,21 @@
-import { Handle, Node, NodeProps } from '@xyflow/react';
+import { Handle, NodeProps, Node as ReactFlowNode } from '@xyflow/react';
 import React from 'react';
 
-import { HealthStatus, SyncStatus } from '../../types/application';
-import { ArgoApplication, ArgoApplicationSet, isArgoApplication, isArgoApplicationSet } from '../../types/argocd';
-import { resourceId } from '../../utils';
-import ApplicationNodeStatusIconHealth from '../icons/IconStatusHealth';
-import ApplicationNodeStatusIconSync from '../icons/IconStatusSync';
+import { HealthStatus, SyncStatus } from '../../../types/application';
+import { ArgoApplication, ArgoApplicationSet, isArgoApplication } from '../../../types/argocd';
+import { resourceId } from '../../../utils';
+import IconStatusHealth from '../../icons/IconStatusHealth';
+import IconStatusSync from '../../icons/IconStatusSync';
 
 export const NODE_WIDTH = 282;
 export const NODE_HEIGHT = 52;
 
 /**
  * Renders a node for an ArgoCD Application resource (icon, name, status).
+ *
+ * @param application - The ArgoCD Application resource to render.
  */
-const ApplicationMapNode_Application: React.FC<{
-  application: ArgoApplication;
-}> = ({ application }) => {
+const ApplicationMapNode_Application: React.FC<{ application: ArgoApplication }> = ({ application }) => {
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -28,8 +28,8 @@ const ApplicationMapNode_Application: React.FC<{
           {application.metadata.namespace}/{application.metadata.name}
         </div>
         <div className="application-resource-tree__node-status-icon">
-          <ApplicationNodeStatusIconHealth status={application.status?.health?.status || HealthStatus.Unknown} />
-          <ApplicationNodeStatusIconSync status={application.status?.sync?.status || SyncStatus.Unknown} />
+          <IconStatusHealth status={application.status?.health?.status || HealthStatus.Unknown} />
+          <IconStatusSync status={application.status?.sync?.status || SyncStatus.Unknown} />
         </div>
       </div>
     </>
@@ -38,10 +38,10 @@ const ApplicationMapNode_Application: React.FC<{
 
 /**
  * Renders a node for an ArgoCD ApplicationSet resource (icon, name).
+ *
+ * @param applicationSet - The ArgoCD ApplicationSet resource to render.
  */
-const ApplicationMapNode_ApplicationSet: React.FC<{
-  applicationSet: ArgoApplicationSet;
-}> = ({ applicationSet }) => {
+const ApplicationMapNode_ApplicationSet: React.FC<{ applicationSet: ArgoApplicationSet }> = ({ applicationSet }) => {
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -60,17 +60,20 @@ const ApplicationMapNode_ApplicationSet: React.FC<{
   );
 };
 
-export type ApplicationMapNode = Node<
-  (ArgoApplication | ArgoApplicationSet) & {
-    onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
-    onApplicationSetClick?: (event: React.MouseEvent, applicationSetId: string) => void;
-    selected?: boolean;
-  } & Record<string, unknown>,
-  'application'
->;
+type ApplicationMapNodeData_Application = ArgoApplication & {
+  onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
+  selected?: boolean;
+};
+type ApplicationMapNodeData_ApplicationSet = ArgoApplicationSet;
+type ApplicationMapNodeData = ApplicationMapNodeData_Application | ApplicationMapNodeData_ApplicationSet;
 
 /**
- * The **ApplicationMapNode** is a **polymorphic node renderer** for the **ArgoCD overview graph**. It helps users
+ * Type definition for the **ApplicationMapNode** component, used by React Flow to know how to render the node.
+ */
+export type ApplicationMapNode = ReactFlowNode<ApplicationMapNodeData & Record<string, unknown>, 'application'>;
+
+/**
+ * The **ApplicationMapNode** is a **polymorphic node renderer** for the **ArgoCD extension**. It helps users
  * identify and interact with **resources** directly within the **application map**, supporting intuitive **exploration**
  * of the **deployment topology**.
  *
@@ -78,23 +81,19 @@ export type ApplicationMapNode = Node<
  * - **default**: Normal display with full opacity
  * - **selected**: Highlighted with full opacity and a blue outline
  * - **unselected**: Dimmed with reduced opacity
+ *
+ * @param props - The properties passed to the node, including data, targetPosition, sourcePosition, width, and height.
  */
-export default function ApplicationMapNode({
-  data,
-  sourcePosition,
-  targetPosition,
-  width,
-  height,
-}: NodeProps<ApplicationMapNode>) {
+export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>) {
+  const { data, targetPosition, sourcePosition, width, height } = props;
+
   const onClick = React.useCallback(
     (event: React.MouseEvent) => {
       if (isArgoApplication(data)) {
         data.onApplicationClick?.(event, resourceId(data.kind, data.metadata.namespace, data.metadata.name));
-      } else if (isArgoApplicationSet(data)) {
-        data.onApplicationSetClick?.(event, resourceId(data.kind, data.metadata.namespace, data.metadata.name));
       }
     },
-    [data]
+    [data.onApplicationClick, data.kind, data.metadata.namespace, data.metadata.name]
   );
 
   // Generate the CSS class for the node based on selection state
@@ -106,7 +105,7 @@ export default function ApplicationMapNode({
       className={`application-resource-tree__node application-resource-tree__node--application ${selectionClass}`}
       data-testid="application-map-node"
       title={`Kind: ${data.kind}\nNamespace: ${data.metadata.namespace}\nName: ${data.metadata.name}`}
-      style={{ width: width ?? NODE_WIDTH, height: height ?? NODE_HEIGHT }}
+      style={{ width, height }}
       onClick={onClick}
     >
       {sourcePosition && (
@@ -118,9 +117,9 @@ export default function ApplicationMapNode({
 
       {isArgoApplication(data) ? (
         <ApplicationMapNode_Application application={data as ArgoApplication} />
-      ) : isArgoApplicationSet(data) ? (
+      ) : (
         <ApplicationMapNode_ApplicationSet applicationSet={data as ArgoApplicationSet} />
-      ) : null}
+      )}
     </div>
   );
 }
