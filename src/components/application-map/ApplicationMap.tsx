@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { RankDirectionType, isApplication } from '../../types';
 import { ArgoApplication, ArgoApplicationSet } from '../../types/argocd';
 import { applyLayoutToGraph } from '../../utils/graph';
-import { ApplicationMapNavigationControls } from '../ApplicationMapNavigationControls';
+import { ApplicationMapNavigationControls } from './navigation-controls';
 import { ApplicationMapNode } from './node';
 import type { ApplicationMapNodeType } from './node';
 

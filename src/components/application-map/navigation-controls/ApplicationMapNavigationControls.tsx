@@ -1,17 +1,29 @@
 import * as React from 'react';
 
 /**
+ * The **ApplicationMapNavigationControlsProps** interface defines the properties for the ApplicationMapNavigationControls component.
+ * @property zoomIn - Function to zoom in on the application map.
+ * @property zoomOut - Function to zoom out of the application map.
+ * @property fitView - Function to fit the entire application map within the view.
+ */
+type ApplicationMapNavigationControlsProps = {
+  zoomIn: () => void;
+  zoomOut: () => void;
+  fitView: () => void;
+};
+
+/**
  * The **ApplicationMapNavigationControls** provides **interactive controls** for navigating the application map with
  * the following features:
  * - **Zoom in** to focus on a specific area
  * - **Zoom out** to view the entire map
  * - **Fit view** to automatically adjust the zoom level to fit the entire map on the screen
  */
-const ApplicationMapNavigationControls: React.FC<{
-  zoomIn: () => void;
-  zoomOut: () => void;
-  fitView: () => void;
-}> = ({ zoomIn, zoomOut, fitView }) => {
+const ApplicationMapNavigationControls: React.FC<ApplicationMapNavigationControlsProps> = ({
+  zoomIn,
+  zoomOut,
+  fitView,
+}) => {
   return (
     <div className="graph-options-panel">
       <a className="group-nodes-button" title="Fit view" onClick={() => fitView()} aria-label="Fit view">
