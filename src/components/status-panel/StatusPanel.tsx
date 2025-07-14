@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { ConnectionStatus } from '../../hooks/useApplicationSSE';
 import { ApplicationGraph, HealthStatus, SyncStatus, isApplication } from '../../types';
-import { hasCycle as hasCycleFn } from '../../utils/has_cycle';
+import { hasCycle as hasCycleFn } from '../../utils/hasCycle';
 import StatusPanelCycleWarning from './StatusPanelCycleWarning';
 import StatusPanelHealth from './StatusPanelHealth';
 import StatusPanelSSEStatus from './StatusPanelSSEStatus';

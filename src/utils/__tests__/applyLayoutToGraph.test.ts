@@ -1,7 +1,7 @@
 import { DirectedGraph } from 'graphology';
 
 import { RankDirection } from '../../types/graph';
-import { applyLayoutToGraph } from '../graph';
+import { applyLayoutToGraph } from '../applyLayoutToGraph';
 
 type NodeAttributes = {
   width: number;
