@@ -121,7 +121,6 @@ graph TD
 ## Acceptance Criteria & User Stories
 
 - **Acceptance Criteria**:
-
   - Interactive and smooth visualization of all applications and dependencies
   - Real-time filtering by status (health, sync)
   - Direct navigation to the native ArgoCD page

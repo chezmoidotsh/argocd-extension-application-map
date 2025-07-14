@@ -8,12 +8,7 @@
   "packageRules": [
     {
       "groupName": "react",
-      "matchPackageNames": [
-        "/^react$/",
-        "/^react-dom$/",
-        "/^@types/react$/",
-        "/^@types/react-dom$/"
-      ]
+      "matchPackageNames": ["/^react$/", "/^react-dom$/", "/^@types/react$/", "/^@types/react-dom$/"]
     },
     {
       "groupName": "graphology",
