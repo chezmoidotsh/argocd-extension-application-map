@@ -57,4 +57,4 @@ const StatusPanelSSEStatus: React.FC<StatusPanelSSEStatusProps> = ({ status, mes
   );
 };
 
-export default React.memo(StatusPanelSSEStatus);
+export default StatusPanelSSEStatus;

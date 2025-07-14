@@ -32,4 +32,4 @@ const StatusPanelCycleWarning: React.FC = () => (
   </div>
 );
 
-export default React.memo(StatusPanelCycleWarning);
+export default StatusPanelCycleWarning;

@@ -2,7 +2,6 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
-import { ConnectionStatus } from '../../hooks/useApplicationSSE';
 import '../../styles/index.scss';
 import { allStatusScenario, cyclicScenario } from '../.storybook/scenarii';
 import StatusPanel from './StatusPanel';

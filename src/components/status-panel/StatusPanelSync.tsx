@@ -54,4 +54,4 @@ const StatusPanelSync: React.FC<StatusPanelSyncProps> = ({ statuses, onStatusCli
   );
 };
 
-export default React.memo(StatusPanelSync);
+export default StatusPanelSync;

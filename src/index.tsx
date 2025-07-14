@@ -6,7 +6,7 @@ import '@xyflow/react/dist/style.css';
 import { useEffect, useRef } from 'react';
 
 import { StateScreen } from './components/StateScreen';
-import { StatusPanel } from './components/StatusPanel';
+import { StatusPanel } from './components/status-panel';
 import { ApplicationMap } from './components/application-map';
 import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
 import './styles/index.scss';

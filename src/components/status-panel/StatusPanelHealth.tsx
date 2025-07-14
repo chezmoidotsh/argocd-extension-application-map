@@ -60,4 +60,4 @@ const StatusPanelHealth: React.FC<StatusPanelHealthProps> = ({ statuses, onStatu
   );
 };
 
-export default React.memo(StatusPanelHealth);
+export default StatusPanelHealth;
