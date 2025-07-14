@@ -5,7 +5,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useEffect, useRef } from 'react';
 
-import { StateScreen } from './components/StateScreen';
+import { StateScreen } from './components/state-screen';
 import { StatusPanel } from './components/status-panel';
 import { ApplicationMap } from './components/application-map';
 import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
