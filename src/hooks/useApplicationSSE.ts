@@ -57,7 +57,7 @@ interface UseApplicationSSEReturn {
  * @param options - Configuration options for the SSE connection
  * @returns { status } - The current connection status
  */
-export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplicationSSEReturn => {
+export function useApplicationSSE(options: UseApplicationSSEOptions): UseApplicationSSEReturn {
   const { onEvent, endpoint, initialRetryDelay = 1000, maxRetryDelay = 15000, retryMultiplier = 2 } = options;
 
   const [status, setStatus] = useState<ConnectionStatus>(ConnectionStatus.Connecting);
@@ -165,4 +165,4 @@ export const useApplicationSSE = (options: UseApplicationSSEOptions): UseApplica
   }, [endpoint, initialRetryDelay, maxRetryDelay, retryMultiplier]);
 
   return { status, message };
-};
+}

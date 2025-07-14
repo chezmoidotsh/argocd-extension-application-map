@@ -3,58 +3,26 @@ import { DirectedGraph } from 'graphology';
 import * as React from 'react';
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { useEffect, useRef } from 'react';
 
+import { ApplicationMap } from './components/application-map';
 import { StateScreen } from './components/state-screen';
 import { StatusPanel } from './components/status-panel';
-import { ApplicationMap } from './components/application-map';
 import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
+import { useThrottledValue } from './hooks/useThrottledValue';
 import './styles/index.scss';
 import { ArgoApplication, ArgoApplicationSet, isArgoApplication } from './types/argocd';
 import { RankDirection } from './types/graph';
 import { updateGraph } from './utils/graph_manager';
 
-/**
- * Custom hook to throttle value updates
- * @param value The value to throttle
- * @param delay The throttle delay in milliseconds
- * @returns The throttled value
- */
-const useThrottledValue = <T,>(value: T, delay: number): T => {
-  const [throttledValue, setThrottledValue] = React.useState<T>(value);
-  const lastUpdateRef = useRef<number>(0);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    const now = Date.now();
-    const timeSinceLastUpdate = now - lastUpdateRef.current;
-
-    if (timeSinceLastUpdate >= delay) {
-      setThrottledValue(value);
-      lastUpdateRef.current = now;
-    } else {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        setThrottledValue(value);
-        lastUpdateRef.current = Date.now();
-      }, delay - timeSinceLastUpdate);
-    }
-
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [value, delay]);
-
-  return throttledValue;
-};
-
 const Extension: React.FC = () => {
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
+  const { status: sseStatus, message: sseMessage } = useApplicationSSE({
+    onEvent: (event) => {
+      dispatch({ type: 'STREAM_EVENTS_RECEIVED', payload: event });
+    },
+    endpoint: '/api/v1/stream/applications',
+  });
+  console.debug('[Extension] SSE Status:', sseStatus);
 
   const [graph, dispatch] = React.useReducer(
     function (
@@ -81,14 +49,6 @@ const Extension: React.FC = () => {
   React.useEffect(() => {
     graphRef.current = graph.graph;
   }, [graph.graph]);
-
-  const { status: sseStatus, message: sseMessage } = useApplicationSSE({
-    onEvent: (event) => {
-      dispatch({ type: 'STREAM_EVENTS_RECEIVED', payload: event });
-    },
-    endpoint: '/api/v1/stream/applications',
-  });
-  console.debug('[Extension] SSE Status:', sseStatus);
 
   /**
    * Checks if the user is authenticated by calling the ArgoCD API
