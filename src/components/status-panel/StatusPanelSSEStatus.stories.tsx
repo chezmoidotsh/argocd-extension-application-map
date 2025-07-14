@@ -4,7 +4,7 @@ import { ConnectionStatus } from '../../hooks/useApplicationSSE';
 import StatusPanelSSEStatus from './StatusPanelSSEStatus';
 
 const meta: Meta<typeof StatusPanelSSEStatus> = {
-  title: 'Components/StatusPanel/StatusPanelSSEStatus',
+  title: 'Components/Status Panel/SSE Status',
   component: StatusPanelSSEStatus,
 };
 export default meta;

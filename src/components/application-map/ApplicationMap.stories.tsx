@@ -12,7 +12,7 @@ import { allStatusScenario, denseScenario as complexTopology } from '../.storybo
 import Map from './ApplicationMap';
 
 const meta: Meta<typeof Map> = {
-  title: 'Components/Application Map/ApplicationMap',
+  title: 'Components/Application Map/Map',
   component: Map,
   tags: ['autodocs'],
   decorators: [

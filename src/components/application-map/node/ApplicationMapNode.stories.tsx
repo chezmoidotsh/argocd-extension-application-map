@@ -12,7 +12,7 @@ import { NODE_HEIGHT, NODE_WIDTH } from '../ApplicationMap';
 import ApplicationMapNode from './ApplicationMapNode';
 
 const meta: Meta<typeof ApplicationMapNode> = {
-  title: 'Components/Application Map/ApplicationMapNode',
+  title: 'Components/Application Map/Node',
   component: ApplicationMapNode,
   tags: ['autodocs'],
   decorators: [

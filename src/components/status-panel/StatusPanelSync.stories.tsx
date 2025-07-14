@@ -4,7 +4,7 @@ import { SyncStatus } from '../../types';
 import StatusPanelSync from './StatusPanelSync';
 
 const meta: Meta<typeof StatusPanelSync> = {
-  title: 'Components/StatusPanel/StatusPanelSync',
+  title: 'Components/Status Panel/Sync',
   component: StatusPanelSync,
 };
 export default meta;

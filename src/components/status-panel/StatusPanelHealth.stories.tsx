@@ -4,7 +4,7 @@ import { HealthStatus } from '../../types';
 import StatusPanelHealth from './StatusPanelHealth';
 
 const meta: Meta<typeof StatusPanelHealth> = {
-  title: 'Components/StatusPanel/StatusPanelHealth',
+  title: 'Components/Status Panel/Health',
   component: StatusPanelHealth,
 };
 export default meta;

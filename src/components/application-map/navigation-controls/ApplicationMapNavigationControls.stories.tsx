@@ -9,7 +9,7 @@ import '../../../styles/index.scss';
 import ApplicationMapNavigationControls from './ApplicationMapNavigationControls';
 
 const meta: Meta<typeof ApplicationMapNavigationControls> = {
-  title: 'Components/Application Map/ApplicationMapNavigationControls',
+  title: 'Components/Application Map/Navigation Controls',
   component: ApplicationMapNavigationControls,
   tags: ['autodocs'],
   decorators: [

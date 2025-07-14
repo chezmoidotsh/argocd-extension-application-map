@@ -7,7 +7,7 @@ import { allStatusScenario, cyclicScenario } from '../.storybook/scenarii';
 import StatusPanel from './StatusPanel';
 
 const meta: Meta<typeof StatusPanel> = {
-  title: 'Components/StatusPanel',
+  title: 'Components/Status Panel',
   component: StatusPanel,
   tags: ['autodocs'],
   argTypes: {

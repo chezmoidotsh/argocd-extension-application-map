@@ -5,7 +5,7 @@ import { SyncStatus } from '../../types/application';
 import IconStatusSync from './IconStatusSync';
 
 const meta: Meta<typeof IconStatusSync> = {
-  title: 'Icons/IconStatusSync',
+  title: 'Icons/Status Sync',
   component: IconStatusSync,
   tags: ['autodocs'],
   argTypes: {
