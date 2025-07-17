@@ -1,60 +1,40 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import React from 'react';
+
 import '../../styles/index.scss';
 import { HealthStatus } from '../../types/application';
 import IconStatusHealth from './IconStatusHealth';
 
 const meta: Meta<typeof IconStatusHealth> = {
-  title: 'Icons/Status Health',
+  title: 'Icons/Health Status',
   component: IconStatusHealth,
   tags: ['autodocs'],
   argTypes: {
-    status: {
-      control: 'select',
-      options: Object.values(HealthStatus),
-      table: {
-        defaultValue: { summary: HealthStatus.Unknown },
-      },
-    },
+    status: { table: { disable: true } },
   },
 };
 export default meta;
 type Story = StoryObj<typeof IconStatusHealth>;
 
-export const Healthy: Story = { args: { status: HealthStatus.Healthy } };
-export const Degraded: Story = { args: { status: HealthStatus.Degraded } };
-export const Progressing: Story = { args: { status: HealthStatus.Progressing } };
-export const Suspended: Story = { args: { status: HealthStatus.Suspended } };
-export const Missing: Story = { args: { status: HealthStatus.Missing } };
-export const Unknown: Story = { args: { status: HealthStatus.Unknown } };
+const rowStyle = { display: 'flex', gap: 16, alignItems: 'center', padding: 16 };
 
-export const HealthyDark: Story = {
-  ...Healthy,
-  name: 'Healthy (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
+export const AllLight: Story = {
+  render: () => (
+    <div style={rowStyle}>
+      {Object.values(HealthStatus).map((status) => (
+        <div key={status} style={{ textAlign: 'center' }}>
+          <IconStatusHealth status={status} />
+          <div style={{ fontSize: 12 }}>{status}</div>
+        </div>
+      ))}
+    </div>
+  ),
+  name: 'All icons (light)',
 };
-export const DegradedDark: Story = {
-  ...Degraded,
-  name: 'Degraded (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
-};
-export const ProgressingDark: Story = {
-  ...Progressing,
-  name: 'Progressing (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
-};
-export const SuspendedDark: Story = {
-  ...Suspended,
-  name: 'Suspended (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
-};
-export const MissingDark: Story = {
-  ...Missing,
-  name: 'Missing (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
-};
-export const UnknownDark: Story = {
-  ...Unknown,
-  name: 'Unknown (dark)',
+
+export const AllDark: Story = {
+  ...AllLight,
+  name: 'All icons (dark)',
   parameters: { backgrounds: { default: 'dark' } },
 };

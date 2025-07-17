@@ -1,39 +1,41 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import React from 'react';
+
 import '../../styles/index.scss';
 import { SyncStatus } from '../../types/application';
 import IconStatusSync from './IconStatusSync';
 
 const meta: Meta<typeof IconStatusSync> = {
-  title: 'Icons/Status Sync',
+  title: 'Icons/Sync Status',
   component: IconStatusSync,
   tags: ['autodocs'],
   argTypes: {
-    status: {
-      control: 'select',
-      options: Object.values(SyncStatus),
-      table: {
-        defaultValue: { summary: SyncStatus.Unknown },
-      },
-    },
+    status: { table: { disable: true } },
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof IconStatusSync>;
 
-export const Synced: Story = { args: { status: SyncStatus.Synced } };
-export const OutOfSync: Story = { args: { status: SyncStatus.OutOfSync } };
-export const Unknown: Story = { args: { status: SyncStatus.Unknown } };
+const rowStyle = { display: 'flex', gap: 16, alignItems: 'center', padding: 16 };
 
-export const SyncedDark: Story = { ...Synced, name: 'Synced (dark)', parameters: { backgrounds: { default: 'dark' } } };
-export const OutOfSyncDark: Story = {
-  ...OutOfSync,
-  name: 'OutOfSync (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
+export const AllLight: Story = {
+  render: () => (
+    <div style={rowStyle}>
+      {Object.values(SyncStatus).map((status) => (
+        <div key={status} style={{ textAlign: 'center' }}>
+          <IconStatusSync status={status} />
+          <div style={{ fontSize: 12 }}>{status}</div>
+        </div>
+      ))}
+    </div>
+  ),
+  name: 'All icons (light)',
 };
-export const UnknownDark: Story = {
-  ...Unknown,
-  name: 'Unknown (dark)',
+
+export const AllDark: Story = {
+  ...AllLight,
+  name: 'All icons (dark)',
   parameters: { backgrounds: { default: 'dark' } },
 };

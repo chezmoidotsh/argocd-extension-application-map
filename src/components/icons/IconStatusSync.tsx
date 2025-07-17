@@ -3,44 +3,30 @@ import React from 'react';
 import { SyncStatus } from '../../types';
 
 /**
- * Mapping of sync statuses to their corresponding icons, colors, and titles.
+ * Mapping of sync statuses to their corresponding JSX elements.
+ *
+ * NOTE: This constant guarantees that all sync statuses are covered.
  */
-const iconMappings: {
-  [K in SyncStatus]: {
-    readonly color: string;
-    readonly icon: string;
-    readonly title?: string;
-  };
+const icons: {
+  [K in SyncStatus]: JSX.Element;
 } = {
-  [SyncStatus.Synced]: {
-    color: '#18be94',
-    icon: 'fa-check-circle',
-    title: 'Synced',
-  },
-  [SyncStatus.OutOfSync]: {
-    color: '#f4c030',
-    icon: 'fa-arrow-alt-circle-up',
-    title: 'OutOfSync',
-  },
-  [SyncStatus.Unknown]: {
-    color: '#ccd6dd',
-    icon: 'fa-circle-notch fa-spin',
-  },
+  // Synced icons representing an application that is in sync with its desired state.
+  [SyncStatus.Synced]: <i className="fa fa-check-circle" style={{ color: 'var(--argo-sync-synced)' }} title="Synced" />,
+
+  // OutOfSync icons representing an application that is not in sync with its desired state.
+  [SyncStatus.OutOfSync]: (
+    <i className="fa fa-arrow-alt-circle-up" style={{ color: 'var(--argo-sync-outofsync)' }} title="OutOfSync" />
+  ),
+
+  // Unknown icons representing an application whose sync status is unknown.
+  [SyncStatus.Unknown]: (
+    <i className="fa fa-circle-notch fa-spin" style={{ color: 'var(--argo-sync-unknown)' }} title="Unknown" />
+  ),
 } as const;
 
 /**
  * The **IconStatusSync** displays a **visual indicator** of an application's synchronization status.
  */
-const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({ status }) => {
-  const { icon, color, title } = iconMappings[status] || iconMappings[SyncStatus.Unknown];
-  return (
-    <i
-      qe-id="utils-sync-status-title"
-      title={title}
-      className={`fa ${icon} utils-sync-status-icon`}
-      style={{ color, marginRight: 4 }}
-    ></i>
-  );
-};
+const IconStatusSync: React.FC<{ status?: SyncStatus }> = ({ status }) => icons[status] || icons[SyncStatus.Unknown];
 
 export default IconStatusSync;
