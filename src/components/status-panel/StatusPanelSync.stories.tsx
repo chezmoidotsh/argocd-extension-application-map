@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import '../../styles/index.scss';
 import { SyncStatus } from '../../types';
 import StatusPanelSync from './StatusPanelSync';
 

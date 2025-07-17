@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import '../../styles/index.scss';
 import { HealthStatus } from '../../types';
 import StatusPanelHealth from './StatusPanelHealth';
 

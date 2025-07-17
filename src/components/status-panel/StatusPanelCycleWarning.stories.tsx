@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
+import '../../styles/index.scss';
 import StatusPanelCycleWarning from './StatusPanelCycleWarning';
 
 const meta: Meta<typeof StatusPanelCycleWarning> = {
