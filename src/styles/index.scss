@@ -1,155 +1,293 @@
-// -----------------------------------------------------------------------------
-// Global Variables
-// -----------------------------------------------------------------------------
+//
+// Main stylesheet for the ArgoCD Overview Extension.
+// This file defines global variables and styles for the custom components
+// used in the extension, as well as overrides for some default ArgoCD styles.
+//
 
-// Layout
-$container-height: calc(100vh - 100px);
+// =============================================================================
+// ROOT VARIABLES
+// =============================================================================
+// Defines the color palette and other global variables for the extension.
+// These variables are used throughout the stylesheet for consistency.
+// =============================================================================
 
-// Colors
-$color-warning-bg: #fff8e1;
-$color-warning-border: #f4c030;
-$color-warning-text: #5c4c00;
-$color-control-text: #6d7f8b;
-$color-control-hover-bg: #d1d5d9;
-$color-separator: #dee6eb;
-$color-secondary-text: #666666;
-$color-panel-title: #6d7f8b;
-$color-selection: #3872e0cc; // rgba(56, 114, 224, 0.8) as hex with alpha
-$color-white: #ffffff;
-$color-as-icon-bg: #8fa4b1;
+:root {
+  // Layout
+  --layout-container-height: calc(100vh - 100px);
 
-// -----------------------------------------------------------------------------
-// Main Layout
-// -----------------------------------------------------------------------------
+  // Generic Colors
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-primary: #61afef;
+  --color-success: #18be58;
+  --color-warning: #f4c030;
+  --color-danger: #e96d76;
+  --color-info: #0d84ff;
+  --color-disabled: #bdbdbd;
+
+  // Application Status Colors
+  // These colors are used to indicate the health and sync status of applications.
+  --app-status-degraded: var(--color-danger);
+  --app-status-healthy: var(--color-success);
+  --app-status-missing: var(--color-warning);
+  --app-status-outofsync: var(--color-warning);
+  --app-status-progressing: var(--color-info);
+  --app-status-suspended: var(--color-warning);
+  --app-status-synced: var(--color-success);
+  --app-status-unknown: var(--color-disabled);
+
+  // SSE Connection Status Colors
+  // These colors are used for the SSE connection status badge.
+  --connection-status-closed-text: #e53935;
+  --connection-status-closed: #e06c75;
+  --connection-status-connected-text: #4caf50;
+  --connection-status-connected: #98c379;
+  --connection-status-connecting-text: #e7ac16;
+  --connection-status-connecting: #e5c07b;
+  --connection-status-error-text: #ffffff;
+  --connection-status-error: #bb2a33;
+  --connection-status-retrying-text: #1976d2;
+  --connection-status-retrying: #61afef;
+  --connection-status-unknown-text: #808080;
+  --connection-status-unknown: #abb2bf;
+}
+
+// =============================================================================
+// APPLICATION MAP
+// =============================================================================
+// This section contains the styles for the main application map component,
+// which is the core feature of this extension.
+// =============================================================================
 
 .argocd-application-map {
-  // ---------------------------------------------------------------------------
-  // Main container for the application map
-  // ---------------------------------------------------------------------------
+  //
+  // Container
+  //
+  // The main container for the application map, which holds the graph and other UI elements.
+  //
   &__container {
-    height: $container-height;
-    width: 100%;
     box-sizing: border-box;
+    height: var(--layout-container-height);
     overflow: hidden;
+    width: 100%;
 
-    // ---------------------------------------------------------------------------
-    // Graph options panel
-    // ---------------------------------------------------------------------------
+    // The panel containing graph options (e.g., layout direction).
     & .graph-options-panel {
-      z-index: 5;
       margin: 10px 0 0 10px;
+      z-index: 5;
     }
   }
 
-  // ---------------------------------------------------------------------------
+  //
   // Status Panel
-  // ---------------------------------------------------------------------------
+  //
+  // A panel that displays various status information, such as connection status and warnings.
+  //
   &__status-panel {
+    // Title of the status panel sections.
     &__title {
       line-height: 19.5px;
-      margin-bottom: 3px;
+      margin-bottom: 0.3em;
 
       & label {
         font-size: 12px;
         font-weight: 600;
-        .theme-light & {
-          color: $color-panel-title;
-        }
+        color: rgb(109, 127, 139);
       }
     }
 
-    &__warning {
-      &-box {
-        margin-top: 8px;
-        padding: 8px 12px;
-        background-color: $color-warning-bg;
-        border-left: 4px solid $color-warning-border;
+    //
+    // Connection Status Badge
+    //
+    // A badge that indicates the status of the Server-Sent Events (SSE) connection.
+    // It is initially small, showing only an icon, and expands on hover to reveal the status text.
+    //
+    &__connection-status-badge {
+      align-items: center;
+      border-radius: 20px;
+      border: 1px solid;
+      cursor: pointer;
+      display: inline-flex;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 16px;
+      margin: 5px 5px 0 0;
+      max-width: 20px; // Collapsed by default
+      overflow: hidden;
+      padding: 1px 5px 1px 2px;
+      transition: all 0.5s ease-out;
+
+      // Expands the badge on hover to show the full text.
+      &:hover {
+        max-width: 200px;
+        padding-right: 8px;
       }
 
-      &-text {
-        font-size: 12px;
-        color: $color-warning-text;
+      // The text description of the status, hidden by default.
+      & > span[data-status-description] {
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.25s ease 0.1s;
+        overflow: hidden;
       }
 
-      &-header {
-        margin-bottom: 4px;
+      // Fades in the status description on hover.
+      &:hover > span[data-status-description] {
+        opacity: 1;
       }
 
-      &-icon {
-        margin-right: 6px;
+      // Generates modifier classes for each connection status using the defined variables.
+      // e.g., .argocd-application-map__connection-status-badge--connected
+      @each $status in connected, connecting, closed, retrying, unknown {
+        &--#{$status} {
+          background-color: color-mix(in srgb, var(--connection-status-#{$status}) 25%, white);
+          border-color: var(--connection-status-#{$status});
+          color: var(--connection-status-#{$status}-text);
+        }
       }
 
-      &-list {
-        margin: 4px 0 4px 20px;
-        padding: 0;
+      // Special case for the 'error' status.
+      &--error {
+        background-color: var(--connection-status-closed);
+        border-color: var(--connection-status-closed);
+        color: var(--connection-status-error-text);
       }
 
-      &-footer {
-        font-size: 11px;
-        color: $color-secondary-text;
-        margin-top: 4px;
+      // The icon inside the badge.
+      &__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        font-size: 8px;
+        margin-right: 4px;
+        position: relative;
+        border: 1px solid transparent;
+        flex-shrink: 0;
+        transition: border-color 0.3s ease-out;
       }
+
+      // Adds a border to the icon on hover for better visibility.
+      &:hover &__icon {
+        border: 1px solid currentColor;
+      }
+    }
+
+    //
+    // Warning Box
+    //
+    // A styled container for displaying warnings, such as cyclical dependencies.
+    //
+    &__warning-box {
+      background-color: #fff8e1;
+      border-left: 4px solid #fbc02d;
+      margin-top: 8px;
+      padding: 8px 12px;
+    }
+
+    &__warning-text {
+      font-size: 12px;
+      color: #5c4c00;
+    }
+
+    &__warning-header {
+      margin-bottom: 4px;
+    }
+
+    &__warning-icon {
+      margin-right: 6px;
+    }
+
+    &__warning-list {
+      margin: 4px 0 4px 20px;
+      padding: 0;
+    }
+
+    &__warning-footer {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Node selection states
-  // ---------------------------------------------------------------------------
+  //
+  // Status Icon Colors
+  //
+  // These loops generate utility classes to color icons based on different statuses.
+  // This makes it easy to apply consistent status colors throughout the component.
+  //
+
+  // Generates color classes for connection status icons.
+  // e.g., .argocd-application-map__connection-status-icon--connected
+  @each $status in connected, connecting, closed, error, retrying, unknown {
+    &__connection-status-icon--#{$status} {
+      color: var(--connection-status-#{$status}-text);
+    }
+  }
+
+  // Generates color classes for application health status icons.
+  // e.g., .argocd-application-map__health-status-icon--healthy
+  @each $status in healthy, suspended, degraded, progressing, missing, unknown {
+    &__health-status-icon--#{$status} {
+      color: var(--app-status-#{$status});
+    }
+  }
+
+  // Generates color classes for application sync status icons.
+  // e.g., .argocd-application-map__sync-status-icon--synced
+  @each $status in synced, outofsync, unknown {
+    &__sync-status-icon--#{$status} {
+      color: var(--app-status-#{$status});
+    }
+  }
+}
+
+// =============================================================================
+// ARGO CD OVERRIDES
+// =============================================================================
+// This section contains style overrides for the official Argo CD
+// 'application-resource-tree' component. These customizations are necessary
+// to integrate the extension's features, such as highlighting unselected nodes.
+// =============================================================================
+
+.application-resource-tree {
+  //
+  // Node Styles
+  //
+  // Overrides the styles for nodes within the resource tree to control their
+  // appearance based on selection state.
+  //
   &__node {
+    // Default state for all nodes.
     &--default {
       opacity: 1;
     }
+
+    // Style for the currently selected node.
     &--selected {
       opacity: 1;
       position: relative;
     }
+
+    // Style for nodes that are not selected. They are faded out to
+    // emphasize the selected node and its direct relationships.
     &--unselected {
       opacity: 0.25;
     }
   }
 
-  // ---------------------------------------------------------------------------
-  // Edge selection states
-  // ---------------------------------------------------------------------------
-  &__edge {
-    &--default {
-      stroke: #777777;
-      stroke-width: 1;
-      stroke-dasharray: 3, 3;
-      stroke-opacity: 1;
-    }
-    &--selected {
-      stroke: #777777;
-      stroke-width: 1;
-      stroke-dasharray: none;
-      stroke-opacity: 1;
-    }
-    &--unselected {
-      stroke: #777777;
-      stroke-width: 1;
-      stroke-dasharray: 3, 3;
-      stroke-opacity: 0.25;
-    }
-    &__marker {
-      &--default {
-        opacity: 1;
-      }
-      &--selected {
-        opacity: 1;
-      }
-      &--unselected {
-        opacity: 0.5;
-      }
-    }
-  }
-}
-
-.application-resource-tree {
+  //
+  // Node Kind Icon
+  //
+  // Customizes the appearance of the resource kind icon (e.g., 'S' for Service).
+  //
   &__node-kind-icon {
-    span.as-icon {
-      background: $color-as-icon-bg;
+    & span.as-icon {
+      background: #8fa4b1;
       border-radius: 50%;
-      color: white;
+      color: #ffffff;
       display: inline-block;
       font-size: 1em;
       font-weight: 400;

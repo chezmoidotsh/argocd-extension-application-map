@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { HealthStatus, SyncStatus } from '../../types/application';
-import { ConnectionStatus, SSEEvent, useApplicationSSE } from '../useApplicationSSE';
+import { ConnectionStatus, HealthStatus, SSEEvent, SyncStatus } from '../../types';
+import { useApplicationSSE } from '../useApplicationSSE';
 
 /**
  * Mock EventSource implementation for testing
@@ -125,7 +125,7 @@ describe('useApplicationSSE', () => {
         instance.simulateOpen();
       });
 
-      expect(result.current.status).toBe(ConnectionStatus.Open);
+      expect(result.current.status).toBe(ConnectionStatus.Connected);
     });
 
     it('should call onEvent callback when receiving messages', async () => {
@@ -184,9 +184,7 @@ describe('useApplicationSSE', () => {
         useApplicationSSE({
           onEvent: jest.fn(),
           endpoint: '/api/v1/stream/applications',
-          initialRetryDelay: 100,
-          maxRetryDelay: 1000,
-          retryMultiplier: 2,
+          expBackoff: { initial: 100, max: 1000, multiplier: 2 },
         })
       );
 
@@ -227,9 +225,7 @@ describe('useApplicationSSE', () => {
         useApplicationSSE({
           onEvent: jest.fn(),
           endpoint: '/api/v1/stream/applications',
-          initialRetryDelay: 500,
-          maxRetryDelay: 2000,
-          retryMultiplier: 3,
+          expBackoff: { initial: 500, max: 2000, multiplier: 3 },
         })
       );
 
@@ -335,9 +331,7 @@ describe('useApplicationSSE', () => {
         useApplicationSSE({
           onEvent: jest.fn(),
           endpoint: '/api/v1/stream/applications',
-          initialRetryDelay: 100,
-          maxRetryDelay: 1000,
-          retryMultiplier: 2,
+          expBackoff: { initial: 100, max: 1000, multiplier: 2 },
         })
       );
 

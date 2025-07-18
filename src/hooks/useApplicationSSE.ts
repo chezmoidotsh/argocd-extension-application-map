@@ -1,53 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Application } from '../types/application';
-
-/**
- * Status of the SSE connection
- */
-export enum ConnectionStatus {
-  Closed = 'CLOSED',
-  Connecting = 'CONNECTING',
-  Error = 'ERROR',
-  Open = 'OPEN',
-  Retrying = 'RETRYING',
-}
-
-/**
- * Represents the top-level event structure from the ArgoCD SSE stream.
- * @property {Object} result - The result of the event
- * @property {string} result.type - The type of the event
- * @property {ArgoApplication} result.application - The application object
- */
-export interface SSEEvent {
-  result: {
-    type: 'ADDED' | 'MODIFIED' | 'DELETED';
-    application: Application;
-  };
-}
+import { ConnectionStatus, ConnectionStatusDetails, SSEEvent } from '../types';
 
 /**
  * Options for configuring the SSE connection and behavior
  * @property onEvent - Callback for each SSE event
  * @property endpoint - SSE endpoint URL (default: '/api/v1/stream/applications')
- * @property initialRetryDelay - Initial retry delay in ms (default: 1000)
- * @property maxRetryDelay - Maximum retry delay in ms (default: 15000)
- * @property retryMultiplier - Exponential backoff multiplier (default: 2)
+ * @property expBackoff - Exponential backoff configuration for reconnection attempts
+ * @property expBackoff.initial - Initial delay in ms before first retry (default: 1000)
+ * @property expBackoff.max - Maximum delay in ms for retries (default: 15000)
+ * @property expBackoff.multiplier - Multiplier for exponential backoff (default: 2)
+ * @property maxRetryCount - Maximum number of retry attempts before giving up (default: 23 or ~5 minutes)
  */
 export interface UseApplicationSSEOptions {
   onEvent: (event: SSEEvent) => void;
   endpoint: string;
-  initialRetryDelay?: number;
-  maxRetryDelay?: number;
-  retryMultiplier?: number;
-}
-
-/**
- * Return type of the useApplicationSSE hook
- */
-interface UseApplicationSSEReturn {
-  status: ConnectionStatus;
-  message: string;
+  expBackoff?: { initial: number; max: number; multiplier?: number };
+  maxRetryCount?: number;
 }
 
 /**
@@ -55,16 +24,25 @@ interface UseApplicationSSEReturn {
  * Handles automatic reconnection with exponential backoff and exposes connection status.
  *
  * @param options - Configuration options for the SSE connection
- * @returns { status } - The current connection status
+ * @return Connection status information including current status and additional details
  */
-export function useApplicationSSE(options: UseApplicationSSEOptions): UseApplicationSSEReturn {
-  const { onEvent, endpoint, initialRetryDelay = 1000, maxRetryDelay = 15000, retryMultiplier = 2 } = options;
+export function useApplicationSSE(options: UseApplicationSSEOptions): ConnectionStatusDetails {
+  const {
+    onEvent,
+    endpoint,
+    expBackoff: delay = { initial: 1000, max: 15000, multiplier: 2 },
+    maxRetryCount = 23,
+  } = options;
 
-  const [status, setStatus] = useState<ConnectionStatus>(ConnectionStatus.Connecting);
-  const [message, setMessage] = useState<string>('Connecting to ArgoCD API...');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatusDetails>({
+    status: ConnectionStatus.Unknown,
+  });
 
   // Stable ref for onEvent to avoid unnecessary reconnections
   const onEventRef = useRef(onEvent);
+  useEffect(() => {
+    onEventRef.current = onEvent;
+  }, [onEvent]);
 
   // Single ref for managing connection state
   const connectionRef = useRef<{
@@ -76,11 +54,6 @@ export function useApplicationSSE(options: UseApplicationSSEOptions): UseApplica
     retryTimeout: null,
     retryCount: 0,
   });
-
-  // Keep onEvent ref up to date
-  useEffect(() => {
-    onEventRef.current = onEvent;
-  }, [onEvent]);
 
   useEffect(() => {
     /**
@@ -105,7 +78,7 @@ export function useApplicationSSE(options: UseApplicationSSEOptions): UseApplica
      * @returns Delay in milliseconds
      */
     function getRetryDelay(retryCount: number): number {
-      return Math.min(initialRetryDelay * Math.pow(retryMultiplier, retryCount), maxRetryDelay);
+      return Math.min(delay.initial * Math.pow(delay.multiplier || 2, retryCount), delay.max);
     }
 
     /**
@@ -116,41 +89,45 @@ export function useApplicationSSE(options: UseApplicationSSEOptions): UseApplica
 
       const connection = connectionRef.current;
       console.debug(`[SSE] Connecting (attempt #${connection.retryCount + 1})...`);
-      setStatus(ConnectionStatus.Connecting);
-      setMessage(`Connecting to ArgoCD API (attempt #${connection.retryCount + 1})...`);
+      setConnectionStatus((prev) => ({
+        // NOTE: Connecting occurs only once, during the first connection to the SSE endpoint
+        status: prev.status === ConnectionStatus.Retrying ? ConnectionStatus.Retrying : ConnectionStatus.Connecting,
+      }));
 
       const eventSource = new EventSource(endpoint, { withCredentials: true });
       connection.eventSource = eventSource;
 
       eventSource.onopen = () => {
         console.debug('[SSE] Connection established');
-        setStatus(ConnectionStatus.Open);
-        setMessage('Connected to ArgoCD API');
+        setConnectionStatus({ status: ConnectionStatus.Connected, since: new Date() });
         connection.retryCount = 0;
       };
 
       eventSource.onerror = (error) => {
         console.error('[SSE] Connection failed:', error);
-        setStatus(ConnectionStatus.Closed);
-        setMessage('Connection to ArgoCD API failed');
+        if (connection.retryCount >= maxRetryCount) {
+          console.warn(`[SSE] Maximum retry attempts reached (${maxRetryCount}), giving up`);
+          setConnectionStatus({ status: ConnectionStatus.Closed, since: new Date() });
+          connection.eventSource?.close();
+          connection.eventSource = null;
+          return;
+        }
 
         const retryDelay = getRetryDelay(connection.retryCount);
         console.debug(`[SSE] Retrying in ${retryDelay}ms`);
-        setStatus(ConnectionStatus.Retrying);
-        setMessage(`Retrying at ${new Date(Date.now() + retryDelay).toLocaleTimeString()}...`);
+        setConnectionStatus({ status: ConnectionStatus.Retrying });
 
         connection.retryCount += 1;
-        connection.retryTimeout = setTimeout(connect, retryDelay) as unknown as number;
+        connection.retryTimeout = window.setTimeout(connect, retryDelay);
       };
 
       eventSource.onmessage = (event) => {
         try {
           const data: SSEEvent = JSON.parse(event.data);
-          onEventRef.current?.(data); // Use stable ref
+          onEventRef.current?.(data);
         } catch (error) {
           console.error('[SSE] Failed to parse SSE event:', error, event.data);
-          setStatus(ConnectionStatus.Error);
-          setMessage(`Failed to parse SSE event: ${error}`);
+          setConnectionStatus({ status: ConnectionStatus.Error });
         }
       };
     }
@@ -162,7 +139,7 @@ export function useApplicationSSE(options: UseApplicationSSEOptions): UseApplica
       console.debug('[SSE] Hook unmounting, cleaning up');
       cleanup();
     };
-  }, [endpoint, initialRetryDelay, maxRetryDelay, retryMultiplier]);
+  }, [endpoint, delay.initial, delay.max, delay.multiplier, maxRetryCount]);
 
-  return { status, message };
+  return connectionStatus;
 }

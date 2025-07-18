@@ -1,3 +1,3 @@
 export { default as IconStatusHealth } from './IconStatusHealth';
-export { default as IconStatusSSE } from './IconStatusSSE';
+export { default as IconStatusConnection } from './IconStatusConnection';
 export { default as IconStatusSync } from './IconStatusSync';

@@ -7,11 +7,11 @@ import '@xyflow/react/dist/style.css';
 import { ApplicationMap } from './components/application-map';
 import { StateScreen } from './components/state-screen';
 import { StatusPanel } from './components/status-panel';
-import { ConnectionStatus, SSEEvent, useApplicationSSE } from './hooks/useApplicationSSE';
+import { useApplicationSSE } from './hooks/useApplicationSSE';
 import { useThrottledValue } from './hooks/useThrottledValue';
 import './styles/index.scss';
-import { Application, ApplicationSet, isApplication } from './types/application';
-import { RankDirection } from './types/rankdirection';
+import { Application, ApplicationSet, isApplication } from './types';
+import { ConnectionStatus, RankDirection, SSEEvent } from './types';
 import { processSSEEvent } from './utils/processSSEEvent';
 
 /**
@@ -57,7 +57,7 @@ const Extension: React.FC = () => {
   });
 
   const [selectedNodes, setSelectedNodes] = React.useState<string[]>([]);
-  const { status: sseStatus, message: sseMessage } = useApplicationSSE({
+  const connectionStatus = useApplicationSSE({
     onEvent: (event) => dispatch({ type: 'STREAM_EVENTS_RECEIVED', payload: event }),
     endpoint: '/api/v1/stream/applications',
   });
@@ -73,18 +73,18 @@ const Extension: React.FC = () => {
 
   // Redirect to login if SSE error and not authenticated
   React.useEffect(() => {
-    if (sseStatus === ConnectionStatus.Error) {
+    if (connectionStatus.status === ConnectionStatus.Error) {
       checkAuth().then((isAuth) => {
         if (!isAuth) {
           window.location.href = `/login?return_url=${encodeURIComponent(window.location.href)}`;
         }
       });
     }
-  }, [sseStatus]);
+  }, [connectionStatus.status]);
 
   // Handlers
   const onPaneClick = React.useCallback(() => setSelectedNodes([]), []);
-  const onApplicationClick = React.useCallback((event: React.MouseEvent, applicationId: string) => {
+  const onApplicationClick = React.useCallback((_: React.MouseEvent, applicationId: string) => {
     const application = graphRef.current.getNodeAttributes(applicationId);
     if (isApplication(application)) {
       window.location.href = `/applications/${application.metadata.namespace}/${application.metadata.name}?view=tree`;
@@ -104,12 +104,7 @@ const Extension: React.FC = () => {
 
   return (
     <div className="argocd-application-map__container application-details">
-      <StatusPanel
-        graph={graph.graph}
-        onStatusClicked={setSelectedNodes}
-        sseStatus={sseStatus}
-        sseMessage={sseMessage}
-      />
+      <StatusPanel graph={graph.graph} onStatusClicked={setSelectedNodes} connectionStatus={connectionStatus} />
       <ReactFlowProvider>
         <ApplicationMap
           graph={throttledGraph}
