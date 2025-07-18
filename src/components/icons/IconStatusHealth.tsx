@@ -13,8 +13,7 @@ const icons: {
   // Healthy icons representing an application that is in good health.
   [HealthStatus.Healthy]: (
     <i
-      className="fa fa-heart utils-health-status-icon"
-      style={{ color: 'var(--argo-health-healthy)' }}
+      className="fa fa-heart utils-health-status-icon argocd-application-map__health-status-icon--healthy"
       title="Healthy"
     />
   ),
@@ -22,8 +21,7 @@ const icons: {
   // Suspended icons representing an application that is temporarily inactive (manually paused).
   [HealthStatus.Suspended]: (
     <i
-      className="fa fa-pause-circle utils-health-status-icon"
-      style={{ color: 'var(--argo-health-suspended)' }}
+      className="fa fa-pause-circle utils-health-status-icon argocd-application-map__health-status-icon--suspended"
       title="Suspended"
     />
   ),
@@ -31,8 +29,7 @@ const icons: {
   // Degraded icons representing an application that is experiencing issues but is still operational.
   [HealthStatus.Degraded]: (
     <i
-      className="fa fa-heart-broken utils-health-status-icon"
-      style={{ color: 'var(--argo-health-degraded)' }}
+      className="fa fa-heart-broken utils-health-status-icon argocd-application-map__health-status-icon--degraded"
       title="Degraded"
     />
   ),
@@ -40,8 +37,7 @@ const icons: {
   // Progressing icons representing an application that is currently undergoing changes or updates.
   [HealthStatus.Progressing]: (
     <i
-      className="fa fa-circle-notch fa-spin utils-health-status-icon"
-      style={{ color: 'var(--argo-health-progressing)' }}
+      className="fa fa-circle-notch fa-spin utils-health-status-icon argocd-application-map__health-status-icon--progressing"
       title="Progressing"
     />
   ),
@@ -49,8 +45,7 @@ const icons: {
   // Missing icons representing an application that is not found or is missing.
   [HealthStatus.Missing]: (
     <i
-      className="fa fa-ghost utils-health-status-icon"
-      style={{ color: 'var(--argo-health-missing)' }}
+      className="fa fa-ghost utils-health-status-icon argocd-application-map__health-status-icon--missing"
       title="Missing"
     />
   ),
@@ -58,8 +53,7 @@ const icons: {
   // Unknown icons representing an application whose health status is not determined or is unknown.
   [HealthStatus.Unknown]: (
     <i
-      className="fa fa-question-circle utils-health-status-icon"
-      style={{ color: 'var(--argo-health-unknown)' }}
+      className="fa fa-question-circle utils-health-status-icon argocd-application-map__health-status-icon--unknown"
       title="Unknown"
     />
   ),

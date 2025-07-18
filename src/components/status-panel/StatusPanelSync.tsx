@@ -27,10 +27,8 @@ const StatusPanelSync: React.FC<StatusPanelSyncProps> = ({ statuses, onStatusCli
         <label>{statuses.length === 1 ? 'APP SYNC' : 'APPS SYNC'}</label>
       </div>
       <div className="application-status-panel__item-value">
-        <div className="application-status-panel__icon">
-          <IconStatusSync status={globalStatus} />
-        </div>
-        <div className="application-status-panel__text">&nbsp;{globalStatus}</div>
+        <IconStatusSync status={globalStatus} />
+        &nbsp;{globalStatus}
       </div>
       {Object.entries(register).map(
         ([title, count]) =>
@@ -40,7 +38,6 @@ const StatusPanelSync: React.FC<StatusPanelSyncProps> = ({ statuses, onStatusCli
                 <IconStatusSync status={title as SyncStatus} />
               </div>
               <div
-                className="application-status-panel__text"
                 onClick={() => onStatusClick(title as SyncStatus)}
                 data-testid={`sync-status-${title.toLocaleLowerCase()}-row`}
                 style={{ cursor: 'pointer' }}

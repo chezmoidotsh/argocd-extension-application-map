@@ -33,10 +33,8 @@ const StatusPanelHealth: React.FC<StatusPanelHealthProps> = ({ statuses, onStatu
         <label>{statuses.length === 1 ? 'APP HEALTH' : 'APPS HEALTH'}</label>
       </div>
       <div className="application-status-panel__item-value">
-        <div className="application-status-panel__icon">
-          <IconStatusHealth status={globalStatus} />
-        </div>
-        <div className="application-status-panel__text">&nbsp;{globalStatus}</div>
+        <IconStatusHealth status={globalStatus} />
+        &nbsp;{globalStatus}
       </div>
       {Object.entries(register).map(
         ([title, count]) =>
@@ -46,7 +44,6 @@ const StatusPanelHealth: React.FC<StatusPanelHealthProps> = ({ statuses, onStatu
                 <IconStatusHealth status={title as HealthStatus} />
               </div>
               <div
-                className="application-status-panel__text"
                 onClick={() => onStatusClick(title as HealthStatus)}
                 data-testid={`health-status-${title.toLocaleLowerCase()}-row`}
                 style={{ cursor: 'pointer' }}

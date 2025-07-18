@@ -14,7 +14,7 @@
     "react-dom": "^18.0.0"
   },
   "scripts": {
-    "build-storybook": "storybook build",
+    "build-storybook": "NODE_ENV=development storybook build",
     "build:dev": "NODE_ENV=development pnpm webpack",
     "build:enpack": "tar -C dist -cvf dist/extension-application-map.tar resources",
     "build:prod": "NODE_ENV=production pnpm webpack",
@@ -22,11 +22,11 @@
     "dev": "NODE_ENV=development pnpm webpack:watch",
     "preinstall": "npx only-allow pnpm",
     "start": "pnpm dev",
-    "storybook": "storybook dev -p 6006",
-    "test-storybook": "test-storybook",
-    "test:ci": "jest --reporters=default --reporters=jest-junit --ci --coverage --testResultsProcessor=jest-junit",
-    "test:watch": "jest --watch",
-    "test": "jest",
+    "storybook": "NODE_ENV=development storybook dev -p 6006",
+    "test-storybook": "NODE_ENV=test test-storybook",
+    "test:ci": "NODE_ENV=test jest --reporters=default --reporters=jest-junit --ci --coverage --testResultsProcessor=jest-junit",
+    "test:watch": "NODE_ENV=test jest --watch",
+    "test": "NODE_ENV=test jest",
     "webpack:watch": "webpack --config ./webpack.config.js --watch",
     "webpack": "webpack --config ./webpack.config.js"
   },

@@ -16,7 +16,9 @@ type Story = StoryObj<typeof StatusPanelConnectionStatus>;
 export const AllStates: Story = {
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <StatusPanelConnectionStatus status={{ status: ConnectionStatus.Connected, since: new Date(Date.now() - 6000000) }} />
+      <StatusPanelConnectionStatus
+        status={{ status: ConnectionStatus.Connected, since: new Date(Date.now() - 6000000) }}
+      />
       <StatusPanelConnectionStatus status={{ status: ConnectionStatus.Connecting }} />
       <StatusPanelConnectionStatus
         status={{ status: ConnectionStatus.Closed, since: new Date(Date.now() - 5 * 60 * 1000 - 15 * 1000) }}

@@ -11,16 +11,18 @@ const icons: {
   [K in SyncStatus]: JSX.Element;
 } = {
   // Synced icons representing an application that is in sync with its desired state.
-  [SyncStatus.Synced]: <i className="fa fa-check-circle" style={{ color: 'var(--argo-sync-synced)' }} title="Synced" />,
+  [SyncStatus.Synced]: (
+    <i className="fa fa-check-circle argocd-application-map__sync-status-icon--synced" title="Synced" />
+  ),
 
   // OutOfSync icons representing an application that is not in sync with its desired state.
   [SyncStatus.OutOfSync]: (
-    <i className="fa fa-arrow-alt-circle-up" style={{ color: 'var(--argo-sync-outofsync)' }} title="OutOfSync" />
+    <i className="fa fa-arrow-alt-circle-up argocd-application-map__sync-status-icon--outofsync" title="OutOfSync" />
   ),
 
   // Unknown icons representing an application whose sync status is unknown.
   [SyncStatus.Unknown]: (
-    <i className="fa fa-circle-notch fa-spin" style={{ color: 'var(--argo-sync-unknown)' }} title="Unknown" />
+    <i className="fa fa-circle-notch fa-spin argocd-application-map__sync-status-icon--unknown" title="Unknown" />
   ),
 } as const;
 

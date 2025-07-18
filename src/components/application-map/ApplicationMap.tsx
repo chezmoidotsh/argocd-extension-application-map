@@ -116,12 +116,18 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
 
     const edges = layouted.mapEdges(
       (edge, _, source, target): Edge => ({
+        // Context properties
         id: edge,
         type: 'smoothstep',
         source,
         target,
+
+        // UI properties
         style: { stroke: '#777', strokeWidth: 1, strokeDasharray: '3,3', strokeOpacity: 1 },
         markerEnd: { type: MarkerType.ArrowClosed, color: '#555', strokeWidth: 3 },
+
+        // Interaction properties
+        selectable: false,
       })
     );
 

@@ -57,10 +57,10 @@ export const ComplexTopology: Story = {
     const canvas = within(canvasElement);
 
     const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
-    expect(root_app_1.children[0]).toHaveClass('argocd-application-map__node--default');
+    expect(root_app_1.children[0]).toHaveClass('application-resource-tree__node--default');
 
     const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
-    expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--default');
+    expect(root_app_2.children[0]).toHaveClass('application-resource-tree__node--default');
   },
 };
 
@@ -85,10 +85,10 @@ export const ComplexTopologyWithSelection: Story = {
     const canvas = within(canvasElement);
 
     const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
-    expect(root_app_1.children[0]).toHaveClass('argocd-application-map__node--unselected');
+    expect(root_app_1.children[0]).toHaveClass('application-resource-tree__node--unselected');
 
     const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
-    expect(root_app_2.children[0]).toHaveClass('argocd-application-map__node--selected');
+    expect(root_app_2.children[0]).toHaveClass('application-resource-tree__node--selected');
   },
 };
 

@@ -5,16 +5,20 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ConnectionStatus, ConnectionStatusDetails } from '../../types';
 import { Application, ApplicationSet, HealthStatus, SyncStatus, isApplication } from '../../types';
 import { hasCycle as hasCycleFn } from '../../utils/hasCycle';
+import StatusPanelConnectionStatus from './StatusPanelConnectionStatus';
 import StatusPanelCycleWarning from './StatusPanelCycleWarning';
 import StatusPanelHealth from './StatusPanelHealth';
-import StatusPanelConnectionStatus from './StatusPanelConnectionStatus';
 import StatusPanelSync from './StatusPanelSync';
 
 const StatusPanel: React.FC<{
   graph: DirectedGraph<Application | ApplicationSet>;
   onStatusClicked: (selectedNodes: string[]) => void;
   connectionStatus: ConnectionStatusDetails;
-}> = ({ graph, onStatusClicked: onFilterUpdated, connectionStatus: sseStatus = { status: ConnectionStatus.Unknown } }) => {
+}> = ({
+  graph,
+  onStatusClicked: onFilterUpdated,
+  connectionStatus: sseStatus = { status: ConnectionStatus.Unknown },
+}) => {
   const [healthStatuses, setHealthStatuses] = useState<HealthStatus[]>([]);
   const [syncStatuses, setSyncStatuses] = useState<SyncStatus[]>([]);
   const [hasCycle, setHasCycle] = useState<boolean>(false);

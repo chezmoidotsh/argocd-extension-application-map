@@ -95,7 +95,7 @@ export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>)
 
   // Generate the CSS class for the node based on selection state
   const selectionState = data.selected === true ? 'selected' : data.selected === false ? 'unselected' : 'default';
-  const selectionClass = `argocd-application-map__node--${selectionState}`;
+  const selectionClass = `application-resource-tree__node--${selectionState}`;
 
   return (
     <div

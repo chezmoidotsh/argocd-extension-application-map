@@ -13,6 +13,7 @@ type ErrorStatusInformation = Extract<ConnectionStatusDetails, { status: Connect
 type RetryingStatusInformation = Extract<ConnectionStatusDetails, { status: ConnectionStatus.Retrying }>;
 type UnknownStatusInformation = Extract<ConnectionStatusDetails, { status: ConnectionStatus.Unknown }>;
 
+const MIN_RETRY_DELAY = 1000; // 1 second
 
 interface StatusPanelConnectionStatusProps {
   status: ConnectionStatusDetails;
@@ -68,19 +69,33 @@ const StatusBadge: React.FC<StatusBadgeProps & React.HTMLProps<HTMLDivElement>> 
   children,
   ...props
 }) => (
-  <div className={`argocd-application-map__status-panel__sse-status-badge ${className}`} {...props}>
-    <IconStatusSSE status={status} />
-    <span className="argocd-application-map__status-panel__sse-status-text">{children}</span>
+  <div className={`argocd-application-map__status-panel__connection-status-badge ${className}`} {...props}>
+    <IconStatusConnection status={status} />
+    <span data-status-description>{children}</span>
   </div>
 );
 
-// Individual status components
+const ClosedStatusBadge: React.FC<ClosedStatusInformation> = ({ since }) => {
+  useTimeTracking(since);
+
+  return (
+    <StatusBadge
+      className="argocd-application-map__status-panel__connection-status-badge--closed"
+      status={ConnectionStatus.Closed}
+      title="Click to refresh the page"
+      onClick={() => window.location.reload()}
+    >
+      Connection Lost • {formatRelativeTime(since)} ago
+    </StatusBadge>
+  );
+};
+
 const ConnectedStatusBadge: React.FC<ConnectedStatusInformation> = ({ since }) => {
   useTimeTracking(since);
 
   return (
     <StatusBadge
-      className="argocd-application-map__status-panel__sse-status-badge--open"
+      className="argocd-application-map__status-panel__connection-status-badge--connected"
       status={ConnectionStatus.Connected}
     >
       Connected • {formatRelativeTime(since)} ago
@@ -90,17 +105,26 @@ const ConnectedStatusBadge: React.FC<ConnectedStatusInformation> = ({ since }) =
 
 const ConnectingStatusBadge: React.FC<ConnectingStatusInformation> = () => (
   <StatusBadge
-    className="argocd-application-map__status-panel__sse-status-badge--connecting"
+    className="argocd-application-map__status-panel__connection-status-badge--connecting"
     status={ConnectionStatus.Connecting}
   >
     Connecting...
   </StatusBadge>
 );
 
-const RetryingStatusBadge: React.FC<RetryingStatusInformation> = ({}) => {
+const ErrorStatusBadge: React.FC<ErrorStatusInformation> = () => (
+  <StatusBadge
+    className="argocd-application-map__status-panel__connection-status-badge--error"
+    status={ConnectionStatus.Error}
+  >
+    Connection Error
+  </StatusBadge>
+);
+
+const RetryingStatusBadge: React.FC<RetryingStatusInformation> = () => {
   return (
     <StatusBadge
-      className="argocd-application-map__status-panel__sse-status-badge--retrying"
+      className="argocd-application-map__status-panel__connection-status-badge--retrying"
       status={ConnectionStatus.Retrying}
     >
       Reconnecting...
@@ -108,38 +132,14 @@ const RetryingStatusBadge: React.FC<RetryingStatusInformation> = ({}) => {
   );
 };
 
-const ErrorStatusBadge: React.FC<ErrorStatusInformation> = () => (
-  <StatusBadge
-    className="argocd-application-map__status-panel__sse-status-badge--error"
-    status={ConnectionStatus.Error}
-  >
-    Connection Error
-  </StatusBadge>
-);
-
 const UnknownStatusBadge: React.FC<UnknownStatusInformation> = () => (
   <StatusBadge
-    className="argocd-application-map__status-panel__sse-status-badge--unknown"
+    className="argocd-application-map__status-panel__connection-status-badge--unknown"
     status={ConnectionStatus.Unknown}
   >
     Unknown status
   </StatusBadge>
 );
-
-const ClosedStatusBadge: React.FC<ClosedStatusInformation> = ({ since }) => {
-  useTimeTracking(since);
-
-  return (
-    <StatusBadge
-      className="argocd-application-map__status-panel__sse-status-badge--closed"
-      status={ConnectionStatus.Closed}
-      title="Click to refresh the page"
-      onClick={window.location.reload}
-    >
-      Connection Lost • {formatRelativeTime(since)} ago
-    </StatusBadge>
-  );
-};
 
 const StatusPanelConnectionStatus: React.FC<StatusPanelConnectionStatusProps> = ({ status }) => {
   switch (status.status) {

@@ -12,21 +12,26 @@ const icons: {
 } = {
   // Connected icons representing an application that is connected to the SSE.
   [ConnectionStatus.Connected]: (
-    <i className="fa fa-wifi sse-status-icon" title="Connected" style={{ color: 'var(--argo-sse-connected)' }} />
+    <i
+      className="fa fa-wifi argocd-application-map__status-panel__connection-status-badge__icon argocd-application-map__connection-status-icon--connected"
+      title="Connected"
+    />
   ),
 
   // Connecting icons representing an application that is in the process of connecting to the SSE.
   [ConnectionStatus.Connecting]: (
     <i
-      className="fa fa-spinner fa-spin sse-status-icon"
+      className="fa fa-spinner fa-spin argocd-application-map__status-panel__connection-status-badge__icon argocd-application-map__connection-status-icon--connecting"
       title="Connecting"
-      style={{ color: 'var(--argo-sse-connecting)' }}
     />
   ),
 
   // Closed icons representing an application that is disconnected from the SSE.
   [ConnectionStatus.Closed]: (
-    <span className="fa-stack sse-status-icon" title="Disconnected" style={{ color: 'var(--argo-sse-closed)' }}>
+    <span
+      className="fa-stack argocd-application-map__status-panel__connection-status-badge__icon argocd-application-map__connection-status-icon--closed"
+      title="Disconnected"
+    >
       <i className="fa fa-slash fa-stack-1x" />
       <i className="fa fa-wifi fa-stack-1x" />
     </span>
@@ -34,21 +39,26 @@ const icons: {
 
   // Error icons representing an application that has encountered an error with the SSE.
   [ConnectionStatus.Error]: (
-    <i className="fa fa-exclamation sse-status-icon" title="Error" style={{ color: 'var(--argo-sse-error)' }} />
+    <i
+      className="fa fa-exclamation argocd-application-map__status-panel__connection-status-badge__icon argocd-application-map__connection-status-icon--error"
+      title="Error"
+    />
   ),
 
   // Retrying icons representing an application that is attempting to reconnect to the SSE.
   [ConnectionStatus.Retrying]: (
     <i
-      className="fa fa-refresh fa-spin sse-status-icon"
+      className="fa fa-refresh fa-spin argocd-application-map__status-panel__connection-status-badge__icon argocd-application-map__connection-status-icon--retrying"
       title="Reconnecting"
-      style={{ color: 'var(--argo-sse-retrying)' }}
     />
   ),
 
   // Unknown icons representing an application whose SSE connection status is unknown.
   [ConnectionStatus.Unknown]: (
-    <i className="fa fa-question sse-status-icon" title="Unknown" style={{ color: 'var(--argo-sse-unknown)' }} />
+    <i
+      className="fa fa-question argocd-application-map__status-panel__connection-status-badge__icon argocd-application-map__connection-status-icon--unknown"
+      title="Unknown"
+    />
   ),
 } as const;
 
