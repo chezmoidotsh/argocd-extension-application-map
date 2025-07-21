@@ -1,18 +1,42 @@
 import { Handle, NodeProps, Node as ReactFlowNode } from '@xyflow/react';
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { services } from '../../../services';
 import { HealthStatus, SyncStatus } from '../../../types';
 import { Application, ApplicationSet, isApplication } from '../../../types';
 import { resourceId } from '../../../utils';
 import IconStatusHealth from '../../icons/IconStatusHealth';
 import IconStatusSync from '../../icons/IconStatusSync';
+import QuickActionButton from './QuickActionButton';
 
 /**
  * Renders a node for an ArgoCD Application resource (icon, name, status).
  *
  * @param application - The ArgoCD Application resource to render.
  */
-const ApplicationMapNode_Application: React.FC<{ application: Application }> = ({ application }) => {
+const ApplicationMapNode_Application: React.FC<{ application: Application; hover: boolean }> = ({
+  application,
+  hover,
+}) => {
+  const [isSyncAllowed, setIsSyncAllowed] = useState<boolean | null>(null);
+  const [isRefreshAllowed, setIsRefreshAllowed] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if ((isSyncAllowed !== null && isRefreshAllowed !== null) || !hover) return;
+    console.debug('Checking permissions for application:', application.metadata.name, isRefreshAllowed, isSyncAllowed);
+
+    if (isSyncAllowed === null)
+      services.account
+        .canI('applications', 'sync', `${application.metadata.namespace}/${application.metadata.name}`)
+        .then(setIsSyncAllowed)
+        .catch(() => setIsSyncAllowed(false));
+    if (isRefreshAllowed === null)
+      services.account
+        .canI('applications', 'get', `${application.metadata.namespace}/${application.metadata.name}`)
+        .then(setIsRefreshAllowed)
+        .catch(() => setIsRefreshAllowed(false));
+  }, [application.metadata.namespace, application.metadata.name, hover]);
+
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
@@ -29,6 +53,26 @@ const ApplicationMapNode_Application: React.FC<{ application: Application }> = (
           <IconStatusSync status={application.status?.sync?.status || SyncStatus.Unknown} />
         </div>
       </div>
+
+      <div className="argocd-application-map__node-quick-actions">
+        <QuickActionButton
+          isUnlocked={isSyncAllowed}
+          icon="fa-sync"
+          title="Sync the application"
+          onClick={async () => {
+            return await services.applications.sync(application.metadata.name, application.metadata.namespace);
+          }}
+        />
+
+        <QuickActionButton
+          isUnlocked={isRefreshAllowed}
+          icon="fa-redo"
+          title="Refresh the application"
+          onClick={async () => {
+            return await services.applications.refresh(application.metadata.name, application.metadata.namespace);
+          }}
+        />
+      </div>
     </>
   );
 };
@@ -42,7 +86,7 @@ const ApplicationMapNode_ApplicationSet: React.FC<{ applicationSet: ApplicationS
   return (
     <>
       <div className="application-resource-tree__node-kind-icon">
-        <span className="as-icon" aria-label="ApplicationSet icon">
+        <span className="argocd-application-map__node-kind-icon__as-icon" aria-label="ApplicationSet icon">
           AS
         </span>
         <div className="application-resource-tree__node-kind">applicationset</div>
@@ -83,6 +127,8 @@ export type ApplicationMapNode = ReactFlowNode<ApplicationMapNodeData & Record<s
  */
 export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>) {
   const { data, targetPosition, sourcePosition, width, height } = props;
+  const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hovered, setHovered] = useState(false);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent) => {
@@ -93,17 +139,31 @@ export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>)
     [data.onApplicationClick, data.kind, data.metadata.namespace, data.metadata.name]
   );
 
+  const onMouseEnter = useCallback(() => {
+    hoverTimerRef.current = setTimeout(() => {
+      setHovered(true);
+    }, 100); // Delay to avoid checking permission on every hover
+  }, []);
+
+  const onMouseLeave = useCallback(() => {
+    if (hoverTimerRef.current) {
+      clearTimeout(hoverTimerRef.current);
+      hoverTimerRef.current = null;
+    }
+  }, []);
+
   // Generate the CSS class for the node based on selection state
   const selectionState = data.selected === true ? 'selected' : data.selected === false ? 'unselected' : 'default';
-  const selectionClass = `application-resource-tree__node--${selectionState}`;
 
   return (
     <div
-      className={`application-resource-tree__node application-resource-tree__node--application ${selectionClass}`}
+      className={`application-resource-tree__node argocd-application-map__node argocd-application-map__node--${selectionState}`}
       data-testid="application-map-node"
       title={`Kind: ${data.kind}\nNamespace: ${data.metadata.namespace}\nName: ${data.metadata.name}`}
       style={{ width, height }}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       {sourcePosition && (
         <Handle type="source" position={sourcePosition} style={{ opacity: 0, pointerEvents: 'none' }} />
@@ -113,7 +173,7 @@ export default function ApplicationMapNode(props: NodeProps<ApplicationMapNode>)
       )}
 
       {isApplication(data) ? (
-        <ApplicationMapNode_Application application={data as Application} />
+        <ApplicationMapNode_Application application={data as Application} hover={hovered} />
       ) : (
         <ApplicationMapNode_ApplicationSet applicationSet={data as ApplicationSet} />
       )}

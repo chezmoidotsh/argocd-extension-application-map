@@ -6,6 +6,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
 
+import { allowCanI } from '../../../mocks/handlers';
 import '../../../styles/index.scss';
 import { HealthStatus, SyncStatus } from '../../../types/application';
 import { NODE_HEIGHT, NODE_WIDTH } from '../ApplicationMap';
@@ -83,6 +84,9 @@ export const Application: Story = {
       ],
     },
     deepControls: { enabled: true },
+    msw: {
+      handlers: [allowCanI('applications', 'sync'), allowCanI('applications', 'get')],
+    },
   },
   args: applicationNodeProps,
   argTypes: {
@@ -180,7 +184,7 @@ export const ApplicationSet: Story = {
     // Check if the ApplicationSet icon is rendered
     const icon = await canvas.findByLabelText('ApplicationSet icon');
     expect(icon).not.toBeNull();
-    expect(icon).toHaveClass('as-icon');
+    expect(icon).toHaveClass('argocd-application-map__node-kind-icon__as-icon');
 
     // Check if the node kind text is rendered
     const nodeKind = await canvas.findByText('applicationset');

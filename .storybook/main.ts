@@ -21,6 +21,8 @@ const config: StorybookConfig = {
     autodocs: true,
   },
 
+  staticDirs: ['../src/mocks/storybook-public'],
+
   typescript: {
     reactDocgen: 'react-docgen',
   },

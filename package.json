@@ -78,6 +78,8 @@
     "jest": "^30.0.0",
     "jest-environment-jsdom": "^30.0.0",
     "jest-junit": "^16.0.0",
+    "msw": "^2.10.4",
+    "msw-storybook-addon": "^2.0.5",
     "playwright": "^1.52.0",
     "raw-loader": "^4.0.2",
     "sass": "^1.89.0",
@@ -91,5 +93,11 @@
     "webpack": "^5.99.8",
     "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^6.0.1"
+  },
+  "msw": {
+    "workerDirectory": [
+      "dist",
+      "src/mocks/storybook-public"
+    ]
   }
 }

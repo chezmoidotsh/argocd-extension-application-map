@@ -242,17 +242,7 @@
       color: var(--app-status-#{$status});
     }
   }
-}
 
-// =============================================================================
-// ARGO CD OVERRIDES
-// =============================================================================
-// This section contains style overrides for the official Argo CD
-// 'application-resource-tree' component. These customizations are necessary
-// to integrate the extension's features, such as highlighting unselected nodes.
-// =============================================================================
-
-.application-resource-tree {
   //
   // Node Styles
   //
@@ -260,6 +250,9 @@
   // appearance based on selection state.
   //
   &__node {
+    // Ensure all nodes have relative positioning for quick actions
+    position: relative;
+
     // Default state for all nodes.
     &--default {
       opacity: 1;
@@ -276,6 +269,16 @@
     &--unselected {
       opacity: 0.25;
     }
+
+    &:hover &__node-quick-actions {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+
+      &__button {
+        transition-delay: 0s;
+      }
+    }
   }
 
   //
@@ -284,7 +287,7 @@
   // Customizes the appearance of the resource kind icon (e.g., 'S' for Service).
   //
   &__node-kind-icon {
-    & span.as-icon {
+    &__as-icon {
       background: #8fa4b1;
       border-radius: 50%;
       color: #ffffff;
@@ -297,6 +300,157 @@
       text-align: center;
       vertical-align: middle;
       width: 32px;
+    }
+  }
+
+  //
+  // Node Quick Actions
+  //
+  // Styles for the quick action buttons that appear below the application nodes.
+  // These interactive buttons are aligned to the right with spacing and appear
+  // when hovering over application nodes. They provide quick access to common
+  // operations like sync, delete, etc., and use a card deck animation effect
+  // for a smooth user experience.
+  //
+  &__node-quick-actions {
+    cursor: default;
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    left: 0;
+    margin-top: 5px;
+    position: absolute;
+    top: 100%;
+    z-index: -1000;
+
+    //
+    // Quick Action Button
+    //
+    // Individual action buttons with hover effects and state-based styling.
+    // Buttons are initially hidden and animate in with a bouncy transition.
+    //
+    &__button {
+      align-items: center;
+      background: white;
+      border-radius: 4px;
+      box-shadow: rgb(204, 214, 221) 1px 1px 1px 0px;
+      cursor: pointer;
+      display: flex;
+      height: 24px;
+      justify-content: center;
+      opacity: 1;
+      transform: translateY(-30px);
+      transition:
+        opacity 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        visibility 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transition-delay: 1s;
+      visibility: hidden;
+      width: 24px;
+
+      //
+      // Button Icon
+      //
+      // The icon inside each action button.
+      //
+      i {
+        color: #666;
+        font-size: 14px;
+      }
+
+      //
+      // Hover State
+      //
+      // Applies border colors based on the button's current execution state.
+      //
+      &:hover {
+        z-index: 0;
+
+        &:not(:disabled).idle {
+          border: 2px solid var(--color-primary);
+        }
+
+        &:not(:disabled).executing {
+          border: 2px solid color-mix(in srgb, var(--color-info), black 20%);
+        }
+
+        &:not(:disabled).succeeded {
+          border: 2px solid color-mix(in srgb, var(--color-success), black 20%);
+        }
+
+        &:not(:disabled).failed {
+          border: 2px solid color-mix(in srgb, var(--color-danger), black 20%);
+        }
+      }
+
+      //
+      // Disabled State
+      //
+      // Reduces opacity and disables pointer interaction for disabled buttons.
+      //
+      &:disabled {
+        cursor: default;
+        opacity: 0.3;
+      }
+
+      //
+      // Execution States
+      //
+      // Visual feedback for different action execution states.
+      //
+
+      // Button is currently executing an action.
+      &.executing {
+        background-color: var(--color-info);
+
+        i {
+          animation: spin 1s linear infinite;
+          color: var(--color-white);
+        }
+      }
+
+      // Action completed successfully.
+      &.succeeded {
+        background-color: var(--color-success);
+
+        i {
+          color: var(--color-white);
+        }
+      }
+
+      // Action failed to complete.
+      &.failed {
+        background-color: var(--color-danger);
+
+        i {
+          color: var(--color-white);
+        }
+      }
+
+      //
+      // Animation Timing
+      //
+      // Staggered animation delays for card deck effect.
+      //
+      @for $i from 1 through 2 {
+        .application-resource-tree__node:hover &:nth-child(#{$i}) {
+          transition-delay: 0.2s + $i * 0.1s;
+        }
+      }
+
+      //
+      // Show Animation
+      //
+      // Reveals and animates buttons when parent node is hovered.
+      //
+      .application-resource-tree__node:hover & {
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease,
+          visibility 0.1s;
+        transform: translateX(0) rotate(0) scale(1);
+        visibility: visible;
+      }
     }
   }
 }
