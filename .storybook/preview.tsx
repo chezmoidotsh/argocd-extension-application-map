@@ -1,3 +1,5 @@
+import { initialize as mswInitialize, mswLoader } from 'msw-storybook-addon';
+
 import type { Preview, StoryFn } from '@storybook/react';
 
 import React from 'react';
@@ -18,6 +20,8 @@ const withColorScheme = (Story: StoryFn, { parameters }: any) => {
   );
 };
 
+mswInitialize();
+
 const preview: Preview = {
   parameters: {
     controls: {
@@ -35,6 +39,7 @@ const preview: Preview = {
     },
   },
   decorators: [withColorScheme],
+  loaders: [mswLoader],
 };
 
 export default preview;

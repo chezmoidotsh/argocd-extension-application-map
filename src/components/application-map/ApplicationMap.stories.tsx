@@ -6,6 +6,7 @@ import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import React from 'react';
 
+import { allowCanI, denyCanI } from '../../mocks/handlers';
 import '../../styles/index.scss';
 import { HealthStatus, RankDirection, isApplication } from '../../types';
 import { allStatusScenario, denseScenario as complexTopology } from '../.storybook/scenarii';
@@ -36,6 +37,11 @@ export const Default: Story = {
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
   },
+  parameters: {
+    msw: {
+      handlers: [allowCanI('applications', 'sync'), denyCanI('applications', 'get')],
+    },
+  },
 };
 
 export const DefaultDark: Story = {
@@ -53,14 +59,23 @@ export const ComplexTopology: Story = {
     onPaneClick: action('onPaneClick'),
     onApplicationClick: action('onApplicationClick'),
   },
+  parameters: {
+    msw: {
+      handlers: [allowCanI('applications', 'sync'), denyCanI('applications', 'get')],
+    },
+  },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
-    expect(root_app_1.children[0]).toHaveClass('application-resource-tree__node--default');
+    expect(root_app_1.children[0]).toHaveClass(
+      'application-resource-tree__node argocd-application-map__node argocd-application-map__node--default'
+    );
 
     const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
-    expect(root_app_2.children[0]).toHaveClass('application-resource-tree__node--default');
+    expect(root_app_2.children[0]).toHaveClass(
+      'application-resource-tree__node argocd-application-map__node argocd-application-map__node--default'
+    );
   },
 };
 
@@ -85,10 +100,14 @@ export const ComplexTopologyWithSelection: Story = {
     const canvas = within(canvasElement);
 
     const root_app_1 = await canvas.findByTestId('rf__node-Application/default/root-app1');
-    expect(root_app_1.children[0]).toHaveClass('application-resource-tree__node--unselected');
+    expect(root_app_1.children[0]).toHaveClass(
+      'application-resource-tree__node argocd-application-map__node argocd-application-map__node--unselected'
+    );
 
     const root_app_2 = await canvas.findByTestId('rf__node-Application/default/root-app2');
-    expect(root_app_2.children[0]).toHaveClass('application-resource-tree__node--selected');
+    expect(root_app_2.children[0]).toHaveClass(
+      'application-resource-tree__node argocd-application-map__node argocd-application-map__node--selected'
+    );
   },
 };
 
