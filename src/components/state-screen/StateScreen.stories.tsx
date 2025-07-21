@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import React from 'react';
 
-import '../../styles/index.scss';
 import StateScreen from './StateScreen';
 
 const meta: Meta<typeof StateScreen> = {

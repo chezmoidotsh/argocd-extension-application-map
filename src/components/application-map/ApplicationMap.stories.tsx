@@ -7,7 +7,6 @@ import '@xyflow/react/dist/style.css';
 import React from 'react';
 
 import { allowCanI, denyCanI } from '../../mocks/handlers';
-import '../../styles/index.scss';
 import { HealthStatus, RankDirection, isApplication } from '../../types';
 import { allStatusScenario, denseScenario as complexTopology } from '../.storybook/scenarii';
 import Map from './ApplicationMap';

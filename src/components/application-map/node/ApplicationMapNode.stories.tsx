@@ -7,7 +7,6 @@ import '@xyflow/react/dist/style.css';
 import React from 'react';
 
 import { allowCanI } from '../../../mocks/handlers';
-import '../../../styles/index.scss';
 import { HealthStatus, SyncStatus } from '../../../types/application';
 import { NODE_HEIGHT, NODE_WIDTH } from '../ApplicationMap';
 import ApplicationMapNode from './ApplicationMapNode';

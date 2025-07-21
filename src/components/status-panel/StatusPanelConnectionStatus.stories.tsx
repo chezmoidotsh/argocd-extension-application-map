@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import React from 'react';
 
-import '../../styles/index.scss';
 import { ConnectionStatus } from '../../types';
 import StatusPanelConnectionStatus from './StatusPanelConnectionStatus';
 

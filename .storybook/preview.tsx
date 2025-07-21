@@ -4,6 +4,7 @@ import type { Preview, StoryFn } from '@storybook/react';
 
 import React from 'react';
 
+import '../src/styles/index.scss';
 import './storybook-argo-v3.0.0.css';
 
 const withColorScheme = (Story: StoryFn, { parameters }: any) => {

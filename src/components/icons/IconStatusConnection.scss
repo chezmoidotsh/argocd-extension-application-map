@@ -1,0 +1,41 @@
+// =============================================================================
+// CONNECTION STATUS ICON
+// =============================================================================
+// Styles for the connection status icon component.
+// =============================================================================
+
+:root {
+  // SSE Connection Status Colors
+  // These colors are used for the SSE connection status badge.
+  --connection-status-closed-text: #e53935;
+  --connection-status-closed: #e06c75;
+  --connection-status-connected-text: #4caf50;
+  --connection-status-connected: #98c379;
+  --connection-status-connecting-text: #e7ac16;
+  --connection-status-connecting: #e5c07b;
+  --connection-status-error-text: #ffffff;
+  --connection-status-error: #bb2a33;
+  --connection-status-retrying-text: #1976d2;
+  --connection-status-retrying: #61afef;
+  --connection-status-unknown-text: #808080;
+  --connection-status-unknown: #abb2bf;
+}
+
+// Connection status icon styles are handled by the main icons.scss file
+// This file is available for component-specific customizations if needed
+.argocd-application-map {
+  //
+  // Status Icon Colors
+  //
+  // These loops generate utility classes to color icons based on different statuses.
+  // This makes it easy to apply consistent status colors throughout the component.
+  //
+
+  // Generates color classes for connection status icons.
+  // e.g., .argocd-application-map__connection-status-icon--connected
+  @each $status in connected, connecting, closed, error, retrying, unknown {
+    &__connection-status-icon--#{$status} {
+      color: var(--connection-status-#{$status}-text);
+    }
+  }
+}

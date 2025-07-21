@@ -7,6 +7,7 @@ import { Application, ApplicationSet, isApplication } from '../../../types';
 import { resourceId } from '../../../utils';
 import IconStatusHealth from '../../icons/IconStatusHealth';
 import IconStatusSync from '../../icons/IconStatusSync';
+import './ApplicationMapNode.scss';
 import QuickActionButton from './QuickActionButton';
 
 /**

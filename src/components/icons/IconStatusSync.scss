@@ -1,0 +1,32 @@
+// =============================================================================
+// SYNC STATUS ICON
+// =============================================================================
+// Styles for the sync status icon component.
+// =============================================================================
+
+:root {
+  // Application Sync Colors
+  // These colors are used to indicate the health and sync status of applications.
+  --app-sync-status-outofsync: var(--color-warning);
+  --app-sync-status-synced: var(--color-success);
+  --app-sync-status-unknown: var(--color-disabled);
+}
+
+// Sync status icon styles are handled by the main icons.scss file
+// This file is available for component-specific customizations if needed
+.argocd-application-map {
+  //
+  // Status Icon Colors
+  //
+  // These loops generate utility classes to color icons based on different statuses.
+  // This makes it easy to apply consistent status colors throughout the component.
+  //
+
+  // Generates color classes for application sync status icons.
+  // e.g., .argocd-application-map__sync-status-icon--synced
+  @each $status in synced, outofsync, unknown {
+    &__sync-status-icon--#{$status} {
+      color: var(--app-sync-status-#{$status});
+    }
+  }
+}

@@ -1,5 +1,7 @@
 import React, { useCallback } from 'react';
 
+import './QuickActionButton.scss';
+
 type QuickActionButtonProps = {
   isUnlocked: boolean;
   icon: string;

@@ -1,0 +1,68 @@
+// =============================================================================
+// APPLICATION MAP NODE
+// =============================================================================
+// Styles for the nodes within the application map, including selection states
+// and the node kind icon display.
+// =============================================================================
+
+.argocd-application-map {
+  //
+  // Node Styles
+  //
+  // Overrides the styles for nodes within the resource tree to control their
+  // appearance based on selection state.
+  //
+  &__node {
+    // Ensure all nodes have relative positioning for quick actions
+    position: relative;
+
+    // Default state for all nodes.
+    &--default {
+      opacity: 1;
+    }
+
+    // Style for the currently selected node.
+    &--selected {
+      opacity: 1;
+      position: relative;
+    }
+
+    // Style for nodes that are not selected. They are faded out to
+    // emphasize the selected node and its direct relationships.
+    &--unselected {
+      opacity: 0.25;
+    }
+
+    &:hover &__node-quick-actions {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+
+      &__button {
+        transition-delay: 0s;
+      }
+    }
+  }
+
+  //
+  // Node Kind Icon
+  //
+  // Customizes the appearance of the resource kind icon (e.g., 'S' for Service).
+  //
+  &__node-kind-icon {
+    &__as-icon {
+      background: #8fa4b1;
+      border-radius: 50%;
+      color: #ffffff;
+      display: inline-block;
+      font-size: 1em;
+      font-weight: 400;
+      height: 32px;
+      line-height: 30px;
+      padding: 2px 4px;
+      text-align: center;
+      vertical-align: middle;
+      width: 32px;
+    }
+  }
+}
