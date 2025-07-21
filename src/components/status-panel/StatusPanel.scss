@@ -1,0 +1,27 @@
+// =============================================================================
+// STATUS PANEL
+// =============================================================================
+// Styles for the status panel component that displays connection status,
+// warnings, and other status information.
+// =============================================================================
+
+.argocd-application-map {
+  //
+  // Status Panel
+  //
+  // A panel that displays various status information, such as connection status and warnings.
+  //
+  &__status-panel {
+    // Title of the status panel sections.
+    &__title {
+      line-height: 19.5px;
+      margin-bottom: 0.3em;
+
+      & label {
+        font-size: 12px;
+        font-weight: 600;
+        color: rgb(109, 127, 139);
+      }
+    }
+  }
+}

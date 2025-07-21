@@ -2,6 +2,7 @@ import React from 'react';
 
 import { SyncStatus } from '../../types';
 import IconStatusSync from '../icons/IconStatusSync';
+import './StatusPanel.scss';
 
 export interface StatusPanelSyncProps {
   statuses: SyncStatus[];

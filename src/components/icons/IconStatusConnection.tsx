@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ConnectionStatus } from '../../types';
+import './IconStatusConnection.scss';
 
 /**
  * Mapping of sync statuses to their corresponding JSX elements.

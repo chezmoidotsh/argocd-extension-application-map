@@ -1,0 +1,26 @@
+// =============================================================================
+// APPLICATION MAP
+// =============================================================================
+// This section contains the styles for the main application map component,
+// which is the core feature of this extension.
+// =============================================================================
+
+.argocd-application-map {
+  //
+  // Container
+  //
+  // The main container for the application map, which holds the graph and other UI elements.
+  //
+  &__container {
+    box-sizing: border-box;
+    height: var(--layout-container-height);
+    overflow: hidden;
+    width: 100%;
+
+    // The panel containing graph options (e.g., layout direction).
+    & .graph-options-panel {
+      margin: 10px 0 0 10px;
+      z-index: 5;
+    }
+  }
+}

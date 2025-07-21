@@ -2,6 +2,7 @@ import React from 'react';
 
 import { HealthStatus } from '../../types';
 import IconStatusHealth from '../icons/IconStatusHealth';
+import './StatusPanel.scss';
 
 export interface StatusPanelHealthProps {
   statuses: HealthStatus[];

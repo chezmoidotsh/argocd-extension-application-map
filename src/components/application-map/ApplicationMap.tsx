@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { RankDirectionType, isApplication } from '../../types';
 import { Application, ApplicationSet } from '../../types/application';
 import { applyLayoutToGraph } from '../../utils/applyLayoutToGraph';
+import './ApplicationMap.scss';
 import { ApplicationMapNavigationControls } from './navigation-controls';
 import { ApplicationMapNode } from './node';
 import type { ApplicationMapNodeType } from './node';

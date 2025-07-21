@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { HealthStatus } from '../../types';
+import './IconStatusHealth.scss';
 
 /**
  * Mapping of health statuses to their corresponding JSX elements.

@@ -1,5 +1,8 @@
 import React from 'react';
 
+import './StatusPanel.scss';
+import './StatusPanelCycleWarning.scss';
+
 const StatusPanelCycleWarning: React.FC = () => (
   <div className="application-status-panel__item" data-testid="cycle-warning-panel">
     <div className="argocd-application-map__status-panel__title">

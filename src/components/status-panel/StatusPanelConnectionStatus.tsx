@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ConnectionStatus, ConnectionStatusDetails } from '../../types';
 import { IconStatusConnection } from '../icons';
+import './StatusPanelConnectionStatus.scss';
 
 // Type guards for each connection status type
 type ClosedStatusInformation = Extract<ConnectionStatusDetails, { status: ConnectionStatus.Closed }>;

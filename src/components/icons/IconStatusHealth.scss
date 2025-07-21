@@ -1,0 +1,35 @@
+// =============================================================================
+// HEALTH STATUS ICON
+// =============================================================================
+// Styles for the health status icon component.
+// =============================================================================
+
+:root {
+  // Application Health Colors
+  // These colors are used to indicate the health and sync status of applications.
+  --app-health-status-degraded: var(--color-danger);
+  --app-health-status-healthy: var(--color-success);
+  --app-health-status-missing: var(--color-warning);
+  --app-health-status-progressing: var(--color-info);
+  --app-health-status-suspended: var(--color-warning);
+  --app-health-status-unknown: var(--color-disabled);
+}
+
+// Health status icon styles are handled by the main icons.scss file
+// This file is available for component-specific customizations if needed
+.argocd-application-map {
+  //
+  // Status Icon Colors
+  //
+  // These loops generate utility classes to color icons based on different statuses.
+  // This makes it easy to apply consistent status colors throughout the component.
+  //
+
+  // Generates color classes for application health status icons.
+  // e.g., .argocd-application-map__health-status-icon--healthy
+  @each $status in healthy, suspended, degraded, progressing, missing, unknown {
+    &__health-status-icon--#{$status} {
+      color: var(--app-health-status-#{$status});
+    }
+  }
+}
