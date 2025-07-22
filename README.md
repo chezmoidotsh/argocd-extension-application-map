@@ -100,7 +100,6 @@ Add the following annotations to your ArgoCD Application manifests:
 | `source-ref.argocd.argoproj.io/targetRevision`  | Expected branch, tag, or commit SHA                   |
 | `source-ref.argocd.argoproj.io/path`            | Path within the repository (default: repository root) |
 | `source-ref.argocd.argoproj.io/chart`           | Helm chart name (for Helm-based applications)         |
-| `source-ref.argocd.argoproj.io/helm.valueFiles` | Comma-separated list of Helm values files             |
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
