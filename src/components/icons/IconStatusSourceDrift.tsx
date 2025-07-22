@@ -22,9 +22,6 @@ const icons: {
       title="Source drift detected"
     />
   ),
-
-  // Unknown - no icon displayed when the source drift status is unknown or not determined.
-  [SourceDriftStatus.Unknown]: null,
 } as const;
 
 /**
@@ -32,6 +29,6 @@ const icons: {
  * Returns null for Conform status to avoid displaying an icon when sources are conforming.
  */
 const IconStatusSourceDrift: React.FC<{ status?: SourceDriftStatus }> = ({ status }) =>
-  icons[status] || icons[SourceDriftStatus.Unknown];
+  icons[status] || icons[SourceDriftStatus.Conform];
 
 export default IconStatusSourceDrift;

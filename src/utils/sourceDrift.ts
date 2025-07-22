@@ -77,21 +77,21 @@ export function getSourceReferencesFromAnnotations(annotations: Record<string, s
 export function detectSourceDrift(application: Application): SourceDriftStatus {
   if (!application.spec) {
     // No application spec defined - cannot determine drift
-    return SourceDriftStatus.Unknown;
+    return SourceDriftStatus.Conform;
   }
 
   // Extract reference sources from annotations
   const referenceSources = getSourceReferencesFromAnnotations(application.metadata?.annotations);
   if (referenceSources.length === 0) {
     // No reference sources defined - cannot determine drift
-    return SourceDriftStatus.Unknown;
+    return SourceDriftStatus.Conform;
   }
 
   // Get current sources from application spec
   const currentSources = [application.spec.source, ...(application.spec.sources || [])];
   if (currentSources.filter((s) => s).length === 0) {
     // No current sources defined - cannot determine drift
-    return SourceDriftStatus.Unknown;
+    return SourceDriftStatus.Conform;
   }
 
   // Compare each current source with its reference

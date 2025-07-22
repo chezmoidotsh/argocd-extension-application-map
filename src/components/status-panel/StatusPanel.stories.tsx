@@ -55,7 +55,7 @@ export const Default: Story = {
 
     const syncStatusOutOfSync = await canvas.findByTestId('sync-status-outofsync-row');
     expect(syncStatusOutOfSync).not.toBeNull();
-    expect(syncStatusOutOfSync).toHaveTextContent('4 applications outofsync');
+    expect(syncStatusOutOfSync).toHaveTextContent('4 applications out of sync');
 
     const syncStatusUnknown = await canvas.findByTestId('sync-status-unknown-row');
     expect(syncStatusUnknown).not.toBeNull();

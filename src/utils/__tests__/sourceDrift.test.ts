@@ -292,29 +292,29 @@ describe('getSourceReferencesFromAnnotations', () => {
 
 describe('detectSourceDrift', () => {
   describe('Edge cases and invalid inputs', () => {
-    test('should return Unknown when application has no spec', () => {
+    test('should return Conform when application has no spec', () => {
       const app = createMockApplication('test-app', undefined);
       delete app.spec;
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
 
-    test('should return Unknown when application spec is null', () => {
+    test('should return Conform when application spec is null', () => {
       const app = createMockApplication('test-app');
       app.spec = null as any;
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
 
-    test('should return Unknown when no reference sources in annotations', () => {
+    test('should return Conform when no reference sources in annotations', () => {
       const app = createMockApplication('test-app', {
         source: createMockSource(),
       });
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
 
-    test('should return Unknown when annotations are empty', () => {
+    test('should return Conform when annotations are empty', () => {
       const app = createMockApplication(
         'test-app',
         {
@@ -323,10 +323,10 @@ describe('detectSourceDrift', () => {
         {}
       );
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
 
-    test('should return Unknown when no current sources are defined', () => {
+    test('should return Conform when no current sources are defined', () => {
       const app = createMockApplication(
         'test-app',
         {
@@ -338,10 +338,10 @@ describe('detectSourceDrift', () => {
         }
       );
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
 
-    test('should return Unknown when current sources array is empty', () => {
+    test('should return Conform when current sources array is empty', () => {
       const app = createMockApplication(
         'test-app',
         {
@@ -353,10 +353,10 @@ describe('detectSourceDrift', () => {
         }
       );
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
 
-    test('should return Unknown when current sources contain only null/undefined values', () => {
+    test('should return Conform when current sources contain only null/undefined values', () => {
       const app = createMockApplication(
         'test-app',
         {
@@ -368,7 +368,7 @@ describe('detectSourceDrift', () => {
         }
       );
       const result = detectSourceDrift(app);
-      expect(result).toBe(SourceDriftStatus.Unknown);
+      expect(result).toBe(SourceDriftStatus.Conform);
     });
   });
 

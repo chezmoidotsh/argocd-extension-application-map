@@ -54,7 +54,7 @@ const ApplicationMapNode_Application: React.FC<{
         <div className="application-resource-tree__node-status-icon">
           <IconStatusHealth status={application.status?.health?.status || HealthStatus.Unknown} />
           <IconStatusSync status={application.status?.sync?.status || SyncStatus.Unknown} />
-          <IconStatusSourceDrift status={application.status?.drift || SourceDriftStatus.Unknown} />
+          <IconStatusSourceDrift status={application.status?.drift || SourceDriftStatus.Conform} />
         </div>
       </div>
 

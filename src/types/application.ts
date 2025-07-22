@@ -191,6 +191,4 @@ export enum SourceDriftStatus {
   Conform = 'Conform',
   /** Application sources have drifted from their reference */
   Drift = 'Drift',
-  /** Application source drift status is unknown */
-  Unknown = 'Unknown',
 }
