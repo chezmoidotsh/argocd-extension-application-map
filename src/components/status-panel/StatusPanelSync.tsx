@@ -5,33 +5,25 @@ import IconStatusSync from '../icons/IconStatusSync';
 import './StatusPanel.scss';
 
 export interface StatusPanelSyncProps {
-  statuses: SyncStatus[];
+  statuses: Record<SyncStatus, number>;
   onStatusClick: (status: SyncStatus) => void;
 }
 
 const StatusPanelSync: React.FC<StatusPanelSyncProps> = ({ statuses, onStatusClick }) => {
-  const register = statuses.reduce(
-    (acc, status) => {
-      acc[status || SyncStatus.Unknown] = (acc[status || SyncStatus.Unknown] || 0) + 1;
-      return acc;
-    },
-    {} as Record<SyncStatus, number>
-  );
-
   const globalStatus =
-    [SyncStatus.OutOfSync, SyncStatus.Unknown, SyncStatus.Synced].find((status) => (register[status] || 0) > 0) ||
+    [SyncStatus.OutOfSync, SyncStatus.Unknown, SyncStatus.Synced].find((status) => (statuses[status] || 0) > 0) ||
     SyncStatus.Synced;
 
   return (
     <div className="application-status-panel__item" data-testid="sync-status-panel" style={{ marginTop: '5px' }}>
       <div className="argocd-application-map__status-panel__title">
-        <label>{statuses.length === 1 ? 'APP SYNC' : 'APPS SYNC'}</label>
+        <label>{Object.values(statuses).reduce((a, b) => a + b, 0) === 1 ? 'APP SYNC' : 'APPS SYNC'}</label>
       </div>
       <div className="application-status-panel__item-value">
         <IconStatusSync status={globalStatus} />
         &nbsp;{globalStatus}
       </div>
-      {Object.entries(register).map(
+      {Object.entries(statuses).map(
         ([title, count]) =>
           count > 0 && (
             <div key={title} className="application-status-panel__item__row">

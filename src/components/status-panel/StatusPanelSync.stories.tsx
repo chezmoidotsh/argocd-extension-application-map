@@ -12,7 +12,11 @@ type Story = StoryObj<typeof StatusPanelSync>;
 
 export const Default: Story = {
   args: {
-    statuses: [SyncStatus.Synced, SyncStatus.OutOfSync, SyncStatus.Synced, SyncStatus.Unknown],
+    statuses: {
+      [SyncStatus.Synced]: 2,
+      [SyncStatus.OutOfSync]: 1,
+      [SyncStatus.Unknown]: 1,
+    },
     onStatusClick: () => {},
   },
 };

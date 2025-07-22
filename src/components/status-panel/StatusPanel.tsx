@@ -21,8 +21,19 @@ const StatusPanel: React.FC<{
   onStatusClicked: onFilterUpdated,
   connectionStatus: sseStatus = { status: ConnectionStatus.Unknown },
 }) => {
-  const [healthStatuses, setHealthStatuses] = useState<HealthStatus[]>([]);
-  const [syncStatuses, setSyncStatuses] = useState<SyncStatus[]>([]);
+  const [countPerHealthStatuses, setCountPerHealthStatuses] = useState<Record<HealthStatus, number>>({
+    [HealthStatus.Degraded]: 0,
+    [HealthStatus.Healthy]: 0,
+    [HealthStatus.Missing]: 0,
+    [HealthStatus.Progressing]: 0,
+    [HealthStatus.Suspended]: 0,
+    [HealthStatus.Unknown]: 0,
+  });
+  const [countPerSyncStatuses, setCountPerSyncStatuses] = useState<Record<SyncStatus, number>>({
+    [SyncStatus.OutOfSync]: 0,
+    [SyncStatus.Synced]: 0,
+    [SyncStatus.Unknown]: 0,
+  });
   const [countPerDriftStatus, setCountPerDriftStatus] = useState<Record<SourceDriftStatus, number>>({
     [SourceDriftStatus.Conform]: 0,
     [SourceDriftStatus.Drift]: 0,
@@ -34,18 +45,21 @@ const StatusPanel: React.FC<{
     const appNodes = graph.mapNodes((_, attr) => attr).filter(isApplication) as (Application & {
       status?: { drift?: SourceDriftStatus };
     })[];
-    setHealthStatuses(appNodes.map((node) => node.status?.health?.status || HealthStatus.Unknown));
-    setSyncStatuses(appNodes.map((node) => node.status?.sync?.status || SyncStatus.Unknown));
-    setCountPerDriftStatus(
+    const reducePerStatus = <T extends string>(
+      accessor: (application: Application & { status?: { drift?: SourceDriftStatus } }) => T
+    ) =>
       appNodes.reduce(
         (acc, node) => {
-          const driftStatus = node.status?.drift || SourceDriftStatus.Unknown;
-          acc[driftStatus] = (acc[driftStatus] || 0) + 1;
+          const status = accessor(node);
+          acc[status] = (acc[status] || 0) + 1;
           return acc;
         },
-        {} as Record<SourceDriftStatus, number>
-      )
-    );
+        {} as Record<T, number>
+      );
+
+    setCountPerHealthStatuses(reducePerStatus((app) => app.status?.health?.status || HealthStatus.Unknown));
+    setCountPerSyncStatuses(reducePerStatus((app) => app.status?.sync?.status || SyncStatus.Unknown));
+    setCountPerDriftStatus(reducePerStatus((app) => app.status?.drift || SourceDriftStatus.Unknown));
     setHasCycle(hasCycleFn(graph));
   }, [graph]);
 
@@ -85,8 +99,8 @@ const StatusPanel: React.FC<{
   return (
     <div className="application-details__status-panel">
       <div className="application-status-panel row" style={{ position: 'relative' }}>
-        <StatusPanelHealth statuses={healthStatuses} onStatusClick={onHealthStatusClick} />
-        <StatusPanelSync statuses={syncStatuses} onStatusClick={onSyncStatusClick} />
+        <StatusPanelHealth statuses={countPerHealthStatuses} onStatusClick={onHealthStatusClick} />
+        <StatusPanelSync statuses={countPerSyncStatuses} onStatusClick={onSyncStatusClick} />
         <StatusPanelSourceDrift countPerStatus={countPerDriftStatus} onStatusClick={onSourceDriftStatusClick} />
         {hasCycle && <StatusPanelCycleWarning />}
         <div style={{ position: 'absolute', top: 5, right: 5 }}>

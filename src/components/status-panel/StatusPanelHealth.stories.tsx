@@ -12,7 +12,14 @@ type Story = StoryObj<typeof StatusPanelHealth>;
 
 export const Default: Story = {
   args: {
-    statuses: [HealthStatus.Healthy, HealthStatus.Degraded, HealthStatus.Healthy, HealthStatus.Missing],
+    statuses: {
+      [HealthStatus.Degraded]: 1,
+      [HealthStatus.Healthy]: 2,
+      [HealthStatus.Missing]: 1,
+      [HealthStatus.Progressing]: 0,
+      [HealthStatus.Suspended]: 0,
+      [HealthStatus.Unknown]: 0,
+    },
     onStatusClick: () => {},
   },
 };
