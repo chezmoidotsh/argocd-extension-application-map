@@ -5,19 +5,11 @@ import IconStatusHealth from '../icons/IconStatusHealth';
 import './StatusPanel.scss';
 
 export interface StatusPanelHealthProps {
-  statuses: HealthStatus[];
+  statuses: Record<HealthStatus, number>;
   onStatusClick: (status: HealthStatus) => void;
 }
 
 const StatusPanelHealth: React.FC<StatusPanelHealthProps> = ({ statuses, onStatusClick }) => {
-  const register = statuses.reduce(
-    (acc, status) => {
-      acc[status || HealthStatus.Healthy] = (acc[status || HealthStatus.Healthy] || 0) + 1;
-      return acc;
-    },
-    {} as Record<HealthStatus, number>
-  );
-
   const globalStatus =
     [
       HealthStatus.Degraded,
@@ -26,18 +18,18 @@ const StatusPanelHealth: React.FC<StatusPanelHealthProps> = ({ statuses, onStatu
       HealthStatus.Unknown,
       HealthStatus.Healthy,
       HealthStatus.Suspended,
-    ].find((status) => (register[status] || 0) > 0) || HealthStatus.Healthy;
+    ].find((status) => (statuses[status] || 0) > 0) || HealthStatus.Healthy;
 
   return (
     <div className="application-status-panel__item" data-testid="health-status-panel" style={{ marginTop: '5px' }}>
       <div className="argocd-application-map__status-panel__title">
-        <label>{statuses.length === 1 ? 'APP HEALTH' : 'APPS HEALTH'}</label>
+        <label>{Object.values(statuses).reduce((a, b) => a + b, 0) === 1 ? 'APP HEALTH' : 'APPS HEALTH'}</label>
       </div>
       <div className="application-status-panel__item-value">
         <IconStatusHealth status={globalStatus} />
         &nbsp;{globalStatus}
       </div>
-      {Object.entries(register).map(
+      {Object.entries(statuses).map(
         ([title, count]) =>
           count > 0 && (
             <div key={title} className="application-status-panel__item__row">

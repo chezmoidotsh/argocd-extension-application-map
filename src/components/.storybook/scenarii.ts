@@ -1,10 +1,11 @@
 import { DirectedGraph } from 'graphology';
 
-import { HealthStatus, SyncStatus } from '../../types/application';
+import { ApplicationGraphNode } from '../../types';
+import { HealthStatus, SourceDriftStatus, SyncStatus } from '../../types/application';
 import { Application, ApplicationSet } from '../../types/application';
 import { resourceId } from '../../utils';
 
-export type ArgoApplicationGraph = DirectedGraph<Application | ApplicationSet>;
+export type ArgoApplicationGraph = DirectedGraph<ApplicationGraphNode>;
 
 /**
  * ScenarioGraph provides a fluent API to build and manipulate an ApplicationGraph
@@ -46,10 +47,11 @@ export class ScenarioGraph {
     namespace: string = 'default',
     healthStatus: HealthStatus = HealthStatus.Healthy,
     syncStatus: SyncStatus = SyncStatus.Synced,
+    sourceDriftStatus: SourceDriftStatus = SourceDriftStatus.Conform,
     parentRef?: { kind: 'Application' | 'ApplicationSet'; namespace: string; name: string }
   ): ScenarioGraph {
     const nodeId = resourceId('Application', namespace, name);
-    const app: Application = {
+    const app: Application & { status?: { drift?: SourceDriftStatus } } = {
       kind: 'Application',
       metadata: { name, namespace },
       spec: {
@@ -59,6 +61,7 @@ export class ScenarioGraph {
         syncPolicy: {},
       },
       status: {
+        drift: sourceDriftStatus,
         health: { status: healthStatus },
         sync: { status: syncStatus },
       },
@@ -149,12 +152,48 @@ export class ScenarioGraph {
  * Suitable for testing status indicators in StatusPanel.
  */
 export const allStatusScenario = new ScenarioGraph()
-  .createApplication('app-healthy-synced', 'default', HealthStatus.Healthy, SyncStatus.Synced)
-  .createApplication('app-degraded-outofSync', 'default', HealthStatus.Degraded, SyncStatus.OutOfSync)
-  .createApplication('app-progressing-outofSync', 'default', HealthStatus.Progressing, SyncStatus.OutOfSync)
-  .createApplication('app-missing-outofSync', 'default', HealthStatus.Missing, SyncStatus.OutOfSync)
-  .createApplication('app-suspended-outofSync', 'default', HealthStatus.Suspended, SyncStatus.OutOfSync)
-  .createApplication('app-unknown-unknown', 'default', HealthStatus.Unknown, SyncStatus.Unknown)
+  .createApplication(
+    'app-healthy-synced',
+    'default',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform
+  )
+  .createApplication(
+    'app-degraded-outofSync',
+    'default',
+    HealthStatus.Degraded,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Drift
+  )
+  .createApplication(
+    'app-progressing-outofSync',
+    'default',
+    HealthStatus.Progressing,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Conform
+  )
+  .createApplication(
+    'app-missing-outofSync',
+    'default',
+    HealthStatus.Missing,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Unknown
+  )
+  .createApplication(
+    'app-suspended-outofSync',
+    'default',
+    HealthStatus.Suspended,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Unknown
+  )
+  .createApplication(
+    'app-unknown-unknown',
+    'default',
+    HealthStatus.Unknown,
+    SyncStatus.Unknown,
+    SourceDriftStatus.Unknown
+  )
   .createScenarioGraph();
 
 /**
@@ -172,92 +211,155 @@ export const denseScenario = new ScenarioGraph()
   .createApplicationSet('appset-infra', 'default', { kind: 'Application', namespace: 'default', name: 'root-app2' })
 
   // Create team1 applications with ApplicationSet parent (diversified statuses)
-  .createApplication('team1-service1', 'default', HealthStatus.Healthy, SyncStatus.Synced, {
+  .createApplication('team1-service1', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-team1',
   })
-  .createApplication('team1-service2', 'default', HealthStatus.Degraded, SyncStatus.OutOfSync, {
-    kind: 'ApplicationSet',
-    namespace: 'default',
-    name: 'appset-team1',
-  })
-  .createApplication('team1-service3', 'default', HealthStatus.Progressing, SyncStatus.Synced, {
-    kind: 'ApplicationSet',
-    namespace: 'default',
-    name: 'appset-team1',
-  })
+  .createApplication(
+    'team1-service2',
+    'default',
+    HealthStatus.Degraded,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Drift,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'default',
+      name: 'appset-team1',
+    }
+  )
+  .createApplication(
+    'team1-service3',
+    'default',
+    HealthStatus.Progressing,
+    SyncStatus.Synced,
+    SourceDriftStatus.Unknown,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'default',
+      name: 'appset-team1',
+    }
+  )
 
   // Create team2 applications with ApplicationSet parent (diversified statuses)
-  .createApplication('team2-api1', 'default', HealthStatus.Missing, SyncStatus.OutOfSync, {
+  .createApplication('team2-api1', 'default', HealthStatus.Missing, SyncStatus.OutOfSync, SourceDriftStatus.Conform, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-team2',
   })
-  .createApplication('team2-api2', 'default', HealthStatus.Suspended, SyncStatus.Unknown, {
+  .createApplication('team2-api2', 'default', HealthStatus.Suspended, SyncStatus.Unknown, SourceDriftStatus.Conform, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-team2',
   })
-  .createApplication('team2-frontend', 'default', HealthStatus.Healthy, SyncStatus.Synced, {
+  .createApplication('team2-frontend', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-team2',
   })
 
   // Create infrastructure applications with ApplicationSet parent (diversified statuses)
-  .createApplication('infra-monitoring', 'default', HealthStatus.Healthy, SyncStatus.Synced, {
+  .createApplication(
+    'infra-monitoring',
+    'default',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'default',
+      name: 'appset-infra',
+    }
+  )
+  .createApplication('infra-logging', 'default', HealthStatus.Degraded, SyncStatus.OutOfSync, SourceDriftStatus.Drift, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-infra',
   })
-  .createApplication('infra-logging', 'default', HealthStatus.Degraded, SyncStatus.OutOfSync, {
+  .createApplication(
+    'infra-database',
+    'default',
+    HealthStatus.Progressing,
+    SyncStatus.Unknown,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'default',
+      name: 'appset-infra',
+    }
+  )
+  .createApplication('infra-cache', 'default', HealthStatus.Missing, SyncStatus.Synced, SourceDriftStatus.Unknown, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-infra',
   })
-  .createApplication('infra-database', 'default', HealthStatus.Progressing, SyncStatus.Unknown, {
-    kind: 'ApplicationSet',
-    namespace: 'default',
-    name: 'appset-infra',
-  })
-  .createApplication('infra-cache', 'default', HealthStatus.Missing, SyncStatus.Synced, {
-    kind: 'ApplicationSet',
-    namespace: 'default',
-    name: 'appset-infra',
-  })
-  .createApplication('infra-queue', 'default', HealthStatus.Suspended, SyncStatus.OutOfSync, {
-    kind: 'ApplicationSet',
-    namespace: 'default',
-    name: 'appset-infra',
-  })
+  .createApplication(
+    'infra-queue',
+    'default',
+    HealthStatus.Suspended,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'default',
+      name: 'appset-infra',
+    }
+  )
 
   // Create dependent applications with their parents (diversified statuses)
-  .createApplication('auth-service', 'default', HealthStatus.Healthy, SyncStatus.Synced, {
+  .createApplication('auth-service', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
     kind: 'Application',
     namespace: 'default',
     name: 'team1-service1',
   })
-  .createApplication('user-service', 'default', HealthStatus.Degraded, SyncStatus.OutOfSync, {
-    kind: 'Application',
-    namespace: 'default',
-    name: 'team1-service2',
-  })
-  .createApplication('product-service', 'default', HealthStatus.Progressing, SyncStatus.Synced, {
-    kind: 'Application',
-    namespace: 'default',
-    name: 'team1-service3',
-  })
-  .createApplication('payment-service', 'default', HealthStatus.Missing, SyncStatus.OutOfSync, {
-    kind: 'Application',
-    namespace: 'default',
-    name: 'team2-api1',
-  })
-  .createApplication('notification-service', 'default', HealthStatus.Suspended, SyncStatus.Unknown, {
-    kind: 'Application',
-    namespace: 'default',
-    name: 'team2-api2',
-  })
+  .createApplication(
+    'user-service',
+    'default',
+    HealthStatus.Degraded,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'default',
+      name: 'team1-service2',
+    }
+  )
+  .createApplication(
+    'product-service',
+    'default',
+    HealthStatus.Progressing,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'default',
+      name: 'team1-service3',
+    }
+  )
+  .createApplication(
+    'payment-service',
+    'default',
+    HealthStatus.Missing,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'default',
+      name: 'team2-api1',
+    }
+  )
+  .createApplication(
+    'notification-service',
+    'default',
+    HealthStatus.Suspended,
+    SyncStatus.Unknown,
+    SourceDriftStatus.Unknown,
+    {
+      kind: 'Application',
+      namespace: 'default',
+      name: 'team2-api2',
+    }
+  )
 
   .createScenarioGraph();
 
@@ -267,7 +369,7 @@ export const denseScenario = new ScenarioGraph()
 export const cyclicScenario = new ScenarioGraph()
   // Create applications that will form a cycle
   .createApplication('app-a', 'default', HealthStatus.Healthy, SyncStatus.Synced)
-  .createApplication('app-b', 'default', HealthStatus.Healthy, SyncStatus.Synced, {
+  .createApplication('app-b', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
     kind: 'Application',
     namespace: 'default',
     name: 'app-a',

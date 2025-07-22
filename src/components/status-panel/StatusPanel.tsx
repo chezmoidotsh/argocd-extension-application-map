@@ -2,8 +2,8 @@ import { DirectedGraph } from 'graphology';
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ConnectionStatus, ConnectionStatusDetails } from '../../types';
-import { Application, ApplicationSet, HealthStatus, SyncStatus, isApplication } from '../../types';
+import { ApplicationGraphNode, ConnectionStatus, ConnectionStatusDetails, SourceDriftStatus } from '../../types';
+import { Application, HealthStatus, SyncStatus, isApplication } from '../../types';
 import { hasCycle as hasCycleFn } from '../../utils/hasCycle';
 import './StatusPanel.scss';
 import StatusPanelConnectionStatus from './StatusPanelConnectionStatus';
@@ -12,7 +12,7 @@ import StatusPanelHealth from './StatusPanelHealth';
 import StatusPanelSync from './StatusPanelSync';
 
 const StatusPanel: React.FC<{
-  graph: DirectedGraph<Application | ApplicationSet>;
+  graph: DirectedGraph<ApplicationGraphNode>;
   onStatusClicked: (selectedNodes: string[]) => void;
   connectionStatus: ConnectionStatusDetails;
 }> = ({
@@ -20,14 +20,44 @@ const StatusPanel: React.FC<{
   onStatusClicked: onFilterUpdated,
   connectionStatus: sseStatus = { status: ConnectionStatus.Unknown },
 }) => {
-  const [healthStatuses, setHealthStatuses] = useState<HealthStatus[]>([]);
-  const [syncStatuses, setSyncStatuses] = useState<SyncStatus[]>([]);
+  const [countPerHealthStatuses, setCountPerHealthStatuses] = useState<Record<HealthStatus, number>>({
+    [HealthStatus.Degraded]: 0,
+    [HealthStatus.Healthy]: 0,
+    [HealthStatus.Missing]: 0,
+    [HealthStatus.Progressing]: 0,
+    [HealthStatus.Suspended]: 0,
+    [HealthStatus.Unknown]: 0,
+  });
+  const [countPerSyncStatuses, setCountPerSyncStatuses] = useState<Record<SyncStatus | SourceDriftStatus, number>>({
+    [SourceDriftStatus.Conform]: 0,
+    [SourceDriftStatus.Drift]: 0,
+    [SyncStatus.OutOfSync]: 0,
+    [SyncStatus.Synced]: 0,
+    [SyncStatus.Unknown]: 0,
+  });
   const [hasCycle, setHasCycle] = useState<boolean>(false);
 
   useEffect(() => {
-    const appNodes = graph.mapNodes((_, attr) => attr).filter(isApplication);
-    setHealthStatuses(appNodes.map((node) => node.status?.health?.status || HealthStatus.Unknown));
-    setSyncStatuses(appNodes.map((node) => node.status?.sync?.status || SyncStatus.Unknown));
+    const appNodes = graph.mapNodes((_, attr) => attr).filter(isApplication) as (Application & {
+      status?: { drift?: SourceDriftStatus };
+    })[];
+    const reducePerStatus = <T extends string>(
+      accessor: (application: Application & { status?: { drift?: SourceDriftStatus } }) => T
+    ) =>
+      appNodes.reduce(
+        (acc, node) => {
+          const status = accessor(node);
+          acc[status] = (acc[status] || 0) + 1;
+          return acc;
+        },
+        {} as Record<T, number>
+      );
+
+    setCountPerHealthStatuses(reducePerStatus((app) => app.status?.health?.status || HealthStatus.Unknown));
+    setCountPerSyncStatuses({
+      ...reducePerStatus((app) => app.status?.sync?.status || SyncStatus.Unknown),
+      ...reducePerStatus((app) => app.status?.drift || SourceDriftStatus.Conform),
+    });
     setHasCycle(hasCycleFn(graph));
   }, [graph]);
 
@@ -43,11 +73,15 @@ const StatusPanel: React.FC<{
   );
 
   const onSyncStatusClick = useCallback(
-    (status: SyncStatus) => {
+    (status: SyncStatus | SourceDriftStatus) => {
       onFilterUpdated(
-        graph.filterNodes(
-          (_, attr) => isApplication(attr) && (attr.status?.sync?.status || SyncStatus.Unknown) === status
-        )
+        status === SourceDriftStatus.Drift
+          ? graph.filterNodes(
+              (_, attr) => isApplication(attr) && (attr.status?.drift || SourceDriftStatus.Conform) === status
+            )
+          : graph.filterNodes(
+              (_, attr) => isApplication(attr) && (attr.status?.sync?.status || SyncStatus.Unknown) === status
+            )
       );
     },
     [graph, onFilterUpdated]
@@ -56,8 +90,8 @@ const StatusPanel: React.FC<{
   return (
     <div className="application-details__status-panel">
       <div className="application-status-panel row" style={{ position: 'relative' }}>
-        <StatusPanelHealth statuses={healthStatuses} onStatusClick={onHealthStatusClick} />
-        <StatusPanelSync statuses={syncStatuses} onStatusClick={onSyncStatusClick} />
+        <StatusPanelHealth statuses={countPerHealthStatuses} onStatusClick={onHealthStatusClick} />
+        <StatusPanelSync statuses={countPerSyncStatuses} onStatusClick={onSyncStatusClick} />
         {hasCycle && <StatusPanelCycleWarning />}
         <div style={{ position: 'absolute', top: 5, right: 5 }}>
           <StatusPanelConnectionStatus status={sseStatus} />

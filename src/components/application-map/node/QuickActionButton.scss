@@ -24,7 +24,6 @@
     margin-top: 5px;
     position: absolute;
     top: 100%;
-    z-index: -1000;
 
     //
     // Quick Action Button
@@ -46,10 +45,12 @@
       transition:
         opacity 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
         visibility 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
-        transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+        z-index 0.4s cubic-bezier(0, 1, 0, 1);
       transition-delay: 1s;
       visibility: hidden;
       width: 24px;
+      z-index: -10;
 
       //
       // Button Icon
@@ -135,7 +136,7 @@
       //
       // Staggered animation delays for card deck effect.
       //
-      @for $i from 1 through 2 {
+      @for $i from 1 through 5 {
         .application-resource-tree__node:hover &:nth-child(#{$i}) {
           transition-delay: 0.2s + $i * 0.1s;
         }
@@ -150,9 +151,11 @@
         transition:
           opacity 0.3s ease,
           transform 0.3s ease,
-          visibility 0.1s;
+          visibility 0.1s,
+          z-index 0.3s cubic-bezier(1, 0, 1, 0);
         transform: translateX(0) rotate(0) scale(1);
         visibility: visible;
+        z-index: 0;
       }
     }
   }

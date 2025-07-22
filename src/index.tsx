@@ -11,7 +11,7 @@ import { useApplicationSSE } from './hooks/useApplicationSSE';
 import { useThrottledValue } from './hooks/useThrottledValue';
 import './styles/index.scss';
 import { Application, ApplicationSet, isApplication } from './types';
-import { ConnectionStatus, RankDirection, SSEEvent } from './types';
+import { ApplicationGraphNode, ConnectionStatus, RankDirection, SSEEvent } from './types';
 import { processSSEEvent } from './utils/processSSEEvent';
 
 /**
@@ -22,7 +22,7 @@ import { processSSEEvent } from './utils/processSSEEvent';
  * @returns The new state of the graph
  */
 function graphReducer(
-  state: { graph: DirectedGraph<Application | ApplicationSet>; version: number },
+  state: { graph: DirectedGraph<ApplicationGraphNode>; version: number },
   action: { type: string; payload: SSEEvent }
 ) {
   const newGraph = state.graph.copy();
@@ -52,7 +52,7 @@ async function checkAuth(): Promise<boolean> {
  */
 const Extension: React.FC = () => {
   const [graph, dispatch] = React.useReducer(graphReducer, {
-    graph: new DirectedGraph<Application | ApplicationSet>(),
+    graph: new DirectedGraph<ApplicationGraphNode>(),
     version: 0,
   });
 

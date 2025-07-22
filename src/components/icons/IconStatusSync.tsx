@@ -18,7 +18,7 @@ const icons: {
 
   // OutOfSync icons representing an application that is not in sync with its desired state.
   [SyncStatus.OutOfSync]: (
-    <i className="fa fa-arrow-alt-circle-up argocd-application-map__sync-status-icon--outofsync" title="OutOfSync" />
+    <i className="fa fa-arrow-alt-circle-up argocd-application-map__sync-status-icon--outofsync" title="Out of sync" />
   ),
 
   // Unknown icons representing an application whose sync status is unknown.

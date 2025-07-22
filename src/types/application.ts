@@ -83,15 +83,17 @@ export function isApplicationSet(resource: Application | ApplicationSet): resour
  * @property {string} repoURL - The URL of the Git repository
  * @property {string} path - The path within the repository
  * @property {string} targetRevision - The target revision to sync to (branch, tag, or commit)
+ * @property {string} [chart] - Optional Helm chart name (for Helm repositories)
  * @property {object} [helm] - Optional Helm chart configuration
  * @property {object} [kustomize] - Optional Kustomize configuration
  * @property {object} [directory] - Optional directory configuration
  * @property {object} [plugin] - Optional plugin configuration
  */
-interface ApplicationSource {
+export interface ApplicationSource {
   repoURL: string;
   path: string;
   targetRevision: string;
+  chart?: string;
   helm?: object | undefined;
   kustomize?: object | undefined;
   directory?: object | undefined;
@@ -178,4 +180,15 @@ export enum SyncStatus {
   OutOfSync = 'OutOfSync',
   /** Application sync status is unknown */
   Unknown = 'Unknown',
+}
+
+/**
+ * Enum representing the possible source drift status values
+ * @enum {string}
+ */
+export enum SourceDriftStatus {
+  /** Application sources are conforming to their reference */
+  Conform = 'Conform',
+  /** Application sources have drifted from their reference */
+  Drift = 'Drift',
 }

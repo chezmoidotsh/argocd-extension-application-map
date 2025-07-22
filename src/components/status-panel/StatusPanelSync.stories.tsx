@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { SyncStatus } from '../../types';
+import { SourceDriftStatus, SyncStatus } from '../../types';
 import StatusPanelSync from './StatusPanelSync';
 
 const meta: Meta<typeof StatusPanelSync> = {
@@ -12,7 +12,13 @@ type Story = StoryObj<typeof StatusPanelSync>;
 
 export const Default: Story = {
   args: {
-    statuses: [SyncStatus.Synced, SyncStatus.OutOfSync, SyncStatus.Synced, SyncStatus.Unknown],
+    statuses: {
+      [SourceDriftStatus.Conform]: 1,
+      [SourceDriftStatus.Drift]: 2,
+      [SyncStatus.Synced]: 2,
+      [SyncStatus.OutOfSync]: 1,
+      [SyncStatus.Unknown]: 1,
+    },
     onStatusClick: () => {},
   },
 };

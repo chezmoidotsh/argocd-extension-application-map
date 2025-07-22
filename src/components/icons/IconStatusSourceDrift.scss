@@ -1,0 +1,32 @@
+// =============================================================================
+// SOURCE DRIFT STATUS ICON
+// =============================================================================
+// Styles for the source drift status icon component.
+// =============================================================================
+
+:root {
+  // Application Source Drift Colors
+  // These colors are used to indicate the source drift status of applications.
+  // Note: No color needed for conform status as no icon is displayed.
+  --app-source-drift-status-drift: var(--color-danger);
+}
+
+// Source drift status icon styles are handled by the main icons.scss file
+// This file is available for component-specific customizations if needed
+.argocd-application-map {
+  //
+  // Source Drift Status Icon Colors
+  //
+  // These loops generate utility classes to color icons based on source drift status.
+  // This makes it easy to apply consistent status colors throughout the component.
+  //
+
+  // Generates color classes for application source drift status icons.
+  // e.g., .argocd-application-map__source-drift-status-icon--drift
+  // Note: No class for conform status as no icon is displayed.
+  @each $status in drift {
+    &__source-drift-status-icon--#{$status} {
+      color: var(--app-source-drift-status-#{$status});
+    }
+  }
+}

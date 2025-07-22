@@ -84,6 +84,66 @@ spec:
           emptyDir: {}
 ```
 
+## Configuration
+
+### Source Drift Detection
+
+This extension includes a source drift detection feature that allows you to monitor and manage deviations from your application's expected source configuration. It provides visual indicators for applications that have drifted from their defined source references, enabling quick identification and remediation.
+
+#### Application Annotations
+
+Add the following annotations to your ArgoCD Application manifests:
+
+| Annotation                                      | Description                                           |
+| ----------------------------------------------- | ----------------------------------------------------- |
+| `source-ref.argocd.argoproj.io/repo`            | Git repository URL that serves as the source of truth |
+| `source-ref.argocd.argoproj.io/targetRevision`  | Expected branch, tag, or commit SHA                   |
+| `source-ref.argocd.argoproj.io/path`            | Path within the repository (default: repository root) |
+| `source-ref.argocd.argoproj.io/chart`           | Helm chart name (for Helm-based applications)         |
+| `source-ref.argocd.argoproj.io/helm.valueFiles` | Comma-separated list of Helm values files             |
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-application
+  annotations:
+    # Git repository reference
+    source-ref.argocd.argoproj.io/repo: 'https://github.com/my-org/my-repo'
+
+    # Target revision (branch, tag, or commit SHA)
+    source-ref.argocd.argoproj.io/targetRevision: 'main'
+
+    # Specific path within the repository
+    source-ref.argocd.argoproj.io/path: 'manifests/production'
+
+    # Helm chart information (if using Helm)
+    source-ref.argocd.argoproj.io/chart: 'my-chart'
+spec:
+  # ... rest of your application spec
+```
+
+It also possible to specify multiple sources for an application. This is useful when your application consists of multiple components that are managed in different repositories or paths.
+
+```yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-multi-source-application
+  annotations:
+    # Configuration of the first source
+    source-ref.argocd.argoproj.io/0.repository-url: 'https://github.com/org/app'
+    source-ref.argocd.argoproj.io/0.path: 'manifests'
+
+    # Configuration of the second source
+    source-ref.argocd.argoproj.io/1.repository-url: 'https://github.com/org/config'
+    source-ref.argocd.argoproj.io/1.target-revision: 'main'
+
+    # ...
+spec:
+  # ... rest of your application spec
+```
+
 ## Roadmap
 
 ### v1.0 - MVP (2025-05-25)
@@ -96,20 +156,22 @@ spec:
   - [x] Click on a node to open the native ArgoCD application page
   - [x] Fully integrated with ArgoCD UI (supports dark mode)
 
-### v1.1 - Search and Filter (TBD)
+### v1.1 - Dynamic Refresh (2025-08)
 
-- [ ] Advanced Filtering
-  - [ ] Add support for filtering applications _(side panel like in the ArgoCD UI)_
-  - [ ] Add support for searching applications _(search bar in the top bar)_
-  - [ ] Add filter by application status
-  - [ ] Add filter by namespace
-- [ ] Search Enhancements
-  - [ ] Add fuzzy search support
-  - [ ] Add search suggestions
+- [x] **Real-time Updates via SSE (Server-Sent Events)**
+  - [x] Dynamic refresh of map when ArgoCD applications are updated
+  - [x] Live synchronization of application states and statuses
+  - [x] Seamless real-time drift detection notifications
 
-### v1.2 - Dynamic Refresh (TBD)
+- [x] **Quick Actions Enhancements**
+  - [x] Extended Quick Actions system with "Refresh" or "Sync" buttons directly on application nodes
+  - [x] One-click source resync functionality for drifted applications
 
-- [ ] Add support for dynamic refresh of map when ArgoCD applications are updated using SSE (Server-Sent Events)
+- [x] **Source Drift Detection & Management**
+  - [x] Visual drift indicators using branch icons
+  - [x] Automatic detection via Kubernetes annotations (`source-ref.argocd.argoproj.io/*`)
+  - [x] One-click revert functionality for drifted applications
+  - [x] Integration with Quick Actions system
 
 ## Contributing
 
