@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Edge, MarkerType, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
 import { useEffect } from 'react';
 
-import { RankDirectionType, isApplication } from '../../types';
+import { ApplicationGraphNode, RankDirectionType, isApplication } from '../../types';
 import { Application, ApplicationSet } from '../../types/application';
 import { applyLayoutToGraph } from '../../utils/applyLayoutToGraph';
 import './ApplicationMap.scss';
@@ -30,7 +30,7 @@ export const NODE_HEIGHT = 52;
  * @property onApplicationClick - Callback function triggered when an application node is clicked.
  */
 type ApplicationMapProps = {
-  graph: DirectedGraph<Application | ApplicationSet>;
+  graph: DirectedGraph<ApplicationGraphNode>;
   rankdir: RankDirectionType;
 
   selectedApplications?: string[];
@@ -72,7 +72,7 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
     }
 
     console.debug('[Extension] Generating ApplicationMap nodes and edges from graph:', graph);
-    const spatialized = graph as DirectedGraph<(Application | ApplicationSet) & { width: number; height: number }>;
+    const spatialized = graph as DirectedGraph<ApplicationGraphNode & { width: number; height: number }>;
 
     // NOTE: inject width and height attributes to the graph nodes in order to be able to use them in the layout
     spatialized.forEachNode((node, attributes) => {

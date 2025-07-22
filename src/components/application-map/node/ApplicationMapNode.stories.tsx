@@ -7,7 +7,7 @@ import '@xyflow/react/dist/style.css';
 import React from 'react';
 
 import { allowCanI } from '../../../mocks/handlers';
-import { HealthStatus, SyncStatus } from '../../../types/application';
+import { HealthStatus, SourceDriftStatus, SyncStatus } from '../../../types/application';
 import { NODE_HEIGHT, NODE_WIDTH } from '../ApplicationMap';
 import ApplicationMapNode from './ApplicationMapNode';
 
@@ -203,5 +203,221 @@ export const ApplicationSetDark: Story = {
   ...ApplicationSet,
   name: 'ApplicationSet (dark)',
   parameters: { backgrounds: { default: 'dark' } },
+  play: undefined,
+};
+
+// Source Drift Examples
+export const ApplicationWithSourceDrift: Story = {
+  ...Application,
+  name: 'Application with Source Drift',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'drift-app', namespace: 'production' },
+      status: {
+        health: { status: HealthStatus.Healthy },
+        sync: { status: SyncStatus.Synced },
+        drift: SourceDriftStatus.Drift,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story:
+          'Application with detected source drift. The drift icon is shown and the "Discard drift" button is enabled.',
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationConformingSource: Story = {
+  ...Application,
+  name: 'Application Conforming to Source Reference',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'conform-app', namespace: 'staging' },
+      status: {
+        health: { status: HealthStatus.Healthy },
+        sync: { status: SyncStatus.Synced },
+        drift: SourceDriftStatus.Conform,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story:
+          'Application conforming to its source reference. No drift icon is shown and the "Discard drift" button is disabled.',
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationUnknownDriftStatus: Story = {
+  ...Application,
+  name: 'Application with Unknown Drift Status',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'unknown-drift-app', namespace: 'development' },
+      status: {
+        health: { status: HealthStatus.Degraded },
+        sync: { status: SyncStatus.OutOfSync },
+        drift: SourceDriftStatus.Conform,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story:
+          'Application with conforming drift status. This happens when no source reference annotations are found or the application spec is incomplete.',
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationRepositoryDrift: Story = {
+  ...Application,
+  name: 'Repository URL Drift Example',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'repo-drift-example', namespace: 'production' },
+      status: {
+        health: { status: HealthStatus.Healthy },
+        sync: { status: SyncStatus.Synced },
+        drift: SourceDriftStatus.Drift,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story: `Repository URL drift example. 
+
+**Current source**: \`github.com/org/new-repo\`  
+**Reference source**: \`github.com/org/old-repo\`
+
+This happens when the application is using a different repository than specified in the source reference annotations.`,
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationPathDrift: Story = {
+  ...Application,
+  name: 'Path Drift Example',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'path-drift-example', namespace: 'production' },
+      status: {
+        health: { status: HealthStatus.Progressing },
+        sync: { status: SyncStatus.Synced },
+        drift: SourceDriftStatus.Drift,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story: `Path drift example.
+
+**Current source**: \`manifests/v2\`  
+**Reference source**: \`manifests/v1\`
+
+This happens when the application is using a different path within the repository than specified in the reference annotations.`,
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationRevisionDrift: Story = {
+  ...Application,
+  name: 'Target Revision Drift Example',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'revision-drift-example', namespace: 'production' },
+      status: {
+        health: { status: HealthStatus.Healthy },
+        sync: { status: SyncStatus.OutOfSync },
+        drift: SourceDriftStatus.Drift,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story: `Target revision drift example.
+
+**Current source**: \`feature-branch\`  
+**Reference source**: \`main\`
+
+This happens when the application is targeting a different branch, tag, or commit than specified in the reference annotations.`,
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationChartDrift: Story = {
+  ...Application,
+  name: 'Chart Drift Example',
+  args: {
+    ...applicationNodeProps,
+    data: {
+      ...applicationNodeProps.data,
+      metadata: { name: 'chart-drift-example', namespace: 'production' },
+      status: {
+        health: { status: HealthStatus.Healthy },
+        sync: { status: SyncStatus.Synced },
+        drift: SourceDriftStatus.Drift,
+      },
+    },
+  },
+  parameters: {
+    ...Application.parameters,
+    docs: {
+      description: {
+        story: `Chart drift example (for Helm applications).
+
+**Current source**: \`nginx-v2\`  
+**Reference source**: \`nginx-v1\`
+
+This happens when the Helm chart name differs from the reference specified in the annotations.`,
+      },
+    },
+  },
+  play: undefined,
+};
+
+export const ApplicationDriftDark: Story = {
+  ...ApplicationWithSourceDrift,
+  name: 'Application with Source Drift (dark)',
+  parameters: {
+    ...ApplicationWithSourceDrift.parameters,
+    backgrounds: { default: 'dark' },
+  },
   play: undefined,
 };

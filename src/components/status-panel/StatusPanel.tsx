@@ -3,7 +3,7 @@ import { DirectedGraph } from 'graphology';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { ConnectionStatus, ConnectionStatusDetails } from '../../types';
-import { Application, ApplicationSet, HealthStatus, SyncStatus, isApplication } from '../../types';
+import { ApplicationGraphNode, ConnectionStatus, ConnectionStatusDetails, SourceDriftStatus } from '../../types';
 import { hasCycle as hasCycleFn } from '../../utils/hasCycle';
 import './StatusPanel.scss';
 import StatusPanelConnectionStatus from './StatusPanelConnectionStatus';
@@ -12,7 +12,7 @@ import StatusPanelHealth from './StatusPanelHealth';
 import StatusPanelSync from './StatusPanelSync';
 
 const StatusPanel: React.FC<{
-  graph: DirectedGraph<Application | ApplicationSet>;
+  graph: DirectedGraph<ApplicationGraphNode>;
   onStatusClicked: (selectedNodes: string[]) => void;
   connectionStatus: ConnectionStatusDetails;
 }> = ({

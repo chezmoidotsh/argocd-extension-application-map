@@ -1,8 +1,9 @@
 import { DirectedGraph } from 'graphology';
 
-import { HealthStatus, SyncStatus } from '../types';
-import { Application, ApplicationSet, isApplicationSet } from '../types';
-import { ManagedResource } from '../types/application';
+import { ApplicationGraphNode, HealthStatus, SyncStatus } from '../types';
+import { Application, isApplicationSet } from '../types';
+import { ManagedResource, SourceDriftStatus } from '../types/application';
+import { detectSourceDrift } from './sourceDrift';
 
 /**
  * Updates the graph based on the action and payload.
@@ -41,7 +42,7 @@ import { ManagedResource } from '../types/application';
  * already exists and we need to update its status from Unknown to Known.
  */
 export function processSSEEvent(
-  graph: DirectedGraph<Application | ApplicationSet>,
+  graph: DirectedGraph<ApplicationGraphNode>,
   action: 'ADDED' | 'MODIFIED' | 'DELETED',
   payload: Application
 ): void {
@@ -76,7 +77,7 @@ function getNodeId(resource: { kind: string; name: string; namespace: string }):
  * @param graph - The graphology instance to update.
  * @param payload - The application data from the event.
  */
-function handleDelete(graph: DirectedGraph<Application | ApplicationSet>, payload: Application) {
+function handleDelete(graph: DirectedGraph<ApplicationGraphNode>, payload: Application) {
   if (!payload.metadata.name || !payload.metadata.namespace) return;
 
   const appNodeId = getNodeId({
@@ -109,7 +110,10 @@ function handleDelete(graph: DirectedGraph<Application | ApplicationSet>, payloa
  * @param graph - The graphology instance to update.
  * @param payload - The application data from the event.
  */
-function handleAddOrModify(graph: DirectedGraph<Application | ApplicationSet>, payload: Application) {
+function handleAddOrModify(
+  graph: DirectedGraph<ApplicationGraphNode>,
+  payload: Application & { status?: { drift?: SourceDriftStatus } }
+) {
   if (!payload.metadata.name || !payload.metadata.namespace) return;
 
   const appNodeId = getNodeId({
@@ -117,6 +121,10 @@ function handleAddOrModify(graph: DirectedGraph<Application | ApplicationSet>, p
     name: payload.metadata.name,
     namespace: payload.metadata.namespace,
   });
+
+  // Ensure drift status is detected and added to the payload
+  if (!payload.status) payload.status = {} as any;
+  payload.status.drift = detectSourceDrift(payload);
 
   // Add or update the main application node
   graph.hasNode(appNodeId)
@@ -135,11 +143,7 @@ function handleAddOrModify(graph: DirectedGraph<Application | ApplicationSet>, p
  * @param payload - The application data.
  * @param appNodeId - The ID of the current application node.
  */
-function updateOwnerReferences(
-  graph: DirectedGraph<Application | ApplicationSet>,
-  payload: Application,
-  appNodeId: string
-) {
+function updateOwnerReferences(graph: DirectedGraph<ApplicationGraphNode>, payload: Application, appNodeId: string) {
   const newOwnerIds = new Set<string>();
   if (payload.metadata.ownerReferences) {
     for (const owner of payload.metadata.ownerReferences) {
@@ -182,11 +186,7 @@ function updateOwnerReferences(
  * @param payload - The application data.
  * @param appNodeId - The ID of the current application node.
  */
-function updateResourceReferences(
-  graph: DirectedGraph<Application | ApplicationSet>,
-  payload: Application,
-  appNodeId: string
-) {
+function updateResourceReferences(graph: DirectedGraph<ApplicationGraphNode>, payload: Application, appNodeId: string) {
   const newResourceNodeIds = new Set<string>();
   if (payload.status?.resources) {
     for (const res of payload.status.resources) {
@@ -230,7 +230,7 @@ function updateResourceReferences(
  * @param resource - The resource data from the parent.
  */
 function updateChildNodeStatus(
-  graph: DirectedGraph<Application | ApplicationSet>,
+  graph: DirectedGraph<ApplicationGraphNode>,
   childNodeId: string,
   resource: ManagedResource
 ) {

@@ -2,9 +2,11 @@ import { Handle, NodeProps, Node as ReactFlowNode } from '@xyflow/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { services } from '../../../services';
-import { HealthStatus, SyncStatus } from '../../../types';
+import { HealthStatus, SourceDriftStatus, SyncStatus } from '../../../types';
 import { Application, ApplicationSet, isApplication } from '../../../types';
 import { resourceId } from '../../../utils';
+import { revertSourceDrift } from '../../../utils/sourceDrift';
+import { IconStatusSourceDrift } from '../../icons';
 import IconStatusHealth from '../../icons/IconStatusHealth';
 import IconStatusSync from '../../icons/IconStatusSync';
 import './ApplicationMapNode.scss';
@@ -15,10 +17,10 @@ import QuickActionButton from './QuickActionButton';
  *
  * @param application - The ArgoCD Application resource to render.
  */
-const ApplicationMapNode_Application: React.FC<{ application: Application; hover: boolean }> = ({
-  application,
-  hover,
-}) => {
+const ApplicationMapNode_Application: React.FC<{
+  application: Application & { status?: { drift?: SourceDriftStatus } };
+  hover: boolean;
+}> = ({ application, hover }) => {
   const [isSyncAllowed, setIsSyncAllowed] = useState<boolean | null>(null);
   const [isRefreshAllowed, setIsRefreshAllowed] = useState<boolean | null>(null);
 
@@ -52,6 +54,7 @@ const ApplicationMapNode_Application: React.FC<{ application: Application; hover
         <div className="application-resource-tree__node-status-icon">
           <IconStatusHealth status={application.status?.health?.status || HealthStatus.Unknown} />
           <IconStatusSync status={application.status?.sync?.status || SyncStatus.Unknown} />
+          <IconStatusSourceDrift status={application.status?.drift || SourceDriftStatus.Unknown} />
         </div>
       </div>
 
@@ -73,6 +76,17 @@ const ApplicationMapNode_Application: React.FC<{ application: Application; hover
             return await services.applications.refresh(application.metadata.name, application.metadata.namespace);
           }}
         />
+
+        {application.status?.drift === SourceDriftStatus.Drift && (
+          <QuickActionButton
+            isUnlocked={true}
+            icon="fa-code-compare"
+            title="Revert source drift"
+            onClick={async () => {
+              return await services.applications.update(revertSourceDrift(application));
+            }}
+          />
+        )}
       </div>
     </>
   );
@@ -105,6 +119,7 @@ const ApplicationMapNode_ApplicationSet: React.FC<{ applicationSet: ApplicationS
 type ApplicationMapNodeData_Application = Application & {
   onApplicationClick?: (event: React.MouseEvent, applicationId: string) => void;
   selected?: boolean;
+  status?: { drift?: SourceDriftStatus };
 };
 type ApplicationMapNodeData_ApplicationSet = ApplicationSet;
 type ApplicationMapNodeData = ApplicationMapNodeData_Application | ApplicationMapNodeData_ApplicationSet;
