@@ -1,24 +1,16 @@
 import { DirectedGraph } from 'graphology';
 
 import * as React from 'react';
-import { Edge, MarkerType, ReactFlow, useEdgesState, useNodesState, useReactFlow } from '@xyflow/react';
-import { useEffect } from 'react';
+import { ReactFlow, useReactFlow } from '@xyflow/react';
 
-import { ApplicationGraphNode, RankDirectionType, isApplication } from '../../types';
-import { Application, ApplicationSet } from '../../types/application';
-import { applyLayoutToGraph } from '../../utils/applyLayoutToGraph';
+import { ApplicationGraphNode, RankDirectionType } from '../../types';
 import './ApplicationMap.scss';
+import { NODE_HEIGHT, NODE_WIDTH, useApplicationMapData, useCycleDetection } from './hooks';
 import { ApplicationMapNavigationControls } from './navigation-controls';
 import { ApplicationMapNode } from './node';
-import type { ApplicationMapNodeType } from './node';
 
-/**
- * Node width and height constants for the application map nodes.
- * These dimensions are used to ensure consistent sizing across the application map and to
- * be the same as the dimensions used in ArgoCD UI.
- */
-export const NODE_WIDTH = 282;
-export const NODE_HEIGHT = 52;
+// Re-export node dimensions for backward compatibility
+export { NODE_WIDTH, NODE_HEIGHT };
 
 /**
  * The **ApplicationMapProps** interface defines the properties for the ApplicationMap component.
@@ -59,84 +51,20 @@ const ApplicationMap: React.FC<ApplicationMapProps> = ({
 }) => {
   const { zoomIn, zoomOut, fitView } = useReactFlow();
 
-  const [nodes, setNodes] = useNodesState([]);
-  const [edges, setEdges] = useEdgesState([]);
+  // Detect cycles with intelligent caching
+  const cycleInfo = useCycleDetection(graph);
+
+  // Generate nodes and edges with cycle styling
+  const { nodes, edges } = useApplicationMapData({
+    graph,
+    rankdir,
+    selectedApplications,
+    cycleInfo,
+    onApplicationClick,
+  });
+
+  // Memoized node types to prevent unnecessary re-renders
   const nodeTypes = React.useMemo(() => ({ application: ApplicationMapNode }), []);
-
-  // Combine node and edge generation with selection application into a single effect
-  useEffect(() => {
-    if (!graph || graph.order === 0) {
-      setNodes([]);
-      setEdges([]);
-      return;
-    }
-
-    console.debug('[Extension] Generating ApplicationMap nodes and edges from graph:', graph);
-    const spatialized = graph as DirectedGraph<ApplicationGraphNode & { width: number; height: number }>;
-
-    // NOTE: inject width and height attributes to the graph nodes in order to be able to use them in the layout
-    spatialized.forEachNode((node, attributes) => {
-      spatialized.setNodeAttribute(node, 'width', NODE_WIDTH);
-      spatialized.setNodeAttribute(node, 'height', NODE_HEIGHT);
-    });
-
-    // Apply the layout to the graph
-    const layouted = applyLayoutToGraph(spatialized, rankdir.rankdir);
-
-    // Generate React Flow nodes and edges from the layouted graph
-    const nodes = layouted.mapNodes((node, attrs): ApplicationMapNodeType => {
-      const isSelection = selectedApplications.length > 0;
-      const isSelected = selectedApplications.includes(node);
-      const { width, height, ...nodeAttrs } = attrs;
-
-      // Prepare the node for React Flow with necessary properties
-      return {
-        // Context properties
-        id: node,
-        type: 'application',
-        data: {
-          ...nodeAttrs,
-          selected: isSelection ? isSelected : undefined,
-          onApplicationClick: isApplication(nodeAttrs) ? onApplicationClick : undefined,
-        },
-
-        // UI properties
-        width,
-        height,
-        position: { x: attrs.x, y: attrs.y },
-        sourcePosition: rankdir.sourcePosition,
-        targetPosition: rankdir.targetPosition,
-
-        // Interaction properties
-        selectable: true,
-        draggable: false,
-        connectable: false,
-        deletable: false,
-      };
-    });
-
-    const edges = layouted.mapEdges(
-      (edge, _, source, target): Edge => ({
-        // Context properties
-        id: edge,
-        type: 'smoothstep',
-        source,
-        target,
-
-        // UI properties
-        style: { stroke: '#777', strokeWidth: 1, strokeDasharray: '3,3', strokeOpacity: 1 },
-        markerEnd: { type: MarkerType.ArrowClosed, color: '#555', strokeWidth: 3 },
-
-        // Interaction properties
-        selectable: false,
-      })
-    );
-
-    // Save the nodes and edges to state
-    console.debug('[Extension] Generated ApplicationMap nodes and edges:', { nodes, edges });
-    setNodes(nodes);
-    setEdges(edges);
-  }, [graph, rankdir, onApplicationClick, selectedApplications]);
 
   return (
     <ReactFlow

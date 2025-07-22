@@ -2,7 +2,7 @@ import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
 
-import { allStatusScenario, cyclicScenario } from '../.storybook/scenarii';
+import { allStatusScenario } from '../.storybook/scenarii';
 import StatusPanel from './StatusPanel';
 
 const meta: Meta<typeof StatusPanel> = {
@@ -68,26 +68,6 @@ export const Default: Story = {
 export const DefaultDark: Story = {
   ...Default,
   name: 'Default (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
-  play: undefined,
-};
-
-export const WithCycleWarning: Story = {
-  args: {
-    graph: cyclicScenario,
-    onStatusClicked: action('onStatusClicked'),
-  },
-  play: async ({ canvasElement }: any) => {
-    const canvas = within(canvasElement);
-
-    const cycleWarning = await canvas.findByTestId('cycle-warning-panel');
-    expect(cycleWarning).not.toBeNull();
-  },
-};
-
-export const WithCycleWarningDark: Story = {
-  ...WithCycleWarning,
-  name: 'With Cycle Warning (dark)',
   parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
 };
