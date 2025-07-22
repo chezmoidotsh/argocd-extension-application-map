@@ -178,21 +178,21 @@ export const allStatusScenario = new ScenarioGraph()
     'default',
     HealthStatus.Missing,
     SyncStatus.OutOfSync,
-    SourceDriftStatus.Unknown
+    SourceDriftStatus.Drift
   )
   .createApplication(
     'app-suspended-outofSync',
     'default',
     HealthStatus.Suspended,
     SyncStatus.OutOfSync,
-    SourceDriftStatus.Unknown
+    SourceDriftStatus.Drift
   )
   .createApplication(
     'app-unknown-unknown',
     'default',
     HealthStatus.Unknown,
     SyncStatus.Unknown,
-    SourceDriftStatus.Unknown
+    SourceDriftStatus.Conform
   )
   .createScenarioGraph();
 
@@ -233,7 +233,7 @@ export const denseScenario = new ScenarioGraph()
     'default',
     HealthStatus.Progressing,
     SyncStatus.Synced,
-    SourceDriftStatus.Unknown,
+    SourceDriftStatus.Conform,
     {
       kind: 'ApplicationSet',
       namespace: 'default',
@@ -288,7 +288,7 @@ export const denseScenario = new ScenarioGraph()
       name: 'appset-infra',
     }
   )
-  .createApplication('infra-cache', 'default', HealthStatus.Missing, SyncStatus.Synced, SourceDriftStatus.Unknown, {
+  .createApplication('infra-cache', 'default', HealthStatus.Missing, SyncStatus.Synced, SourceDriftStatus.Conform, {
     kind: 'ApplicationSet',
     namespace: 'default',
     name: 'appset-infra',
@@ -353,7 +353,7 @@ export const denseScenario = new ScenarioGraph()
     'default',
     HealthStatus.Suspended,
     SyncStatus.Unknown,
-    SourceDriftStatus.Unknown,
+    SourceDriftStatus.Conform,
     {
       kind: 'Application',
       namespace: 'default',
@@ -364,19 +364,255 @@ export const denseScenario = new ScenarioGraph()
   .createScenarioGraph();
 
 /**
- * A scenario graph with a cycle (loop) to test cycle detection in StatusPanel.
+ * A scenario graph with a simple 2-node cycle (A ↔ B)
  */
-export const cyclicScenario = new ScenarioGraph()
-  // Create applications that will form a cycle
+export const simpleCycleScenario = new ScenarioGraph()
   .createApplication('app-a', 'default', HealthStatus.Healthy, SyncStatus.Synced)
   .createApplication('app-b', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
     kind: 'Application',
     namespace: 'default',
     name: 'app-a',
   })
-  // Close the cycle: D -> A
+  // Close the cycle: B -> A
   .addParentRef(
     { kind: 'Application', namespace: 'default', name: 'app-b' },
     { kind: 'Application', namespace: 'default', name: 'app-a' }
   )
   .createScenarioGraph();
+
+/**
+ * A scenario graph with a 3-node cycle (A → B → C → A)
+ */
+export const triangleCycleScenario = new ScenarioGraph()
+  .createApplication('frontend', 'default', HealthStatus.Healthy, SyncStatus.Synced)
+  .createApplication('backend', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'default',
+    name: 'frontend',
+  })
+  .createApplication('database', 'default', HealthStatus.Degraded, SyncStatus.OutOfSync, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'default',
+    name: 'backend',
+  })
+  // Close the cycle: database -> frontend
+  .addParentRef(
+    { kind: 'Application', namespace: 'default', name: 'database' },
+    { kind: 'Application', namespace: 'default', name: 'frontend' }
+  )
+  .createScenarioGraph();
+
+/**
+ * A scenario graph with multiple independent cycles
+ */
+export const multipleCyclesScenario = new ScenarioGraph()
+  // Cycle 1: A ↔ B
+  .createApplication('service-a', 'default', HealthStatus.Healthy, SyncStatus.Synced)
+  .createApplication('service-b', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'default',
+    name: 'service-a',
+  })
+  .addParentRef(
+    { kind: 'Application', namespace: 'default', name: 'service-b' },
+    { kind: 'Application', namespace: 'default', name: 'service-a' }
+  )
+
+  // Cycle 2: C → D → E → C
+  .createApplication('api-gateway', 'default', HealthStatus.Progressing, SyncStatus.Synced)
+  .createApplication('auth-service', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'default',
+    name: 'api-gateway',
+  })
+  .createApplication('user-service', 'default', HealthStatus.Missing, SyncStatus.OutOfSync, SourceDriftStatus.Drift, {
+    kind: 'Application',
+    namespace: 'default',
+    name: 'auth-service',
+  })
+  .addParentRef(
+    { kind: 'Application', namespace: 'default', name: 'user-service' },
+    { kind: 'Application', namespace: 'default', name: 'api-gateway' }
+  )
+
+  // Independent acyclic branch
+  .createApplication('monitoring', 'default', HealthStatus.Healthy, SyncStatus.Synced)
+  .createApplication('logging', 'default', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'default',
+    name: 'monitoring',
+  })
+  .createScenarioGraph();
+
+/**
+ * A realistic enterprise platform with strategic cycles
+ * Represents a microservices platform with intentional circular dependencies
+ */
+export const enterprisePlatformScenario = new ScenarioGraph()
+  // Platform Core Infrastructure
+  .createApplication('platform-core', 'platform', HealthStatus.Healthy, SyncStatus.Synced)
+  .createApplicationSet('infrastructure-appset', 'platform', {
+    kind: 'Application',
+    namespace: 'platform',
+    name: 'platform-core',
+  })
+
+  // Observability Stack (acyclic)
+  .createApplication(
+    'prometheus',
+    'observability',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'platform',
+      name: 'infrastructure-appset',
+    }
+  )
+  .createApplication('grafana', 'observability', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'observability',
+    name: 'prometheus',
+  })
+  .createApplication(
+    'alertmanager',
+    'observability',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'observability',
+      name: 'prometheus',
+    }
+  )
+
+  // Security & Identity Stack
+  .createApplication('cert-manager', 'security', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'ApplicationSet',
+    namespace: 'platform',
+    name: 'infrastructure-appset',
+  })
+  .createApplication('vault', 'security', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'security',
+    name: 'cert-manager',
+  })
+
+  // Business Applications with Strategic Cycles
+  .createApplicationSet('business-appset', 'business', {
+    kind: 'Application',
+    namespace: 'platform',
+    name: 'platform-core',
+  })
+
+  // E-commerce Platform (contains cycles for event-driven architecture)
+  .createApplication(
+    'product-catalog',
+    'business',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'ApplicationSet',
+      namespace: 'business',
+      name: 'business-appset',
+    }
+  )
+  .createApplication(
+    'inventory-service',
+    'business',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'business',
+      name: 'product-catalog',
+    }
+  )
+  .createApplication(
+    'pricing-engine',
+    'business',
+    HealthStatus.Degraded,
+    SyncStatus.OutOfSync,
+    SourceDriftStatus.Drift,
+    {
+      kind: 'Application',
+      namespace: 'business',
+      name: 'inventory-service',
+    }
+  )
+  // Strategic cycle: pricing depends on product catalog for real-time pricing
+  .addParentRef(
+    { kind: 'Application', namespace: 'business', name: 'pricing-engine' },
+    { kind: 'Application', namespace: 'business', name: 'product-catalog' }
+  )
+
+  // User Management & Notification Cycle (event-driven notifications)
+  .createApplication('user-service', 'business', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'ApplicationSet',
+    namespace: 'business',
+    name: 'business-appset',
+  })
+  .createApplication(
+    'notification-service',
+    'business',
+    HealthStatus.Progressing,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'business',
+      name: 'user-service',
+    }
+  )
+  .createApplication(
+    'preferences-service',
+    'business',
+    HealthStatus.Healthy,
+    SyncStatus.Synced,
+    SourceDriftStatus.Conform,
+    {
+      kind: 'Application',
+      namespace: 'business',
+      name: 'notification-service',
+    }
+  )
+  // Cycle: user preferences inform notifications, which update user activity
+  .addParentRef(
+    { kind: 'Application', namespace: 'business', name: 'preferences-service' },
+    { kind: 'Application', namespace: 'business', name: 'user-service' }
+  )
+
+  // API Gateway & Load Balancer (independent services)
+  .createApplication('api-gateway', 'platform', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'ApplicationSet',
+    namespace: 'platform',
+    name: 'infrastructure-appset',
+  })
+  .createApplication('load-balancer', 'platform', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'Application',
+    namespace: 'platform',
+    name: 'api-gateway',
+  })
+
+  // Data Platform (some analytics dependencies)
+  .createApplication('data-lake', 'data', HealthStatus.Healthy, SyncStatus.Synced, SourceDriftStatus.Conform, {
+    kind: 'ApplicationSet',
+    namespace: 'platform',
+    name: 'infrastructure-appset',
+  })
+  .createApplication('analytics-engine', 'data', HealthStatus.Missing, SyncStatus.OutOfSync, SourceDriftStatus.Drift, {
+    kind: 'Application',
+    namespace: 'data',
+    name: 'data-lake',
+  })
+  .createScenarioGraph();
+
+/**
+ * Legacy alias for backward compatibility
+ * @deprecated Use simpleCycleScenario instead
+ */
+export const cyclicScenario = simpleCycleScenario;

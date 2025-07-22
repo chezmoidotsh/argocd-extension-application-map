@@ -1,5 +1,3 @@
-import { HttpMethods } from 'msw';
-
 import { Application } from '../types';
 
 /**
@@ -20,7 +18,7 @@ class ArgoCDServices {
     canI: async (resource: string, action: string, subresource: string): Promise<boolean> => {
       try {
         const response = await fetch(`/api/v1/account/can-i/${resource}/${action}/${subresource}`, {
-          method: HttpMethods.GET,
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -60,7 +58,7 @@ class ArgoCDServices {
         const url = `/api/v1/applications/${name}/sync`;
 
         const response = await fetch(url, {
-          method: HttpMethods.POST,
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             appNamespace: namespace,
@@ -105,7 +103,7 @@ class ArgoCDServices {
         const params = new URLSearchParams({ refresh: 'normal', appNamespace: namespace });
 
         const response = await fetch(`${url}?${params}`, {
-          method: HttpMethods.GET,
+          method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -142,7 +140,7 @@ class ArgoCDServices {
         const url = `/api/v1/applications/${application.metadata.name}`;
 
         const response = await fetch(url, {
-          method: HttpMethods.PUT,
+          method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(application),
         });

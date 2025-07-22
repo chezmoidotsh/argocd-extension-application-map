@@ -2,12 +2,18 @@ import { DirectedGraph } from 'graphology';
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { ApplicationGraphNode, ConnectionStatus, ConnectionStatusDetails, SourceDriftStatus } from '../../types';
-import { Application, HealthStatus, SyncStatus, isApplication } from '../../types';
-import { hasCycle as hasCycleFn } from '../../utils/hasCycle';
+import {
+  Application,
+  ApplicationGraphNode,
+  ConnectionStatus,
+  ConnectionStatusDetails,
+  HealthStatus,
+  SourceDriftStatus,
+  SyncStatus,
+  isApplication,
+} from '../../types';
 import './StatusPanel.scss';
 import StatusPanelConnectionStatus from './StatusPanelConnectionStatus';
-import StatusPanelCycleWarning from './StatusPanelCycleWarning';
 import StatusPanelHealth from './StatusPanelHealth';
 import StatusPanelSync from './StatusPanelSync';
 
@@ -35,12 +41,12 @@ const StatusPanel: React.FC<{
     [SyncStatus.Synced]: 0,
     [SyncStatus.Unknown]: 0,
   });
-  const [hasCycle, setHasCycle] = useState<boolean>(false);
 
   useEffect(() => {
     const appNodes = graph.mapNodes((_, attr) => attr).filter(isApplication) as (Application & {
       status?: { drift?: SourceDriftStatus };
     })[];
+
     const reducePerStatus = <T extends string>(
       accessor: (application: Application & { status?: { drift?: SourceDriftStatus } }) => T
     ) =>
@@ -58,7 +64,6 @@ const StatusPanel: React.FC<{
       ...reducePerStatus((app) => app.status?.sync?.status || SyncStatus.Unknown),
       ...reducePerStatus((app) => app.status?.drift || SourceDriftStatus.Conform),
     });
-    setHasCycle(hasCycleFn(graph));
   }, [graph]);
 
   const onHealthStatusClick = useCallback(
@@ -92,7 +97,6 @@ const StatusPanel: React.FC<{
       <div className="application-status-panel row" style={{ position: 'relative' }}>
         <StatusPanelHealth statuses={countPerHealthStatuses} onStatusClick={onHealthStatusClick} />
         <StatusPanelSync statuses={countPerSyncStatuses} onStatusClick={onSyncStatusClick} />
-        {hasCycle && <StatusPanelCycleWarning />}
         <div style={{ position: 'absolute', top: 5, right: 5 }}>
           <StatusPanelConnectionStatus status={sseStatus} />
         </div>

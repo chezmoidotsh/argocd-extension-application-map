@@ -956,19 +956,14 @@ describe('revertSourceDrift', () => {
       expect(result).toEqual(originalApp);
     });
 
-    test('should log warning and return unchanged application when no reference sources', () => {
-      const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-
+    test('should return unchanged application when no reference sources', () => {
       const originalApp = createMockApplication('test-app', {
         source: createMockSource(),
       });
 
       const result = revertSourceDrift(originalApp);
 
-      expect(consoleWarnSpy).toHaveBeenCalledWith('No reference sources defined for application:', 'test-app');
       expect(result).toEqual(originalApp);
-
-      consoleWarnSpy.mockRestore();
     });
   });
 

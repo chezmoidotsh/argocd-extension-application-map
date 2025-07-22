@@ -23,4 +23,173 @@
       z-index: 5;
     }
   }
+
+  // =============================================================================
+  // CYCLE EDGE STYLES
+  // =============================================================================
+  // Visual styling for edges that are part of dependency cycles
+  // =============================================================================
+
+  &__cycle-edge {
+    // Base styling for cycle edges - using !important to override React Flow defaults
+    stroke: #d32f2f !important;
+    stroke-width: 2px !important;
+    stroke-dasharray: none !important;
+    opacity: 1 !important;
+
+    // Subtle pulse animation to draw attention
+    animation: cycle-pulse 3s ease-in-out infinite;
+
+    // Glow effect using drop-shadow filter
+    filter: drop-shadow(0 0 2px rgba(211, 47, 47, 0.4));
+
+    // Enhanced glow on hover for interaction feedback
+    &:hover {
+      stroke-width: 2.5px !important;
+      filter: drop-shadow(0 0 3px rgba(211, 47, 47, 0.6));
+      animation-duration: 2s; // Faster pulse on hover
+    }
+  }
+
+  // Marker styling for cycle edge arrows
+  &__cycle-edge-marker {
+    fill: #d32f2f !important;
+    stroke: #d32f2f !important;
+    stroke-width: 1px !important;
+  }
+
+  // Cycle tooltip styling
+  &__cycle-tooltip {
+    font-family: inherit;
+
+    // Ensure tooltip is readable in all themes
+    background-color: var(--background-primary, #fff) !important;
+    color: var(--text-primary, #333) !important;
+    border-color: var(--color-error, #d32f2f) !important;
+
+    // Smooth transitions
+    transition: opacity 0.2s ease-in-out;
+
+    .tooltip-header {
+      color: var(--color-error, #d32f2f) !important;
+    }
+
+    .tooltip-content {
+      color: var(--text-primary, #333) !important;
+    }
+
+    .tooltip-footer {
+      color: var(--text-secondary, #666) !important;
+      border-top-color: var(--border-color, #eee) !important;
+    }
+  }
+}
+
+// Pulse animation keyframes
+@keyframes cycle-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+// Support for multiple cycles with distinct colors
+// Each cycle gets a different color to help distinguish overlapping cycles
+.argocd-application-map__cycle-edge {
+  // Cycle 0: Red (primary error color)
+  &--cycle-0 {
+    stroke: #d32f2f !important;
+    filter: drop-shadow(0 0 2px rgba(211, 47, 47, 0.4));
+
+    &:hover {
+      filter: drop-shadow(0 0 3px rgba(211, 47, 47, 0.6));
+    }
+  }
+
+  // Cycle 1: Orange (warning color)
+  &--cycle-1 {
+    stroke: #f57c00 !important;
+    filter: drop-shadow(0 0 2px rgba(245, 124, 0, 0.4));
+
+    &:hover {
+      filter: drop-shadow(0 0 3px rgba(245, 124, 0, 0.6));
+    }
+  }
+
+  // Cycle 2: Purple (secondary alert color)
+  &--cycle-2 {
+    stroke: #7b1fa2 !important;
+    filter: drop-shadow(0 0 2px rgba(123, 31, 162, 0.4));
+
+    &:hover {
+      filter: drop-shadow(0 0 3px rgba(123, 31, 162, 0.6));
+    }
+  }
+
+  // Cycle 3: Pink (additional contrast color)
+  &--cycle-3 {
+    stroke: #c2185b !important;
+    filter: drop-shadow(0 0 2px rgba(194, 24, 91, 0.4));
+
+    &:hover {
+      filter: drop-shadow(0 0 3px rgba(194, 24, 91, 0.6));
+    }
+  }
+
+  // Cycle 4: Teal (if more cycles exist)
+  &--cycle-4 {
+    stroke: #00796b !important;
+    filter: drop-shadow(0 0 2px rgba(0, 121, 107, 0.4));
+
+    &:hover {
+      filter: drop-shadow(0 0 3px rgba(0, 121, 107, 0.6));
+    }
+  }
+}
+
+// Accessibility: Respect reduced motion preferences
+@media (prefers-reduced-motion: reduce) {
+  .argocd-application-map__cycle-edge {
+    animation: none;
+  }
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .argocd-application-map__cycle-edge {
+    stroke-width: 3px !important;
+    filter: none; // Remove glow effects for better contrast
+
+    &--cycle-0 {
+      stroke: #ff0000 !important;
+    }
+    &--cycle-1 {
+      stroke: #ff8800 !important;
+    }
+    &--cycle-2 {
+      stroke: #aa00ff !important;
+    }
+    &--cycle-3 {
+      stroke: #ff0088 !important;
+    }
+    &--cycle-4 {
+      stroke: #00aa88 !important;
+    }
+  }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+  .argocd-application-map__cycle-tooltip {
+    background-color: var(--background-primary, #2d2d2d) !important;
+    color: var(--text-primary, #fff) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+
+    .tooltip-footer {
+      border-top-color: var(--border-color, #444) !important;
+    }
+  }
 }

@@ -5,6 +5,7 @@ export { isApplication, isApplicationSet, HealthStatus, SyncStatus, SourceDriftS
 export { RankDirection } from './rankdirection';
 export { QuickActionState } from './quickActions';
 export type { Application, ApplicationSet, ApplicationSource } from './application';
+export type { CycleDetectionResult, CycleInfo, EdgeInfo } from './cycles';
 export type { RankDirectionType } from './rankdirection';
 export type { SSEEvent, ConnectionStatusDetails } from './sse';
 
