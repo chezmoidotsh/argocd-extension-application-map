@@ -31,6 +31,7 @@ exports[`updateGraph App-of-Apps Scenarios should handle app-of-apps with ownerR
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -66,6 +67,7 @@ exports[`updateGraph App-of-Apps Scenarios should handle app-of-apps with ownerR
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -105,6 +107,7 @@ exports[`updateGraph App-of-Apps Scenarios updates resources for a node on MODIF
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -187,6 +190,7 @@ exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a no
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -213,6 +217,7 @@ exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a no
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -262,6 +267,7 @@ exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a no
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -313,6 +319,7 @@ exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent w
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -349,6 +356,7 @@ exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent w
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -405,6 +413,7 @@ exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent w
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -451,6 +460,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) adds a simple application 
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -484,6 +494,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -530,6 +541,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of 
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -563,6 +575,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of 
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Progressing",
           },
@@ -607,6 +620,7 @@ exports[`updateGraph Edge Cases & Malformed Data handles cyclical dependencies g
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -632,6 +646,7 @@ exports[`updateGraph Edge Cases & Malformed Data handles cyclical dependencies g
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -671,6 +686,7 @@ exports[`updateGraph Edge Cases & Malformed Data handles incomplete or malformed
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -716,6 +732,7 @@ exports[`updateGraph Edge Cases & Malformed Data handles self-referencing applic
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -768,6 +785,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) adds a node with ow
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -817,6 +835,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) adds an Application
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -878,6 +897,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) adds resources from
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -939,6 +959,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) handles resources i
           "namespace": "default",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -964,6 +985,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) handles resources i
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -1010,6 +1032,7 @@ exports[`updateGraph Status & Attribute Updates handles change of ownership (own
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -1066,6 +1089,7 @@ exports[`updateGraph Status & Attribute Updates handles change of ownership (own
           ],
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -1115,6 +1139,7 @@ exports[`updateGraph Status & Attribute Updates updates a child's unknown status
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
@@ -1182,6 +1207,7 @@ exports[`updateGraph Status & Attribute Updates updates a child's unknown status
           "namespace": "argocd",
         },
         "status": {
+          "drift": "Conform",
           "health": {
             "status": "Healthy",
           },
