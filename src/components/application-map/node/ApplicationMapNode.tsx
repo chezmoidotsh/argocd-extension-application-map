@@ -23,10 +23,10 @@ const ApplicationMapNode_Application: React.FC<{
 }> = ({ application, hover }) => {
   const [isSyncAllowed, setIsSyncAllowed] = useState<boolean | null>(null);
   const [isRefreshAllowed, setIsRefreshAllowed] = useState<boolean | null>(null);
+  const [isRevertAllowed, setIsRevertAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if ((isSyncAllowed !== null && isRefreshAllowed !== null) || !hover) return;
-    console.debug('Checking permissions for application:', application.metadata.name, isRefreshAllowed, isSyncAllowed);
+    if ((isSyncAllowed !== null && isRefreshAllowed !== null && isRevertAllowed !== null) || !hover) return;
 
     if (isSyncAllowed === null)
       services.account
@@ -38,6 +38,11 @@ const ApplicationMapNode_Application: React.FC<{
         .canI('applications', 'get', `${application.metadata.namespace}/${application.metadata.name}`)
         .then(setIsRefreshAllowed)
         .catch(() => setIsRefreshAllowed(false));
+    if (isRevertAllowed === null)
+      services.account
+        .canI('applications', 'update', `${application.metadata.namespace}/${application.metadata.name}`)
+        .then(setIsRevertAllowed)
+        .catch(() => setIsRevertAllowed(false));
   }, [application.metadata.namespace, application.metadata.name, hover]);
 
   return (
@@ -79,7 +84,7 @@ const ApplicationMapNode_Application: React.FC<{
 
         {application.status?.drift === SourceDriftStatus.Drift && (
           <QuickActionButton
-            isUnlocked={true}
+            isUnlocked={isRevertAllowed}
             icon="fa-code-compare"
             title="Revert source drift"
             onClick={async () => {
