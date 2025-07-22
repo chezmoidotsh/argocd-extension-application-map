@@ -1,3 +1,7 @@
+import { HttpMethods } from 'msw';
+
+import { Application } from '../types';
+
 /**
  * Services for ArgoCD API interactions
  */
@@ -16,7 +20,7 @@ class ArgoCDServices {
     canI: async (resource: string, action: string, subresource: string): Promise<boolean> => {
       try {
         const response = await fetch(`/api/v1/account/can-i/${resource}/${action}/${subresource}`, {
-          method: 'GET',
+          method: HttpMethods.GET,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -56,7 +60,7 @@ class ArgoCDServices {
         const url = `/api/v1/applications/${name}/sync`;
 
         const response = await fetch(url, {
-          method: 'POST',
+          method: HttpMethods.POST,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             appNamespace: namespace,
@@ -101,7 +105,7 @@ class ArgoCDServices {
         const params = new URLSearchParams({ refresh: 'normal', appNamespace: namespace });
 
         const response = await fetch(`${url}?${params}`, {
-          method: 'GET',
+          method: HttpMethods.GET,
           headers: { 'Content-Type': 'application/json' },
         });
 
@@ -122,6 +126,44 @@ class ArgoCDServices {
         return {
           success: false,
           error: `Refresh error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        };
+      }
+    },
+
+    /**
+     * Update an application
+     * @param application - The updated application object
+     * @returns Promise with action result
+     */
+    update: async (
+      application: Application
+    ): Promise<{ success: false; error: string } | { success: true; data: any }> => {
+      try {
+        const url = `/api/v1/applications/${application.metadata.name}`;
+
+        const response = await fetch(url, {
+          method: HttpMethods.PUT,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(application),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          return {
+            success: false,
+            error: `Patch failed: ${response.status} ${response.statusText} - ${errorText}`,
+          };
+        }
+
+        const data = await response.json();
+        return {
+          success: true,
+          data,
+        };
+      } catch (error) {
+        return {
+          success: false,
+          error: `Patch error: ${error instanceof Error ? error.message : 'Unknown error'}`,
         };
       }
     },
