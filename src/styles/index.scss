@@ -25,6 +25,18 @@
   --color-disabled: #bdbdbd;
 }
 
+.theme-light {
+  --background-color: #ffffff;
+  --shadow-color: #ccd6dd;
+  --text-color: #363c4a;
+}
+
+.theme-dark {
+  --background-color: #303237;
+  --shadow-color: #495763;
+  --text-color: #ffffff;
+}
+
 // =============================================================================
 // GLOBAL UTILITIES
 // =============================================================================

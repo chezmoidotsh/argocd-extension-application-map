@@ -33,9 +33,10 @@
     //
     &__button {
       align-items: center;
-      background: white;
+      background: var(--background-color);
       border-radius: 4px;
-      box-shadow: rgb(204, 214, 221) 1px 1px 1px 0px;
+      box-shadow: var(--shadow-color) 1px 1px 1px 0px;
+      color: var(--text-color);
       cursor: pointer;
       display: flex;
       height: 24px;
@@ -58,7 +59,6 @@
       // The icon inside each action button.
       //
       i {
-        color: #666;
         font-size: 14px;
       }
 
