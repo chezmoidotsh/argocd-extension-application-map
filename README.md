@@ -43,9 +43,9 @@ server:
       - name: extension-application-map
         env:
           - name: EXTENSION_URL
-            value: https://github.com/chezmoi-sh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map.tar
+            value: https://github.com/chezmoidotsh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map.tar
           - name: EXTENSION_CHECKSUM_URL
-            value: https://github.com/chezmoi-sh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map_checksums.txt
+            value: https://github.com/chezmoidotsh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map_checksums.txt
 ```
 
 #### Kustomize
@@ -65,9 +65,9 @@ spec:
           image: quay.io/argoprojlabs/argocd-extension-installer:v0.0.1
           env:
             - name: EXTENSION_URL
-              value: https://github.com/chezmoi-sh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map.tar
+              value: https://github.com/chezmoidotsh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map.tar
             - name: EXTENSION_CHECKSUM_URL
-              value: https://github.com/chezmoi-sh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map_checksums.txt
+              value: https://github.com/chezmoidotsh/argocd-extension-application-map/releases/download/v1.1.0/extension-application-map_checksums.txt
           volumeMounts:
             - name: extensions
               mountPath: /tmp/extensions/
