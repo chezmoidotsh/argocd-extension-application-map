@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`updateGraph App-of-Apps Scenarios should handle app-of-apps with ownerReferences 1`] = `
+exports[`processSSEEvent App-of-Apps Scenarios should handle app-of-apps with ownerReferences 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -88,7 +88,7 @@ exports[`updateGraph App-of-Apps Scenarios should handle app-of-apps with ownerR
 }
 `;
 
-exports[`updateGraph App-of-Apps Scenarios updates resources for a node on MODIFIED event, orphaning old children 1`] = `
+exports[`processSSEEvent App-of-Apps Scenarios updates resources for a node on MODIFIED event, orphaning old children 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -166,7 +166,7 @@ exports[`updateGraph App-of-Apps Scenarios updates resources for a node on MODIF
 }
 `;
 
-exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a node that is both a parent and a child 1`] = `
+exports[`processSSEEvent ApplicationSet Lifecycle correctly handles deletion of a node that is both a parent and a child 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -254,7 +254,7 @@ exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a no
 }
 `;
 
-exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a node that is both a parent and a child 2`] = `
+exports[`processSSEEvent ApplicationSet Lifecycle correctly handles deletion of a node that is both a parent and a child 2`] = `
 {
   "attributes": {},
   "edges": [],
@@ -288,7 +288,7 @@ exports[`updateGraph ApplicationSet Lifecycle correctly handles deletion of a no
 }
 `;
 
-exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 1`] = `
+exports[`processSSEEvent ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -377,7 +377,7 @@ exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent w
 }
 `;
 
-exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 2`] = `
+exports[`processSSEEvent ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 2`] = `
 {
   "attributes": {},
   "edges": [
@@ -434,7 +434,7 @@ exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent w
 }
 `;
 
-exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 3`] = `
+exports[`processSSEEvent ApplicationSet Lifecycle removes an ApplicationSet parent when it becomes orphaned 3`] = `
 {
   "attributes": {},
   "edges": [],
@@ -447,7 +447,7 @@ exports[`updateGraph ApplicationSet Lifecycle removes an ApplicationSet parent w
 }
 `;
 
-exports[`updateGraph Basic Operations (Nodes & Edges) adds a simple application node 1`] = `
+exports[`processSSEEvent Basic Operations (Nodes & Edges) adds a simple application node 1`] = `
 {
   "attributes": {},
   "edges": [],
@@ -481,7 +481,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) adds a simple application 
 }
 `;
 
-exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 1`] = `
+exports[`processSSEEvent Basic Operations (Nodes & Edges) removes a node on DELETED 1`] = `
 {
   "attributes": {},
   "edges": [],
@@ -515,7 +515,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 
 }
 `;
 
-exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 2`] = `
+exports[`processSSEEvent Basic Operations (Nodes & Edges) removes a node on DELETED 2`] = `
 {
   "attributes": {},
   "edges": [],
@@ -528,7 +528,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) removes a node on DELETED 
 }
 `;
 
-exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of an existing node on MODIFIED 1`] = `
+exports[`processSSEEvent Basic Operations (Nodes & Edges) updates the attributes of an existing node on MODIFIED 1`] = `
 {
   "attributes": {},
   "edges": [],
@@ -562,7 +562,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of 
 }
 `;
 
-exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of an existing node on MODIFIED 2`] = `
+exports[`processSSEEvent Basic Operations (Nodes & Edges) updates the attributes of an existing node on MODIFIED 2`] = `
 {
   "attributes": {},
   "edges": [],
@@ -596,7 +596,7 @@ exports[`updateGraph Basic Operations (Nodes & Edges) updates the attributes of 
 }
 `;
 
-exports[`updateGraph Edge Cases & Malformed Data handles cyclical dependencies gracefully 1`] = `
+exports[`processSSEEvent Edge Cases & Malformed Data handles cyclical dependencies gracefully 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -673,7 +673,7 @@ exports[`updateGraph Edge Cases & Malformed Data handles cyclical dependencies g
 }
 `;
 
-exports[`updateGraph Edge Cases & Malformed Data handles incomplete or malformed SSE payloads gracefully 1`] = `
+exports[`processSSEEvent Edge Cases & Malformed Data handles incomplete or malformed SSE payloads gracefully 1`] = `
 {
   "attributes": {},
   "edges": [],
@@ -713,7 +713,7 @@ exports[`updateGraph Edge Cases & Malformed Data handles incomplete or malformed
 }
 `;
 
-exports[`updateGraph Edge Cases & Malformed Data handles self-referencing applications gracefully 1`] = `
+exports[`processSSEEvent Edge Cases & Malformed Data handles self-referencing applications gracefully 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -759,7 +759,419 @@ exports[`updateGraph Edge Cases & Malformed Data handles self-referencing applic
 }
 `;
 
-exports[`updateGraph Resource and Ownership Handling (Edges) adds a node with ownerReferences, creating a parent 1`] = `
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) demonstrates race condition leaving orphaned ApplicationSet nodes 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset-03->Application/argocd/guestbook-app-04",
+      "source": "ApplicationSet/argocd/appset-03",
+      "target": "Application/argocd/guestbook-app-04",
+    },
+    {
+      "key": "Application/argocd/app-of-apps-02->ApplicationSet/argocd/appset-03",
+      "source": "Application/argocd/app-of-apps-02",
+      "target": "ApplicationSet/argocd/appset-03",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "guestbook-app-04",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset-03",
+            },
+          ],
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/guestbook-app-04",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset-03",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset-03",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "app-of-apps-02",
+          "namespace": "argocd",
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset-03",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/app-of-apps-02",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) demonstrates race condition leaving orphaned ApplicationSet nodes 2`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "app-of-apps-02",
+          "namespace": "argocd",
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset-03",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/app-of-apps-02",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) demonstrates race condition leaving orphaned ApplicationSet nodes 3`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "Application/argocd/app-of-apps-02->ApplicationSet/argocd/appset-03",
+      "source": "Application/argocd/app-of-apps-02",
+      "target": "ApplicationSet/argocd/appset-03",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "app-of-apps-02",
+          "namespace": "argocd",
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset-03",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/app-of-apps-02",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset-03",
+          "namespace": "argocd",
+        },
+        "status": {
+          "health": undefined,
+          "sync": {
+            "status": undefined,
+          },
+        },
+      },
+      "key": "ApplicationSet/argocd/appset-03",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) demonstrates race condition leaving orphaned ApplicationSet nodes 4`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) preserves ApplicationSets with remaining children during deletion 1`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset-01->Application/argocd/child-app-A",
+      "source": "ApplicationSet/argocd/appset-01",
+      "target": "Application/argocd/child-app-A",
+    },
+    {
+      "key": "ApplicationSet/argocd/appset-01->Application/argocd/child-app-B",
+      "source": "ApplicationSet/argocd/appset-01",
+      "target": "Application/argocd/child-app-B",
+    },
+    {
+      "key": "Application/argocd/app-of-apps->ApplicationSet/argocd/appset-01",
+      "source": "Application/argocd/app-of-apps",
+      "target": "ApplicationSet/argocd/appset-01",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "child-app-A",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset-01",
+            },
+          ],
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/child-app-A",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset-01",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset-01",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "child-app-B",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset-01",
+            },
+          ],
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/child-app-B",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "app-of-apps",
+          "namespace": "argocd",
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [
+            {
+              "kind": "ApplicationSet",
+              "name": "appset-01",
+              "namespace": "argocd",
+            },
+          ],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/app-of-apps",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) preserves ApplicationSets with remaining children during deletion 2`] = `
+{
+  "attributes": {},
+  "edges": [
+    {
+      "key": "ApplicationSet/argocd/appset-01->Application/argocd/child-app-A",
+      "source": "ApplicationSet/argocd/appset-01",
+      "target": "Application/argocd/child-app-A",
+    },
+    {
+      "key": "ApplicationSet/argocd/appset-01->Application/argocd/child-app-B",
+      "source": "ApplicationSet/argocd/appset-01",
+      "target": "Application/argocd/child-app-B",
+    },
+  ],
+  "nodes": [
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "child-app-A",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset-01",
+            },
+          ],
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/child-app-A",
+    },
+    {
+      "attributes": {
+        "kind": "ApplicationSet",
+        "metadata": {
+          "name": "appset-01",
+          "namespace": "argocd",
+        },
+      },
+      "key": "ApplicationSet/argocd/appset-01",
+    },
+    {
+      "attributes": {
+        "kind": "Application",
+        "metadata": {
+          "name": "child-app-B",
+          "namespace": "argocd",
+          "ownerReferences": [
+            {
+              "apiVersion": "argoproj.io/v1alpha1",
+              "kind": "ApplicationSet",
+              "name": "appset-01",
+            },
+          ],
+        },
+        "status": {
+          "drift": "Conform",
+          "health": {
+            "status": "Healthy",
+          },
+          "resources": [],
+          "sync": {
+            "status": "Synced",
+          },
+        },
+      },
+      "key": "Application/argocd/child-app-B",
+    },
+  ],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
+exports[`processSSEEvent Resource and Ownership Handling (Edges) adds a node with ownerReferences, creating a parent 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -816,7 +1228,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) adds a node with ow
 }
 `;
 
-exports[`updateGraph Resource and Ownership Handling (Edges) adds an ApplicationSet referenced in resources 1`] = `
+exports[`processSSEEvent Resource and Ownership Handling (Edges) adds an ApplicationSet referenced in resources 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -878,7 +1290,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) adds an Application
 }
 `;
 
-exports[`updateGraph Resource and Ownership Handling (Edges) adds resources from status.resources as stub nodes 1`] = `
+exports[`processSSEEvent Resource and Ownership Handling (Edges) adds resources from status.resources as stub nodes 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -940,7 +1352,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) adds resources from
 }
 `;
 
-exports[`updateGraph Resource and Ownership Handling (Edges) handles resources in different namespaces correctly 1`] = `
+exports[`processSSEEvent Resource and Ownership Handling (Edges) handles resources in different namespaces correctly 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -1006,7 +1418,7 @@ exports[`updateGraph Resource and Ownership Handling (Edges) handles resources i
 }
 `;
 
-exports[`updateGraph Status & Attribute Updates handles change of ownership (ownerReference) 1`] = `
+exports[`processSSEEvent Status & Attribute Updates handles change of ownership (ownerReference) 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -1063,7 +1475,7 @@ exports[`updateGraph Status & Attribute Updates handles change of ownership (own
 }
 `;
 
-exports[`updateGraph Status & Attribute Updates handles change of ownership (ownerReference) 2`] = `
+exports[`processSSEEvent Status & Attribute Updates handles change of ownership (ownerReference) 2`] = `
 {
   "attributes": {},
   "edges": [
@@ -1120,7 +1532,7 @@ exports[`updateGraph Status & Attribute Updates handles change of ownership (own
 }
 `;
 
-exports[`updateGraph Status & Attribute Updates updates a child's unknown status from a parent's resource definition 1`] = `
+exports[`processSSEEvent Status & Attribute Updates updates a child's unknown status from a parent's resource definition 1`] = `
 {
   "attributes": {},
   "edges": [
@@ -1188,7 +1600,7 @@ exports[`updateGraph Status & Attribute Updates updates a child's unknown status
 }
 `;
 
-exports[`updateGraph Status & Attribute Updates updates a child's unknown status from a parent's resource definition 2`] = `
+exports[`processSSEEvent Status & Attribute Updates updates a child's unknown status from a parent's resource definition 2`] = `
 {
   "attributes": {},
   "edges": [

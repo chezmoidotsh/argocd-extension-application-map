@@ -37,7 +37,7 @@ const createMockApp = (
   return app;
 };
 
-describe('updateGraph', () => {
+describe('processSSEEvent', () => {
   describe('Basic Operations (Nodes & Edges)', () => {
     /**
      * Diagram:
@@ -511,6 +511,134 @@ describe('updateGraph', () => {
       }).not.toThrow();
 
       expect(graph.hasEdge('Application/argocd/appA', 'Application/argocd/appA')).toBe(true);
+      expect(graph.export()).toMatchSnapshot();
+    });
+  });
+
+  describe('Race Conditions & Orphaned Nodes (issue #128)', () => {
+    /**
+     * Reproduces the race condition described in issue #128:
+     * When deleting applications in a hierarchy, a race condition between DELETED and MODIFIED
+     * events can leave orphaned ApplicationSet nodes in the graph.
+     *
+     * Initial diagram:
+     *   ┌──────────────────┐     ┌────────────┐     ┌──────────────────┐
+     *   │ app-of-apps-02   │ ──▶ │ appset-03  │ ──▶ │ guestbook-app-04 │
+     *   └──────────────────┘     └────────────┘     └──────────────────┘
+     *
+     * Race condition sequence:
+     * 1. DELETED guestbook-app-04 → appset-03 is removed (no children)
+     * 2. MODIFIED app-of-apps-02 → appset-03 is recreated via status.resources
+     * 3. DELETED app-of-apps-02 → app-of-apps-02 is removed, but appset-03 remains orphaned
+     *
+     * Final diagram with issue #128 (BUG - appset-03 should be removed):
+     *                               ┌────────────┐
+     *                               │ appset-03  │ (orphaned node)
+     *                               └────────────┘
+     *
+     * Expected diagram:
+     *
+     *  (no node remains)
+     */
+    it('demonstrates race condition leaving orphaned ApplicationSet nodes', () => {
+      const graph = new DirectedGraph<Application | ApplicationSet>();
+
+      // Setup: Create the hierarchy app-of-apps-02 → appset-03 → guestbook-app-04
+      const guestbookApp = createMockApp('guestbook-app-04', 'argocd', {
+        kind: 'ApplicationSet',
+        name: 'appset-03',
+      });
+
+      const appOfApps = createMockApp('app-of-apps-02', 'argocd', undefined, [
+        { kind: 'ApplicationSet', name: 'appset-03', namespace: 'argocd' },
+      ]);
+
+      // Initial state: Build the full hierarchy
+      processSSEEvent(graph, 'ADDED', guestbookApp);
+      processSSEEvent(graph, 'ADDED', appOfApps);
+
+      expect(graph.hasNode('Application/argocd/guestbook-app-04')).toBe(true);
+      expect(graph.hasNode('ApplicationSet/argocd/appset-03')).toBe(true);
+      expect(graph.hasNode('Application/argocd/app-of-apps-02')).toBe(true);
+      expect(graph.hasEdge('ApplicationSet/argocd/appset-03', 'Application/argocd/guestbook-app-04')).toBe(true);
+      expect(graph.hasEdge('Application/argocd/app-of-apps-02', 'ApplicationSet/argocd/appset-03')).toBe(true);
+      expect(graph.export()).toMatchSnapshot();
+
+      // Race condition sequence:
+
+      // 1. DELETED guestbook-app-04 → Should remove appset-03 (no children left)
+      processSSEEvent(graph, 'DELETED', guestbookApp);
+      expect(graph.hasNode('Application/argocd/guestbook-app-04')).toBe(false);
+      expect(graph.hasNode('ApplicationSet/argocd/appset-03')).toBe(false); // Correctly removed
+      expect(graph.export()).toMatchSnapshot();
+
+      // 2. MODIFIED app-of-apps-02 → Recreates appset-03 via status.resources reference
+      // (simulates the case where app-of-apps-02 still has appset-03 in its status.resources)
+      const modifiedAppOfApps = createMockApp('app-of-apps-02', 'argocd', undefined, [
+        { kind: 'ApplicationSet', name: 'appset-03', namespace: 'argocd' },
+      ]);
+      processSSEEvent(graph, 'MODIFIED', modifiedAppOfApps);
+      expect(graph.hasNode('ApplicationSet/argocd/appset-03')).toBe(true); // Recreated
+      expect(graph.hasEdge('Application/argocd/app-of-apps-02', 'ApplicationSet/argocd/appset-03')).toBe(true);
+      expect(graph.export()).toMatchSnapshot();
+
+      // 3. DELETED app-of-apps-02 → Should remove app-of-apps-02 and cleanup orphaned appset-03
+      processSSEEvent(graph, 'DELETED', appOfApps);
+      expect(graph.hasNode('Application/argocd/app-of-apps-02')).toBe(false);
+      expect(graph.hasNode('ApplicationSet/argocd/appset-03')).toBe(false);
+      expect(graph.export()).toMatchSnapshot();
+    });
+
+    /**
+     * Edge case: Verifies that ApplicationSets with remaining children are NOT removed
+     * during the race condition cleanup.
+     *
+     * Initial diagram:
+     *   ┌──────────────────┐     ┌────────────┐     ┌──────────────────┐
+     *   │ app-of-apps      │ ──▶ │ appset-01  │ ──▶ │ child-app-A      │
+     *   └──────────────────┘     └─────┬──────┘     └──────────────────┘
+     *                                  │            ┌──────────────────┐
+     *                                  └──────────▶ │ child-app-B      │
+     *                                               └──────────────────┘
+     *
+     * Expected: After DELETED app-of-apps, appset-01 should remain (has children)
+     *
+     * ┌────────────┐     ┌──────────────────┐
+     * │ appset-01  │ ──▶ │ child-app-A      │
+     * └─────┬──────┘     └──────────────────┘
+     *       │            ┌──────────────────┐
+     *       └──────────▶ │ child-app-B      │
+     *                    └──────────────────┘
+     */
+    it('preserves ApplicationSets with remaining children during deletion', () => {
+      const graph = new DirectedGraph<Application | ApplicationSet>();
+
+      const childAppA = createMockApp('child-app-A', 'argocd', {
+        kind: 'ApplicationSet',
+        name: 'appset-01',
+      });
+      const childAppB = createMockApp('child-app-B', 'argocd', {
+        kind: 'ApplicationSet',
+        name: 'appset-01',
+      });
+      const appOfApps = createMockApp('app-of-apps', 'argocd', undefined, [
+        { kind: 'ApplicationSet', name: 'appset-01', namespace: 'argocd' },
+      ]);
+
+      processSSEEvent(graph, 'ADDED', childAppA);
+      processSSEEvent(graph, 'ADDED', childAppB);
+      processSSEEvent(graph, 'ADDED', appOfApps);
+
+      expect(graph.outDegree('ApplicationSet/argocd/appset-01')).toBe(2); // Has 2 children
+      expect(graph.export()).toMatchSnapshot();
+
+      // Delete the parent app-of-apps
+      processSSEEvent(graph, 'DELETED', appOfApps);
+
+      // appset-01 should remain because it still has children
+      expect(graph.hasNode('Application/argocd/app-of-apps')).toBe(false);
+      expect(graph.hasNode('ApplicationSet/argocd/appset-01')).toBe(true);
+      expect(graph.outDegree('ApplicationSet/argocd/appset-01')).toBe(2); // Still has 2 children
       expect(graph.export()).toMatchSnapshot();
     });
   });
