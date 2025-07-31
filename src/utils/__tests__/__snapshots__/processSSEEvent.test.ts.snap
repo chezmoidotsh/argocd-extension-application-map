@@ -949,6 +949,19 @@ exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) demonstra
 }
 `;
 
+exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) demonstrates race condition leaving orphaned ApplicationSet nodes 4`] = `
+{
+  "attributes": {},
+  "edges": [],
+  "nodes": [],
+  "options": {
+    "allowSelfLoops": true,
+    "multi": false,
+    "type": "directed",
+  },
+}
+`;
+
 exports[`processSSEEvent Race Conditions & Orphaned Nodes (issue #128) preserves ApplicationSets with remaining children during deletion 1`] = `
 {
   "attributes": {},

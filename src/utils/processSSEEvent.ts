@@ -89,6 +89,7 @@ function handleDelete(graph: DirectedGraph<ApplicationGraphNode>, payload: Appli
   if (!graph.hasNode(appNodeId)) return;
 
   const parents = graph.inNeighbors(appNodeId);
+  const children = graph.outNeighbors(appNodeId);
   graph.dropNode(appNodeId);
 
   // After deleting a node, check if any of its former parents (ApplicationSets)
@@ -100,6 +101,15 @@ function handleDelete(graph: DirectedGraph<ApplicationGraphNode>, payload: Appli
       graph.outDegree(parentNodeId) === 0
     ) {
       graph.dropNode(parentNodeId);
+    }
+  });
+
+  // After deleting a node, check if any of its former children (ApplicationSets)
+  // have become orphaned and remove them.
+  // NOTE: only remove children that are ApplicationSet without any other children.
+  children.forEach((childNodeId) => {
+    if (graph.getNodeAttributes(childNodeId).kind === 'ApplicationSet' && graph.outDegree(childNodeId) === 0) {
+      graph.dropNode(childNodeId);
     }
   });
 }
