@@ -84,7 +84,24 @@ spec:
           emptyDir: {}
 ```
 
-## Configuration
+## Features
+
+### Quick Actions
+
+The extension provides a Quick Actions system that allows you to perform common tasks directly from the application map. This includes actions like refreshing the application state, syncing applications, and reverting drifted applications when necessary.
+
+To access Quick Actions, simply hover over the application node in the map. A context menu will appear, allowing you to select the desired action.
+
+![Example of Quick Actions](docs/assets/quick-actions-example.png)
+
+> [!NOTE]
+> If you don't have the necessary permissions to perform an action, it will be disabled in the Quick Actions menu.
+
+3 buttons are available in the Quick Actions menu:
+
+- **Refresh**: This button allows you to refresh the application state, ensuring that the map reflects the latest status of your applications.
+- **Sync**: This button initiates a synchronization of the application with its source, applying any changes that have been made in the Git repository.
+- **Revert Drift**: This button reverts the application source configuration to its expected state defined in the `Application` annotations.
 
 ### Source Drift Detection
 
@@ -142,6 +159,12 @@ metadata:
 spec:
   # ... rest of your application spec
 ```
+
+### Cycle Detection
+
+The extension automatically detects cycles in your application dependencies. If a cycle is detected, it will be highlighted in the map, allowing you to quickly identify and resolve circular dependencies.
+
+![Cycle Detection Example](docs/assets/cycle-detection-example.png)
 
 ## Roadmap
 
