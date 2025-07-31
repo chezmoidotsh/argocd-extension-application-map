@@ -138,7 +138,7 @@
       //
       @for $i from 1 through 5 {
         .application-resource-tree__node:hover &:nth-child(#{$i}) {
-          transition-delay: 0.2s + $i * 0.1s;
+          transition-delay: $i * 0.02s;
         }
       }
 
