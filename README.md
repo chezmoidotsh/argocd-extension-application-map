@@ -97,7 +97,7 @@ Add the following annotations to your ArgoCD Application manifests:
 | Annotation                                      | Description                                           |
 | ----------------------------------------------- | ----------------------------------------------------- |
 | `source-ref.argocd.argoproj.io/repo`            | Git repository URL that serves as the source of truth |
-| `source-ref.argocd.argoproj.io/targetRevision`  | Expected branch, tag, or commit SHA                   |
+| `source-ref.argocd.argoproj.io/target-revision` | Expected branch, tag, or commit SHA                   |
 | `source-ref.argocd.argoproj.io/path`            | Path within the repository (default: repository root) |
 | `source-ref.argocd.argoproj.io/chart`           | Helm chart name (for Helm-based applications)         |
 
@@ -111,7 +111,7 @@ metadata:
     source-ref.argocd.argoproj.io/repo: 'https://github.com/my-org/my-repo'
 
     # Target revision (branch, tag, or commit SHA)
-    source-ref.argocd.argoproj.io/targetRevision: 'main'
+    source-ref.argocd.argoproj.io/target-revision: 'main'
 
     # Specific path within the repository
     source-ref.argocd.argoproj.io/path: 'manifests/production'
