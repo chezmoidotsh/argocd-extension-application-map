@@ -41,7 +41,7 @@ jobs:
       
       - name: 📝 Update README.md
         run: |
-          VERSION="$(node -p "require('./package.json').version")"
+          VERSION="v$(node -p "require('./package.json').version")"
           # Remplace l'ancienne version dans les URLs de téléchargement par la nouvelle
           sed -i.bak -E "s|(releases/download/)[^/]+/extension-application-map.tar|\1${VERSION}/extension-application-map.tar|g" README.md
           sed -i.bak -E "s|(releases/download/)[^/]+/extension-application-map_checksums.txt|\1${VERSION}/extension-application-map_checksums.txt|g" README.md
@@ -55,19 +55,22 @@ jobs:
 
           # Create a new commit using GitHub API (GraphQL) to get signed commit
           gh api graphql \
-            -f query="mutation(\$repo:String!,\$branch:String!,\$message:String!,\$path:String!,\$content:Base64String!,\$oid:GitObjectID!){
+          -f query="mutation(\$repo:String!,\$branch:String!,\$message:String!,\$packageJsonContent:Base64String!,\$readmeContent:Base64String!,\$oid:GitObjectID!){
               createCommitOnBranch(input:{
-                branch:{repositoryNameWithOwner:\$repo,branchName:\$branch},
-                message:{headline:\$message},
-                fileChanges:{additions:[{path:\$path,contents:\$content}]},
-                expectedHeadOid:\$oid
+              branch:{repositoryNameWithOwner:\$repo,branchName:\$branch},
+              message:{headline:\$message},
+              fileChanges:{additions:[
+                  {path:\"package.json\",contents:\$packageJsonContent},
+                  {path:\"README.md\",contents:\$readmeContent}
+              ]},
+              expectedHeadOid:\$oid
               }){commit{url}}
-            }" \
-            -f repo="${{ github.repository }}" \
-            -f branch="main" \
-            -f message="🚀: bump ${BUMP_TYPE} version to ${VERSION}" \
-            -f path="package.json" \
-            -f content="$(base64 -w 0 package.json)" \
-            -f oid="$(git rev-parse HEAD)"
+          }" \
+          -f repo="chezmoidotsh/argocd-extension-application-map" \
+          -f branch="main" \
+          -f message="🚀: bump ${BUMP_TYPE} version to ${VERSION}" \
+          -f packageJsonContent="$(base64 -w 0 package.json)" \
+          -f readmeContent="$(base64 -w 0 README.md)" \
+          -f oid="$(git rev-parse HEAD)"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
