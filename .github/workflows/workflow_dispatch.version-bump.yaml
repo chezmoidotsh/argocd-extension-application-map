@@ -10,7 +10,6 @@ on:
         required: true
         type: choice
         options:
-          - auto
           - major
           - minor
           - patch
@@ -33,45 +32,26 @@ jobs:
         with:
           node-version: 20
 
-      - name: 🔄 Bump version with Nyx (auto)
-        if: github.event.inputs.version_type == 'auto'
-        id: nyx
-        uses: mooltiverse/nyx@34bf14b64bd12a0ea51d92b841a6f82dc1dfb814 # v3.1.3
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          command: infer
-          preset: extended
-          releaseLenient: true
-
-      - name: 📝 Update package.json (auto)
-        if: ${{ github.event.inputs.version_type == 'auto' && (steps.nyx.outputs.newVersion == 'true') }}
-        id: auto-bump
-        run: |
-          npm version ${{ steps.nyx.outputs.version }} --no-git-tag-version
-          echo "version=${{ steps.nyx.outputs.version }}" >> "${GITHUB_OUTPUT}"
-          echo "bump_type=${{ steps.nyx.outputs.bump }}" >> "${GITHUB_OUTPUT}"
-
       - name: 📝 Manual version bump
-        if: github.event.inputs.version_type != 'auto'
         id: manual-bump
         run: |
           npm version ${{ github.event.inputs.version_type }} --no-git-tag-version
           echo "version=$(node -p "require('./package.json').version")" >> "${GITHUB_OUTPUT}"
           echo "bump_type=${{ github.event.inputs.version_type }}" >> "${GITHUB_OUTPUT}"
+      
+      - name: 📝 Update README.md
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          # Remplace l'ancienne version dans les URLs de téléchargement par la nouvelle
+          sed -i.bak -E "s|(releases/download/)[^/]+/extension-application-map.tar|\1${VERSION}/extension-application-map.tar|g" README.md
+          sed -i.bak -E "s|(releases/download/)[^/]+/extension-application-map_checksums.txt|\1${VERSION}/extension-application-map_checksums.txt|g" README.md
+          rm -f README.md.bak
 
       - name: 🔏 Create signed commit
-        # Run if manual bump or if auto and new version was found
-        if: ${{ github.event.inputs.version_type != 'auto' || (steps.nyx.outputs.newVersion == 'true') }}
         run: |
           # Set variables based on the bump type
-          if [ "${{ github.event.inputs.version_type }}" == "auto" ]; then
-            VERSION="${{ steps.auto-bump.outputs.version }}"
-            BUMP_TYPE="${{ steps.auto-bump.outputs.bump_type }}"
-          else
-            VERSION="${{ steps.manual-bump.outputs.version }}"
-            BUMP_TYPE="${{ steps.manual-bump.outputs.bump_type }}"
-          fi
+          VERSION="${{ steps.manual-bump.outputs.version }}"
+          BUMP_TYPE="${{ steps.manual-bump.outputs.bump_type }}"
 
           # Create a new commit using GitHub API (GraphQL) to get signed commit
           gh api graphql \
