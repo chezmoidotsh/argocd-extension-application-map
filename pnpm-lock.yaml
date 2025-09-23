@@ -131,10 +131,10 @@ importers:
         version: 4.0.2(webpack@5.101.3)
       sass:
         specifier: ^1.89.0
-        version: 1.93.0
+        version: 1.93.1
       sass-loader:
         specifier: ^16.0.5
-        version: 16.0.5(sass@1.93.0)(webpack@5.101.3)
+        version: 16.0.5(sass@1.93.1)(webpack@5.101.3)
       storybook:
         specifier: ^8.6.14
         version: 8.6.14
@@ -4674,8 +4674,8 @@ packages:
       webpack:
         optional: true
 
-  sass@1.93.0:
-    resolution: {integrity: sha512-CQi5/AzCwiubU3dSqRDJ93RfOfg/hhpW1l6wCIvolmehfwgCI35R/0QDs1+R+Ygrl8jFawwwIojE2w47/mf94A==}
+  sass@1.93.1:
+    resolution: {integrity: sha512-wLAeLB7IksO2u+cCfhHqcy7/2ZUMPp/X2oV6+LjmweTqgjhOKrkaE/Q1wljxtco5EcOcupZ4c981X0gpk5Tiag==}
     engines: {node: '>=14.0.0'}
     hasBin: true
 
@@ -10977,14 +10977,14 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sass-loader@16.0.5(sass@1.93.0)(webpack@5.101.3):
+  sass-loader@16.0.5(sass@1.93.1)(webpack@5.101.3):
     dependencies:
       neo-async: 2.6.2
     optionalDependencies:
-      sass: 1.93.0
+      sass: 1.93.1
       webpack: 5.101.3(@swc/core@1.13.3)(esbuild@0.25.8)(webpack-cli@6.0.1)
 
-  sass@1.93.0:
+  sass@1.93.1:
     dependencies:
       chokidar: 4.0.3
       immutable: 5.1.3
