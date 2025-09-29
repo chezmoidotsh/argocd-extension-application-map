@@ -95,7 +95,7 @@ importers:
         version: 6.24.1
       chromatic:
         specifier: ^13.0.0
-        version: 13.2.1
+        version: 13.3.0
       css-loader:
         specifier: ^7.1.2
         version: 7.1.2(webpack@5.101.3)
@@ -2570,8 +2570,8 @@ packages:
       '@chromatic-com/playwright':
         optional: true
 
-  chromatic@13.2.1:
-    resolution: {integrity: sha512-J/b5JbwtkjXHocVgnJO1MXV1zuyFZlFEGoVEHeyNPRLqaEgGRwVXtoMJIVioeeUlavrg5OCnb//6RagS/fi5Yw==}
+  chromatic@13.3.0:
+    resolution: {integrity: sha512-OtXVKSFqGS1x6E6xYzmYX2iImSknbvo5CfTxP3ztFvXQhIAwhJzJuA3XpnIewER9gtWUNnV2DDi8/f9JyZJSfg==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
@@ -8483,7 +8483,7 @@ snapshots:
 
   chromatic@11.29.0: {}
 
-  chromatic@13.2.1: {}
+  chromatic@13.3.0: {}
 
   chrome-trace-event@1.0.4: {}
 
