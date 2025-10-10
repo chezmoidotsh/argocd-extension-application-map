@@ -122,7 +122,7 @@ importers:
         version: 2.11.5(@types/node@24.6.1)(typescript@5.9.3)
       msw-storybook-addon:
         specifier: ^2.0.5
-        version: 2.0.5(msw@2.11.5(@types/node@24.6.1)(typescript@5.9.3))
+        version: 2.0.6(msw@2.11.5(@types/node@24.6.1)(typescript@5.9.3))
       playwright:
         specifier: ^1.52.0
         version: 1.56.0
@@ -4048,8 +4048,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  msw-storybook-addon@2.0.5:
-    resolution: {integrity: sha512-uum2gtprDBoUb8GV/rPMwPytHmB8+AUr25BQUY0MpjYey5/ujaew2Edt+4oHiXpLTd0ThyMqmEvGy/sRpDV4lg==}
+  msw-storybook-addon@2.0.6:
+    resolution: {integrity: sha512-ExCwDbcJoM2V3iQU+fZNp+axVfNc7DWMRh4lyTXebDO8IbpUNYKGFUrA8UqaeWiRGKVuS7+fU+KXEa9b0OP6uA==}
     peerDependencies:
       msw: ^2.0.0
 
@@ -10086,7 +10086,7 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw-storybook-addon@2.0.5(msw@2.11.5(@types/node@24.6.1)(typescript@5.9.3)):
+  msw-storybook-addon@2.0.6(msw@2.11.5(@types/node@24.6.1)(typescript@5.9.3)):
     dependencies:
       is-node-process: 1.2.0
       msw: 2.11.5(@types/node@24.6.1)(typescript@5.9.3)
