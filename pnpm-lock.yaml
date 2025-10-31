@@ -13,7 +13,7 @@ importers:
         version: 1.1.5
       '@xyflow/react':
         specifier: ^12.6.4
-        version: 12.9.1(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 12.9.2(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       graphology:
         specifier: ^0.26.0
         version: 0.26.0(graphology-types@0.24.8)
@@ -2125,8 +2125,8 @@ packages:
   '@xtuc/long@4.2.2':
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  '@xyflow/react@12.9.1':
-    resolution: {integrity: sha512-JRPCT5p7NnPdVSIh15AFvUSSm+8GUyz2I6iuBEC1LG2lKgig/L48AM/ImMHCc3ZUCg+AgTOJDaX2fcRyPA9BTA==}
+  '@xyflow/react@12.9.2':
+    resolution: {integrity: sha512-Xr+LFcysHCCoc5KRHaw+FwbqbWYxp9tWtk1mshNcqy25OAPuaKzXSdqIMNOA82TIXF/gFKo0Wgpa6PU7wUUVqw==}
     peerDependencies:
       react: '>=17'
       react-dom: '>=17'
@@ -7436,7 +7436,7 @@ snapshots:
 
   '@xtuc/long@4.2.2': {}
 
-  '@xyflow/react@12.9.1(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@xyflow/react@12.9.2(@types/react@18.3.26)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@xyflow/system': 0.0.72
       classcat: 5.0.5
