@@ -139,8 +139,8 @@ importers:
         specifier: ^8.6.14
         version: 8.6.14
       storybook-addon-deep-controls:
-        specifier: ^0.9.2
-        version: 0.9.5(storybook@8.6.14)
+        specifier: ^0.10.0
+        version: 0.10.0(storybook@8.6.14)
       style-loader:
         specifier: ^4.0.0
         version: 4.0.0(webpack@5.102.1)
@@ -4432,10 +4432,10 @@ packages:
     resolution: {integrity: sha512-DvEy55V3DB7uknRo+4iOGT5fP1slR8wQohVdknigZPMpMstaKJQWhwiYBACJE3Ul2pTnATihhBYnRhZQHGBiRw==}
     engines: {node: '>= 0.8'}
 
-  storybook-addon-deep-controls@0.9.5:
-    resolution: {integrity: sha512-HYyHC5nMrE2MMpU4InrKAPOLBeil/B4xjLWh+aN0veQjJiYbjNixnyCobYMRZ4SB8KUt5v+TwuvdEZBEGJLPJg==}
+  storybook-addon-deep-controls@0.10.0:
+    resolution: {integrity: sha512-tVWoibwNVkBaGN9nl8h1Qz4t562SVpudC/JcEL436KjKWUeft+b0HLw9tvZVcRyuZtNvSvuOQbTNyTdVi9lbKA==}
     peerDependencies:
-      storybook: '>= 7.0.0 < 8.5.0 || >= 9.0.0 < 10.0.0'
+      storybook: '>= 7.0.0 < 8.5.0 || >= 9.0.0 < 11.0.0'
 
   storybook@8.6.14:
     resolution: {integrity: sha512-sVKbCj/OTx67jhmauhxc2dcr1P+yOgz/x3h0krwjyMgdc5Oubvxyg4NYDZmzAw+ym36g/lzH8N0Ccp4dwtdfxw==}
@@ -9888,7 +9888,7 @@ snapshots:
 
   statuses@2.0.2: {}
 
-  storybook-addon-deep-controls@0.9.5(storybook@8.6.14):
+  storybook-addon-deep-controls@0.10.0(storybook@8.6.14):
     dependencies:
       storybook: 8.6.14
 
