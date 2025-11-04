@@ -104,7 +104,7 @@ importers:
         version: 4.4.0(webpack@5.102.1)
       eslint-plugin-storybook:
         specifier: ^10.0.0
-        version: 10.0.3(eslint@9.39.0)(storybook@8.6.14)(typescript@5.9.3)
+        version: 10.0.4(eslint@9.39.0)(storybook@8.6.14)(typescript@5.9.3)
       identity-obj-proxy:
         specifier: ^3.0.0
         version: 3.0.0
@@ -2830,11 +2830,11 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-plugin-storybook@10.0.3:
-    resolution: {integrity: sha512-KseeLc7LBP23WR7s1K7FpCMofKDW12aP83PxAdoWvMJjP0ShWX6mgUFuN42+phI9QKSW74gQcG8QU0pbfR45mw==}
+  eslint-plugin-storybook@10.0.4:
+    resolution: {integrity: sha512-etAC9C/x6SQZksQQkCZpSms7O9CLTzwPtion2e8hQSnzT3BIyhSP4JHGJyNwEQ2Mt71XROWuOwqnH776cZiXqw==}
     peerDependencies:
       eslint: '>=8'
-      storybook: ^10.0.3
+      storybook: ^10.0.4
 
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
@@ -8029,7 +8029,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-storybook@10.0.3(eslint@9.39.0)(storybook@8.6.14)(typescript@5.9.3):
+  eslint-plugin-storybook@10.0.4(eslint@9.39.0)(storybook@8.6.14)(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/utils': 8.46.3(eslint@9.39.0)(typescript@5.9.3)
       eslint: 9.39.0
