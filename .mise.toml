@@ -4,7 +4,7 @@
 argocd = "latest"
 helm = "3.19.4"
 kind = "0.30.0"
-kubectl = "1.34.3"
+kubectl = "1.35.0"
 
 # Development tools
 node = "lts"
