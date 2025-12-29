@@ -101,7 +101,7 @@ importers:
         version: 7.1.2(webpack@5.104.1)
       esbuild-loader:
         specifier: ^4.3.0
-        version: 4.4.1(webpack@5.104.1)
+        version: 4.4.2(webpack@5.104.1)
       eslint-plugin-storybook:
         specifier: ^10.0.0
         version: 10.1.10(eslint@9.39.1)(storybook@8.6.15)(typescript@5.9.3)
@@ -2965,8 +2965,8 @@ packages:
   es6-error@4.1.1:
     resolution: {integrity: sha512-Um/+FxMr9CISWh0bi5Zv0iOD+4cFh5qLeks1qhAopKVAJw3drgKbKySikp7wGhDL0HPeaja0P5ULZrxLkniUVg==}
 
-  esbuild-loader@4.4.1:
-    resolution: {integrity: sha512-aXMJpkrSKy/x4fvpB0uA7svGOBQFAkWvWdOtKuyWOXtUwruG3Rfr6jqjI/UKf4QDvcHjKQI6pnpKiOejpfE1jg==}
+  esbuild-loader@4.4.2:
+    resolution: {integrity: sha512-8LdoT9sC7fzfvhxhsIAiWhzLJr9yT3ggmckXxsgvM07wgrRxhuT98XhLn3E7VczU5W5AFsPKv9DdWcZIubbWkQ==}
     peerDependencies:
       webpack: ^4.40.0 || ^5.0.0
 
@@ -5039,6 +5039,7 @@ packages:
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-mimetype@4.0.0:
     resolution: {integrity: sha512-QaKxh0eNIi2mE9p2vEdzfagOKHCcj1pJ56EEHGQOVxp8r9/iszLUUV7v89x9O1p/T+NlTM5W7jW6+cz4Fq1YVg==}
@@ -8239,7 +8240,7 @@ snapshots:
 
   es6-error@4.1.1: {}
 
-  esbuild-loader@4.4.1(webpack@5.104.1):
+  esbuild-loader@4.4.2(webpack@5.104.1):
     dependencies:
       esbuild: 0.27.2
       get-tsconfig: 4.13.0
