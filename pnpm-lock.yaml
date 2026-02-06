@@ -125,7 +125,7 @@ importers:
         version: 2.0.6(msw@2.12.9(@types/node@25.1.0)(typescript@5.9.3))
       playwright:
         specifier: ^1.52.0
-        version: 1.58.1
+        version: 1.58.2
       raw-loader:
         specifier: ^4.0.2
         version: 4.0.2(webpack@5.105.0)
@@ -4216,8 +4216,13 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
-  playwright@1.58.1:
-    resolution: {integrity: sha512-+2uTZHxSCcxjvGc5C891LrS1/NlxglGxzrC4seZiVjcYVQfUa87wBL6rTDqzGjuoWNjnBzRqKmF6zRYGMvQUaQ==}
+  playwright-core@1.58.2:
+    resolution: {integrity: sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.58.2:
+    resolution: {integrity: sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -6997,7 +7002,7 @@ snapshots:
       jest-serializer-html: 7.1.0
       jest-watch-typeahead: 3.0.1(jest@30.2.0(@types/node@25.1.0)(esbuild-register@3.6.0(esbuild@0.25.12)))
       nyc: 15.1.0
-      playwright: 1.58.1
+      playwright: 1.58.2
       playwright-core: 1.58.1
       rimraf: 3.0.2
       storybook: 8.6.15
@@ -9797,9 +9802,11 @@ snapshots:
 
   playwright-core@1.58.1: {}
 
-  playwright@1.58.1:
+  playwright-core@1.58.2: {}
+
+  playwright@1.58.2:
     dependencies:
-      playwright-core: 1.58.1
+      playwright-core: 1.58.2
     optionalDependencies:
       fsevents: 2.3.2
 
