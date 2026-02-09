@@ -104,7 +104,7 @@ importers:
         version: 4.4.2(webpack@5.105.0)
       eslint-plugin-storybook:
         specifier: ^10.0.0
-        version: 10.2.7(eslint@9.39.2)(storybook@8.6.15)(typescript@5.9.3)
+        version: 10.2.8(eslint@9.39.2)(storybook@8.6.15)(typescript@5.9.3)
       identity-obj-proxy:
         specifier: ^3.0.0
         version: 3.0.0
@@ -3028,11 +3028,11 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-plugin-storybook@10.2.7:
-    resolution: {integrity: sha512-111gI3lUuan/zfDZ79isC4YZ75A9Ro7knqa2lNHv9PQRBWGKe6gvH2gDCYMioqT8aZo7UTzXfsyW7HHlEWxpQA==}
+  eslint-plugin-storybook@10.2.8:
+    resolution: {integrity: sha512-BtysXrg1RoYT3DIrCc+svZ0+L3mbWsu7suxTLGrihBY5HfWHkJge+qjlBBR1Nm2ZMslfuFS5K0NUWbWCJRu6kg==}
     peerDependencies:
       eslint: '>=8'
-      storybook: ^10.2.7
+      storybook: ^10.2.8
 
   eslint-scope@5.1.1:
     resolution: {integrity: sha512-2NxwbF/hZ0KpepYN0cNbo+FN6XoK7GaHlQhgx/hIZl6Va0bF45RQOOwhLIy8lQDbuCiadSLCBnH2CFYquit5bw==}
@@ -4522,6 +4522,11 @@ packages:
 
   semver@7.7.3:
     resolution: {integrity: sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==}
+    engines: {node: '>=10'}
+    hasBin: true
+
+  semver@7.7.4:
+    resolution: {integrity: sha512-vFKC2IEtQnVhpT78h1Yp8wzwrf8CM+MzKMHGJZfBtzhZNycRFnXsHk6E5TxIkkMsgNS7mdX3AGB7x2QM2di4lA==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -7307,7 +7312,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.54.0
       debug: 4.4.3
       minimatch: 9.0.5
-      semver: 7.7.3
+      semver: 7.7.4
       tinyglobby: 0.2.15
       ts-api-utils: 2.4.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -8371,7 +8376,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-storybook@10.2.7(eslint@9.39.2)(storybook@8.6.15)(typescript@5.9.3):
+  eslint-plugin-storybook@10.2.8(eslint@9.39.2)(storybook@8.6.15)(typescript@5.9.3):
     dependencies:
       '@typescript-eslint/utils': 8.54.0(eslint@9.39.2)(typescript@5.9.3)
       eslint: 9.39.2
@@ -10100,6 +10105,8 @@ snapshots:
   semver@6.3.1: {}
 
   semver@7.7.3: {}
+
+  semver@7.7.4: {}
 
   serialize-javascript@6.0.2:
     dependencies:
