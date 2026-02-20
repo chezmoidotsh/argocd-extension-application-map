@@ -22,7 +22,7 @@ jobs:
       security-events: write
     steps:
       - name: ⬇️ Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
 
       - name: 🏗️ Setup Node.js
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
@@ -39,7 +39,7 @@ jobs:
         run: pnpm audit --json | pnpx npm-audit-sarif /dev/stdin > pnpm-audit.sarif || true
 
       - name: 📊 Upload audit results to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@16140ae1a102900babc80a33c44059580f687047 # v4.30.9
+        uses: github/codeql-action/upload-sarif@89a39a4e59826350b863aa6b6252a07ad50cf83e # v4.32.4
         with:
           sarif_file: pnpm-audit.sarif
           category: pnpm-audit
