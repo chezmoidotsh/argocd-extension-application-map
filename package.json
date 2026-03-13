@@ -3,7 +3,7 @@
   "version": "1.1.0",
   "private": false,
   "dependencies": {
-    "@dagrejs/dagre": "^1.1.4",
+    "@dagrejs/dagre": "^2.0.0",
     "@xyflow/react": "^12.6.4",
     "graphology": "^0.26.0",
     "graphology-types": "^0.24.8",
