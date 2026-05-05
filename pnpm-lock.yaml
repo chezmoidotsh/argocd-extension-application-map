@@ -94,8 +94,8 @@ importers:
         specifier: ^6.24.1
         version: 6.24.1
       chromatic:
-        specifier: ^13.0.0
-        version: 13.3.5
+        specifier: ^16.0.0
+        version: 16.8.0
       css-loader:
         specifier: ^7.1.2
         version: 7.1.4(webpack@5.105.2)
@@ -2571,16 +2571,19 @@ packages:
       '@chromatic-com/playwright':
         optional: true
 
-  chromatic@13.3.5:
-    resolution: {integrity: sha512-MzPhxpl838qJUo0A55osCF2ifwPbjcIPeElr1d4SHcjnHoIcg7l1syJDrAYK/a+PcCBrOGi06jPNpQAln5hWgw==}
+  chromatic@16.8.0:
+    resolution: {integrity: sha512-61Ma2LBOB8x2uyVnVn0RkPxtPNlg6crXmOn9X3gEcKuRDbJQUfNSKTjRCX18YSOW0lxGrzmkQO5Qj+P0l4GEkQ==}
     hasBin: true
     peerDependencies:
       '@chromatic-com/cypress': ^0.*.* || ^1.0.0
       '@chromatic-com/playwright': ^0.*.* || ^1.0.0
+      '@chromatic-com/vitest': ^0.*.* || ^1.0.0
     peerDependenciesMeta:
       '@chromatic-com/cypress':
         optional: true
       '@chromatic-com/playwright':
+        optional: true
+      '@chromatic-com/vitest':
         optional: true
 
   chrome-trace-event@1.0.4:
@@ -4988,10 +4991,12 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@9.0.1:
     resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-to-istanbul@9.3.0:
@@ -7937,7 +7942,9 @@ snapshots:
 
   chromatic@11.29.0: {}
 
-  chromatic@13.3.5: {}
+  chromatic@16.8.0:
+    dependencies:
+      semver: 7.7.4
 
   chrome-trace-event@1.0.4: {}
 
