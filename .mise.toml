@@ -3,7 +3,7 @@
 # Kubernetes tools
 argocd = "latest"
 helm = "3.21.0"
-kind = "0.31.0"
+kind = "0.32.0"
 kubectl = "1.36.1"
 
 # Development tools
