@@ -92,7 +92,7 @@
     "typescript": "^5.8.3",
     "webpack": "^5.99.8",
     "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^7.0.0"
   },
   "msw": {
     "workerDirectory": [
