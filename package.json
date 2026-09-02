@@ -79,7 +79,7 @@
     "jest-environment-jsdom": "^30.0.0",
     "jest-junit": "^16.0.0",
     "msw": "^2.10.4",
-    "msw-storybook-addon": "^2.0.5",
+    "msw-storybook-addon": "^3.0.0",
     "playwright": "^1.52.0",
     "raw-loader": "^4.0.2",
     "sass": "^1.89.0",
