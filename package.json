@@ -83,7 +83,7 @@
     "playwright": "^1.52.0",
     "raw-loader": "^4.0.2",
     "sass": "^1.89.0",
-    "sass-loader": "^16.0.5",
+    "sass-loader": "^17.0.0",
     "storybook": "^8.6.14",
     "storybook-addon-deep-controls": "^0.10.0",
     "style-loader": "^4.0.0",
