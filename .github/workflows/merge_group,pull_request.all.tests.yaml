@@ -42,7 +42,7 @@ jobs:
         run: pnpm test:ci
 
       - name: 📊 Upload test results
-        uses: dorny/test-reporter@dc3a92680fcc15842eef52e8c4606ea7ce6bd3f3 # v2.1.1
+        uses: dorny/test-reporter@d1b5dff021aa968b288b02285a8bf47471c5928a # v3.2.0
         if: always()
         with:
           name: Jest Test Results
