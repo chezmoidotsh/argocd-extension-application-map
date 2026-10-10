@@ -11,6 +11,10 @@ node = "lts"
 pnpm = "latest"
 tilt = "latest"
 
+# Lint and convention tools
+"github:axnic/rtunk" = "latest" # Lint stack driven by .rtunk/rtunk.yaml (`lint`)
+"npm:@commitlint/cli" = "21.2.3" # Commit convention check, drives .commitlintrc.js (`ci:commitlint`)
+
 # -- Configure MISE environment
 [env]
 HELM_CACHE_HOME = "{{ config_root }}/.misenv/helm/cache"
@@ -31,3 +35,47 @@ run = "kind delete cluster --name argocd-dev"
 description = "Start the development environment"
 depends = ["setup"]
 run = "tilt up"
+
+# -- CI tasks: the central workflows of axnic/.github and the local ones only run `mise run <task>`
+[tasks.lint]
+description = "Lint the whole repository with rtunk"
+run = "rtunk check ."
+
+[tasks."lint:fix"]
+description = "Lint the whole repository with rtunk and apply the fixes"
+run = "rtunk check --fix ."
+
+[tasks."ci:commitlint"]
+description = "Validate commit messages in a range (usage: mise run ci:commitlint -- --from <sha> --to <sha> | --last)"
+usage = 'arg "[args]..." var=#true'
+run = '''
+# commitlint reads stdin when given no range, which would hang: require one.
+case " $usage_args " in
+  *" --from "*|*" --to "*|*" --last "*|*" -f "*|*" -t "*|*" -l "*) ;;
+  *) echo "usage: mise run ci:commitlint -- --from <sha> --to <sha> | --last" >&2; exit 2 ;;
+esac
+eval "set -- $usage_args"
+commitlint --verbose "$@"
+'''
+
+[tasks."ci:install"]
+description = "Install the Node.js dependencies from the lockfile"
+run = "pnpm install --frozen-lockfile"
+
+[tasks."ci:build"]
+description = "Build the extension bundle (dist/extension-application-map.tar)"
+depends = ["ci:install"]
+run = "pnpm build"
+
+[tasks."ci:test"]
+description = "Run the Jest tests (writes junit.xml and coverage/)"
+depends = ["ci:install"]
+run = "pnpm test:ci"
+
+[tasks.ci]
+description = "Local CI quality gate: lint, build, tests (commit messages and security:audit excluded)"
+depends = ["lint", "ci:build", "ci:test"]
+
+[tasks."security:audit"]
+description = "Audit the production dependencies for known vulnerabilities"
+run = "pnpm audit --prod"

@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Security — GitHub Actions workflows hardening
+# =============================================================================
+# Checks that every action used by the workflows is pinned by SHA, on pull requests and
+# merge-queue entries touching .github/workflows (actionlint runs in rtunk).
+#
+# Jobs:
+#   harden — SHA-pinning check
+# =============================================================================
+
+name: Workflows Hardening
+
+on:
+  merge_group: {}
+  pull_request:
+    paths:
+      - .github/workflows/**
+
+concurrency:
+  group: workflows-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # harden — SHA-pinning check
+  # ---------------------------------------------------------------------------
+  harden:
+    name: 🔒️ Workflows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: 📌 Ensure SHA pinned actions
+        uses: zgosalvez/github-actions-ensure-sha-pinned-actions@9e9574ef04ea69da568d6249bd69539ccc704e74 # v4.0.0

@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# AI Review — PR-Agent review through OpenRouter
+# =============================================================================
+# Reviews new pull requests and answers /commands in PR comments from allowed users.
+# Needs the OPENROUTER_API_KEY secret and the PR_AGENT_ALLOWED_USERS repository variable
+# (JSON list of GitHub logins); does nothing without them.
+#
+# Jobs:
+#   review — PR-Agent review and /commands, from core.review
+#
+# Reusable workflow: https://github.com/axnic/.github/blob/main/.github/workflows/core.review.yaml
+# =============================================================================
+
+name: AI Review
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened]
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # review — PR-Agent review and /commands, from core.review
+  # ---------------------------------------------------------------------------
+  review:
+    name: 🤖 PR Agent
+    # Pinned to an axnic/.github commit; Renovate keeps it up to date.
+    uses: axnic/.github/.github/workflows/core.review.yaml@0de47d4c78c2a071698bddd5877745d921c98487 # main
+    secrets: inherit
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write

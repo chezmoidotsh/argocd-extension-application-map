@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Quality Assurance — Jest tests
+# =============================================================================
+# Runs the Jest test suite when the sources or the dependencies change, on pull requests and
+# merge-queue entries, and publishes the JUnit report as a check run.
+#
+# Jobs:
+#   test — Jest tests and test report
+# =============================================================================
+
+name: Tests
+
+on:
+  merge_group: {}
+  pull_request:
+    paths:
+      - src/**
+      - jest.config.js
+      - jest.setup.js
+      - package.json
+      - pnpm-lock.yaml
+      - .github/workflows/merge_group,pull_request.test.yaml
+
+concurrency:
+  group: test-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # test — Jest tests and test report
+  # ---------------------------------------------------------------------------
+  test:
+    name: 🧪 Jest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      checks: write # the test report is published as a check run
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: 🔧 Install tools via mise
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache: true
+          cache_key: "mise-v1-{{platform}}-{{file_hash}}"
+
+      - name: 🧪 Run tests
+        run: mise run ci:test
+
+      # `if: always()` so a failing run still publishes its report.
+      - name: 📊 Publish test results
+        if: always()
+        uses: dorny/test-reporter@dc3a92680fcc15842eef52e8c4606ea7ce6bd3f3 # v2.1.1
+        with:
+          name: Jest Test Results
+          path: junit.xml
+          reporter: jest-junit
+          fail-on-error: true

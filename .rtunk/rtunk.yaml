@@ -1,5 +1,5 @@
-# This file controls the behavior of Trunk: https://docs.trunk.io/cli
-# To learn more about the format of this file, see https://docs.trunk.io/reference/trunk-yaml
+# Configuration of rtunk for this repository: the linters, runtimes and plugin sources that
+# `rtunk check` uses here (trunk.yaml format). Run it with `mise run lint`.
 version: 0.1
 cli:
   version: 1.24.0
@@ -28,22 +28,18 @@ lint:
     - checkov@3.2.457
     - git-diff-check
     - markdownlint@0.45.0
-    - prettier@3.6.2:
-        packages:
-          - '@trivago/prettier-plugin-sort-imports@5.2.2'
+    - prettier@3.6.2
     - taplo@0.9.3
     - trufflehog@3.90.2
   ignore:
     - linters: [ALL]
       paths:
-        - 'examples/**/*.yaml'
+        - examples/**/*.yaml
     - linters: [markdownlint]
       paths:
-        - 'src/**/*.mdx'
-actions:
-  disabled:
-    - trunk-announce
-    - trunk-check-pre-push
-    - trunk-fmt-pre-commit
-  enabled:
-    - trunk-upgrade-available
+        - src/**/*.mdx
+    # Dependency vulnerabilities are reported by the OSV-Scanner workflow (code scanning) and
+    # `security:audit`; the only finding left is `braces`, a dev dependency of Storybook.
+    - linters: [osv-scanner]
+      paths:
+        - pnpm-lock.yaml

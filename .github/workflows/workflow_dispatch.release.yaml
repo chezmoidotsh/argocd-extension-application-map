@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Release — Create a versioned release from the GitHub UI
+# =============================================================================
+# Triggered manually (Actions → Release → Run workflow). Set either `bump` or `version`,
+# not both. prepare runs `mise run ci`, computes the version, writes the notes and pushes
+# the tag; publish builds the extension, attaches it to the release with its checksums and
+# build provenance, and takes the release out of draft.
+# Requires the mise tasks: ci, ci:build.
+#
+# Jobs:
+#   prepare — run `mise run ci`, compute the version, write the notes, push the tag
+#   publish — build the extension, attach the bundle, attest it, publish the release
+#
+# Reusable workflow: https://github.com/axnic/.github/blob/main/.github/workflows/release.prepare.yaml
+# =============================================================================
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump (choose `manual` to release the exact `version` below)
+        required: false
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+          - manual
+      version:
+        description: Exact version to release, without the leading "v" (only with the `manual` bump)
+        required: false
+        type: string
+      notes:
+        description: Release notes override (leave empty to generate them)
+        required: false
+        type: string
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # prepare — run `mise run ci`, compute the version, write the notes, push the tag
+  # ---------------------------------------------------------------------------
+  prepare:
+    name: 🏷️ Prepare
+    # Pinned to an axnic/.github commit; Renovate keeps it up to date.
+    uses: axnic/.github/.github/workflows/release.prepare.yaml@a684816739b43d901a9f4659187bf436a77446e5 # main
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: read
+    with:
+      # `manual` is not a bump: the reusable workflow gets an empty bump and the exact `version`.
+      bump: "${{ inputs.bump != 'manual' && inputs.bump || '' }}"
+      notes: "${{ inputs.notes }}"
+      version: "${{ inputs.version }}"
+
+  # ---------------------------------------------------------------------------
+  # publish — extension bundle on the release, provenance, release published
+  # ---------------------------------------------------------------------------
+  publish:
+    name: 🚀 Extension bundle (${{ needs.prepare.outputs.tag }})
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # uploads to the release and publishes it
+      id-token: write # OIDC token for the build provenance
+      attestations: write # stores the build provenance attestation
+
+    steps:
+      - name: ⬇️ Checkout tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ needs.prepare.outputs.tag }}
+          persist-credentials: false
+
+      - name: 🔧 Install tools via mise
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache: true
+          cache_key: "mise-v1-{{platform}}-{{file_hash}}"
+
+      - name: 🏗️ Build the extension
+        run: mise run ci:build
+
+      - name: 📄 Create checksums
+        run: |
+          cd dist
+          sha256sum extension-application-map.tar | tee extension-application-map_checksums.txt
+
+      - name: ⬆️ Attach the bundle to the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: |
+          gh release upload "$TAG" \
+            dist/extension-application-map.tar \
+            dist/extension-application-map_checksums.txt \
+            --clobber
+
+      - name: 🛡️ Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-checksums: dist/extension-application-map_checksums.txt
+
+      # The prerelease flag set by release.prepare is kept.
+      - name: 📣 Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+        run: gh release edit "$TAG" --draft=false

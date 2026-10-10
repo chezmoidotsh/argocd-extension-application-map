@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Dependency Audit — Audit the repository's dependencies
+# =============================================================================
+# Runs the repository's own dependency audit (mise run security:audit) weekly
+# and on demand.
+# Requires the mise task: security:audit.
+#
+# Jobs:
+#   audit — mise run security:audit, from security.audit
+#
+# Reusable workflow: https://github.com/axnic/.github/blob/main/.github/workflows/security.audit.yaml
+# =============================================================================
+
+name: Dependency Audit
+
+on:
+  schedule:
+    - cron: 0 6 * * 1
+  workflow_dispatch: {}
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # audit — mise run security:audit, from security.audit
+  # ---------------------------------------------------------------------------
+  audit:
+    name: 📦 Dependency Audit
+    # Pinned to an axnic/.github commit; Renovate keeps it up to date.
+    uses: axnic/.github/.github/workflows/security.audit.yaml@b774f843ae4860bbbfa4603da7d6dbc50f1a5d99 # main
+    secrets: inherit
+    permissions:
+      contents: read

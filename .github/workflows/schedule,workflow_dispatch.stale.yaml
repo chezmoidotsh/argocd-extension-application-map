@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Stale Issues — Warn on inactive issues, then close them
+# =============================================================================
+# Labels issues without activity as stale and asks whether they are still relevant, then
+# closes those that stay silent. Pull requests are ignored; issues with at least 2 upvotes
+# are exempt.
+#
+# Jobs:
+#   stale — stale issue cleanup, from issues.stale
+#
+# Reusable workflow: https://github.com/axnic/.github/blob/main/.github/workflows/issues.stale.yaml
+# =============================================================================
+
+name: Stale Issues
+
+on:
+  schedule:
+    - cron: 46 4 * * *
+  workflow_dispatch: {}
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # stale — stale issue cleanup, from issues.stale
+  # ---------------------------------------------------------------------------
+  stale:
+    name: 🧹 Stale Issues
+    # Pinned to an axnic/.github commit; Renovate keeps it up to date.
+    uses: axnic/.github/.github/workflows/issues.stale.yaml@b774f843ae4860bbbfa4603da7d6dbc50f1a5d99 # main
+    secrets: inherit
+    permissions:
+      issues: write
