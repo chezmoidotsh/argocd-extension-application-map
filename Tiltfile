@@ -11,7 +11,7 @@ allow_k8s_contexts('argocd-dev')
 # -----------------------------------------------------------------------------
 
 EXTENSION_DIST = 'dist/resources/extension-application-map.js/extension-application-map.js'
-ARGOCD_VERSION = 'v3.0.6' # Corresponds to Helm Chart 8.1.2
+ARGOCD_VERSION = 'v3.5.4' # Corresponds to Helm Chart 10.10.2
 
 # -----------------------------------------------------------------------------
 # Development Setup
