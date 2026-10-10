@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import React from 'react';
 
@@ -29,7 +29,11 @@ export const Default: Story = {
 export const DefaultDark: Story = {
   ...Default,
   name: 'Default (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
+  globals: {
+    backgrounds: {
+      value: "dark"
+    }
+  },
 };
 
 export const WithAdditionalContent: Story = {
@@ -55,5 +59,9 @@ export const WithAdditionalContent: Story = {
 export const WithAdditionalContentDark: Story = {
   ...WithAdditionalContent,
   name: 'With Additional Content (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
+  globals: {
+    backgrounds: {
+      value: "dark"
+    }
+  },
 };

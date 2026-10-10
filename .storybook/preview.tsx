@@ -1,6 +1,6 @@
-import { initialize as mswInitialize, mswLoader } from 'msw-storybook-addon';
+import { mswLoader } from 'msw-storybook-addon/csf3';
 
-import type { Preview, StoryFn } from '@storybook/react';
+import type { Preview, StoryFn } from '@storybook/react-webpack5';
 
 import React from 'react';
 
@@ -21,8 +21,6 @@ const withColorScheme = (Story: StoryFn, { parameters }: any) => {
   );
 };
 
-mswInitialize();
-
 const preview: Preview = {
   parameters: {
     controls: {
@@ -32,15 +30,23 @@ const preview: Preview = {
       },
     },
     backgrounds: {
-      default: 'light',
-      values: [
-        { name: 'light', value: '#dee6eb' },
-        { name: 'dark', value: '#100f0f' },
-      ],
+      options: {
+        light: { name: 'light', value: '#dee6eb' },
+        dark: { name: 'dark', value: '#100f0f' }
+      }
     },
   },
+
   decorators: [withColorScheme],
-  loaders: [mswLoader],
+  loaders: [mswLoader()],
+
+  initialGlobals: {
+    backgrounds: {
+      value: 'light'
+    }
+  },
+
+  tags: ['autodocs']
 };
 
 export default preview;

@@ -13,7 +13,9 @@
     "outDir": "./dist",
     "resolveJsonModule": true,
     "sourceMap": true,
-    "target": "es2017"
+    "strict": false,
+    "target": "es2017",
+    "types": ["jest", "@testing-library/jest-dom"]
   },
   "include": ["./**/*"],
   "exclude": ["node_modules"]
