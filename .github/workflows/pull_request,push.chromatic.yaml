@@ -1,0 +1,72 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Chromatic — Storybook visual review
+# =============================================================================
+# Publishes the Storybook to Chromatic when the components or the Storybook configuration
+# change, on pull requests and pushes to the default branch.
+# Requires the CHROMATIC_PROJECT_TOKEN secret.
+#
+# Jobs:
+#   chromatic — Storybook upload and visual diff
+# =============================================================================
+
+name: Chromatic
+
+on:
+  pull_request:
+    paths:
+      - src/components/**
+      - .storybook/**
+      - chromatic.config.json
+      - package.json
+      - pnpm-lock.yaml
+      - .github/workflows/pull_request,push.chromatic.yaml
+  push:
+    branches: [main]
+    paths:
+      - src/components/**
+      - .storybook/**
+      - chromatic.config.json
+      - package.json
+      - pnpm-lock.yaml
+      - .github/workflows/pull_request,push.chromatic.yaml
+
+concurrency:
+  group: chromatic-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # chromatic — Storybook upload and visual diff
+  # ---------------------------------------------------------------------------
+  chromatic:
+    name: 📸 Storybook
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # Full history is needed by Chromatic to compute the baseline of each build.
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Install tools via mise
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache: true
+          cache_key: "mise-v1-{{platform}}-{{file_hash}}"
+
+      - name: 📦 Install dependencies
+        run: mise run ci:install
+
+      - name: 📸 Run Chromatic
+        uses: chromaui/action@58d9ffb36c90c97a02d061544ecc849cc4a242a9 # v13.1.3
+        with:
+          exitOnceUploaded: true
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
