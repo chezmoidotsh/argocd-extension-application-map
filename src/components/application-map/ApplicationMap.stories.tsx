@@ -1,6 +1,7 @@
 import { action } from 'storybook/actions';
-import { Meta, StoryObj } from '@storybook/react-webpack5';
 import { expect, within } from 'storybook/test';
+
+import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -63,8 +64,8 @@ export const DefaultDark: Story = {
   play: undefined,
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
 
@@ -102,8 +103,8 @@ export const ComplexTopologyDark: Story = {
   play: undefined,
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
 
@@ -138,8 +139,8 @@ export const ComplexTopologyWithSelectionDark: Story = {
   play: undefined,
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
 
@@ -193,16 +194,16 @@ export const SimpleCycleDark: Story = {
   name: 'Simple Cycle (dark)',
 
   parameters: {
-    ...SimpleCycle.parameters
+    ...SimpleCycle.parameters,
   },
 
   play: undefined,
 
   globals: {
     backgrounds: {
-      value: "dark"
-    }
-  }
+      value: 'dark',
+    },
+  },
 };
 
 export const TriangleCycle: Story = {
@@ -240,14 +241,14 @@ export const TriangleCycleDark: Story = {
   name: 'Triangle Cycle (dark)',
 
   parameters: {
-    ...TriangleCycle.parameters
+    ...TriangleCycle.parameters,
   },
 
   globals: {
     backgrounds: {
-      value: "dark"
-    }
-  }
+      value: 'dark',
+    },
+  },
 };
 
 export const MultipleCycles: Story = {
@@ -289,14 +290,14 @@ export const MultipleCyclesDark: Story = {
   name: 'Multiple Cycles (dark)',
 
   parameters: {
-    ...MultipleCycles.parameters
+    ...MultipleCycles.parameters,
   },
 
   globals: {
     backgrounds: {
-      value: "dark"
-    }
-  }
+      value: 'dark',
+    },
+  },
 };
 
 export const EnterprisePlatform: Story = {
@@ -350,12 +351,12 @@ export const EnterprisePlatformDark: Story = {
   name: 'Enterprise Platform (dark)',
 
   parameters: {
-    ...EnterprisePlatform.parameters
+    ...EnterprisePlatform.parameters,
   },
 
   globals: {
     backgrounds: {
-      value: "dark"
-    }
-  }
+      value: 'dark',
+    },
+  },
 };

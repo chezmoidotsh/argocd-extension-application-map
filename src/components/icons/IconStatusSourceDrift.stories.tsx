@@ -43,7 +43,7 @@ export const AllDark: Story = {
   name: 'All icons (dark)',
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };

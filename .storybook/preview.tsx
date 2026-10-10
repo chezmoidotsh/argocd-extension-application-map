@@ -7,8 +7,8 @@ import React from 'react';
 import '../src/styles/index.scss';
 import './storybook-argo-v3.0.0.css';
 
-const withColorScheme = (Story: StoryFn, { parameters }: any) => {
-  const colorScheme = parameters.backgrounds.default || 'light';
+const withColorScheme = (Story: StoryFn, { globals }: any) => {
+  const colorScheme = globals.backgrounds?.value || 'light';
 
   return (
     // theme-(light|dark) and application-details are required to configure properly all components with the official
@@ -32,8 +32,8 @@ const preview: Preview = {
     backgrounds: {
       options: {
         light: { name: 'light', value: '#dee6eb' },
-        dark: { name: 'dark', value: '#100f0f' }
-      }
+        dark: { name: 'dark', value: '#100f0f' },
+      },
     },
   },
 
@@ -42,11 +42,11 @@ const preview: Preview = {
 
   initialGlobals: {
     backgrounds: {
-      value: 'light'
-    }
+      value: 'light',
+    },
   },
 
-  tags: ['autodocs']
+  tags: ['autodocs'],
 };
 
 export default preview;

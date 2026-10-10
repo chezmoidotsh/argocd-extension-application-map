@@ -1,6 +1,7 @@
 import { action } from 'storybook/actions';
-import { Meta, StoryObj } from '@storybook/react-webpack5';
 import { expect, userEvent, within } from 'storybook/test';
+
+import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -138,8 +139,8 @@ export const ApplicationDark: Story = {
   play: undefined,
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
 
@@ -209,8 +210,8 @@ export const ApplicationSetDark: Story = {
   play: undefined,
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
 
@@ -425,14 +426,14 @@ export const ApplicationDriftDark: Story = {
   name: 'Application with Source Drift (dark)',
 
   parameters: {
-    ...ApplicationWithSourceDrift.parameters
+    ...ApplicationWithSourceDrift.parameters,
   },
 
   play: undefined,
 
   globals: {
     backgrounds: {
-      value: "dark"
-    }
-  }
+      value: 'dark',
+    },
+  },
 };

@@ -1,6 +1,7 @@
 import { action } from 'storybook/actions';
-import { Meta, StoryObj } from '@storybook/react-webpack5';
 import { expect, within } from 'storybook/test';
+
+import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { allStatusScenario } from '../.storybook/scenarii';
 import StatusPanel from './StatusPanel';
@@ -71,7 +72,7 @@ export const DefaultDark: Story = {
   play: undefined,
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };

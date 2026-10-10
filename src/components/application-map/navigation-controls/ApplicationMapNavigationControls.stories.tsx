@@ -1,4 +1,5 @@
 import { action } from 'storybook/actions';
+
 import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { ReactFlowProvider } from '@xyflow/react';
@@ -35,7 +36,7 @@ export const DefaultDark: Story = {
   name: 'Default (dark)',
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };

@@ -22,7 +22,7 @@ const config: StorybookConfig = {
 
   typescript: {
     reactDocgen: 'react-docgen',
-  }
+  },
 };
 
 config.webpackFinal = async (config) => {

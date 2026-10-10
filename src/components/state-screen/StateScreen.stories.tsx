@@ -31,8 +31,8 @@ export const DefaultDark: Story = {
   name: 'Default (dark)',
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
 
@@ -61,7 +61,7 @@ export const WithAdditionalContentDark: Story = {
   name: 'With Additional Content (dark)',
   globals: {
     backgrounds: {
-      value: "dark"
-    }
+      value: 'dark',
+    },
   },
 };
