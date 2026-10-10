@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Build — ArgoCD extension bundle
+# =============================================================================
+# Builds the production bundle when the sources or the dependencies change, on pull requests
+# and pushes to the default branch, and keeps it as a workflow artifact.
+#
+# Jobs:
+#   build — production build (webpack)
+# =============================================================================
+
+name: Build
+
+on:
+  pull_request:
+    paths:
+      - src/**
+      - webpack.config.js
+      - tsconfig.json
+      - package.json
+      - pnpm-lock.yaml
+      - .github/workflows/pull_request,push.build.yaml
+  push:
+    branches: [main]
+    paths:
+      - src/**
+      - webpack.config.js
+      - tsconfig.json
+      - package.json
+      - pnpm-lock.yaml
+      - .github/workflows/pull_request,push.build.yaml
+
+concurrency:
+  group: build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # build — production build
+  # ---------------------------------------------------------------------------
+  build:
+    name: 🏗️ Extension
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: ⬇️ Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: 🔧 Install tools via mise
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache: true
+          cache_key: "mise-v1-{{platform}}-{{file_hash}}"
+
+      - name: 🔨 Build the extension
+        run: mise run ci:build
+
+      - name: 📂 Upload build artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: extension-build
+          path: dist/
+          if-no-files-found: error
+          retention-days: 7

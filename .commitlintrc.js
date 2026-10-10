@@ -258,15 +258,15 @@ module.exports = {
     'body-leading-blank': [0, 'always'],
     'body-empty': [0, 'always'],
     'body-max-length': [2, 'always', 'Infinity'],
-    'body-max-line-length': [2, 'always', 80],
+    'body-max-line-length': [0, 'always', 80],
     'body-min-length': [2, 'always', 0],
-    'body-case': [2, 'always', 'sentence-case'],
+    'body-case': [0, 'always', 'sentence-case'],
     'footer-leading-blank': [2, 'always'],
-    'footer-empty': [2, 'always'],
+    'footer-empty': [0, 'always'],
     'footer-max-length': [2, 'always', 'Infinity'],
     'footer-max-line-length': [2, 'always', 80],
     'footer-min-length': [2, 'always', 0],
-    'header-case': [2, 'always', 'sentence-case'],
+    'header-case': [0, 'always', 'sentence-case'],
     'header-full-stop': [2, 'never', '.'],
     'header-max-length': [2, 'always', 100],
     'header-min-length': [2, 'always', 0],
@@ -288,14 +288,15 @@ module.exports = {
     'type-empty': [2, 'never'],
     'type-max-length': [2, 'always', 'Infinity'],
     'type-min-length': [2, 'always', 0],
-    'signed-off-by': [2, 'always', 'Signed-off-by: '],
+    // Not enforced: the rule only reads the last line, where Co-authored-by trailers (Renovate, Claude) sit.
+    'signed-off-by': [0, 'always', 'Signed-off-by: '],
   },
   parserPreset: {
     parserOpts: {
       headerPattern:
-        '^(?<type>.+?)\\((?<scope>.+?)\\)!?\\:\\s(?<subject>(?:(?!#).)*(?:(?!\\s).))(?:\\s\\(?(?<references>#\\d*)\\)?)?$',
+        '^(?<type>:[a-z0-9_]+:)\\s\\((?<scope>.+?)\\)!?\\:\\s(?<subject>(?:(?!#).)*(?:(?!\\s).))(?:\\s\\(?(?<references>#\\d*)\\)?)?$',
       breakingHeaderPattern:
-        '^(?<type>.+?)\\((?<scope>.+?)\\)!\\:\\s(?<subject>(?:(?!#).)*(?:(?!\\s).))(?:\\s\\(?(?<references>#\\d*)\\)?)?$',
+        '^(?<type>:[a-z0-9_]+:)\\s\\((?<scope>.+?)\\)!\\:\\s(?<subject>(?:(?!#).)*(?:(?!\\s).))(?:\\s\\(?(?<references>#\\d*)\\)?)?$',
       headerCorrespondence: ['type', 'scope', 'subject', 'references'],
     },
   },
