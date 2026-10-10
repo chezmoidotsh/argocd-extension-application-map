@@ -1,6 +1,7 @@
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
-import { expect, within } from '@storybook/test';
+import { action } from 'storybook/actions';
+import { expect, within } from 'storybook/test';
+
+import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -22,6 +23,13 @@ const meta: Meta<typeof Map> = {
   title: 'Components/Application Map/Map',
   component: Map,
   tags: ['autodocs'],
+  argTypes: {
+    // `graph` is a graphology class instance: it cannot be serialized (controls / docs snippet) without losing its internals
+    graph: { control: false },
+  },
+  parameters: {
+    docs: { source: { type: 'code' } },
+  },
   decorators: [
     (Story: any) => (
       <div className="argocd-application-map__container">
@@ -53,8 +61,12 @@ export const Default: Story = {
 export const DefaultDark: Story = {
   ...Default,
   name: 'Default (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };
 
 export const ComplexTopology: Story = {
@@ -88,8 +100,12 @@ export const ComplexTopology: Story = {
 export const ComplexTopologyDark: Story = {
   ...ComplexTopology,
   name: 'Complex Topology (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };
 
 export const ComplexTopologyWithSelection: Story = {
@@ -120,8 +136,12 @@ export const ComplexTopologyWithSelection: Story = {
 export const ComplexTopologyWithSelectionDark: Story = {
   ...ComplexTopologyWithSelection,
   name: 'Complex Topology With Selection (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };
 
 // =============================================================================
@@ -172,11 +192,18 @@ The edges forming the cycle should appear with a red halo effect and pulse anima
 export const SimpleCycleDark: Story = {
   ...SimpleCycle,
   name: 'Simple Cycle (dark)',
+
   parameters: {
     ...SimpleCycle.parameters,
-    backgrounds: { default: 'dark' },
   },
+
   play: undefined,
+
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };
 
 export const TriangleCycle: Story = {
@@ -212,9 +239,15 @@ This story shows a more complex circular dependency involving three applications
 export const TriangleCycleDark: Story = {
   ...TriangleCycle,
   name: 'Triangle Cycle (dark)',
+
   parameters: {
     ...TriangleCycle.parameters,
-    backgrounds: { default: 'dark' },
+  },
+
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
   },
 };
 
@@ -255,9 +288,15 @@ This story demonstrates the system's ability to detect and visualize multiple in
 export const MultipleCyclesDark: Story = {
   ...MultipleCycles,
   name: 'Multiple Cycles (dark)',
+
   parameters: {
     ...MultipleCycles.parameters,
-    backgrounds: { default: 'dark' },
+  },
+
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
   },
 };
 
@@ -310,8 +349,14 @@ This realistic scenario represents a modern microservices platform with intentio
 export const EnterprisePlatformDark: Story = {
   ...EnterprisePlatform,
   name: 'Enterprise Platform (dark)',
+
   parameters: {
     ...EnterprisePlatform.parameters,
-    backgrounds: { default: 'dark' },
+  },
+
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
   },
 };

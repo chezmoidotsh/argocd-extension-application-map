@@ -1,6 +1,7 @@
-import { action } from '@storybook/addon-actions';
-import { Meta, StoryObj } from '@storybook/react';
-import { expect, userEvent, within } from '@storybook/test';
+import { action } from 'storybook/actions';
+import { expect, userEvent, within } from 'storybook/test';
+
+import { Meta, StoryObj } from '@storybook/react-webpack5';
 
 import { ReactFlowProvider } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
@@ -135,8 +136,12 @@ export const Application: Story = {
 export const ApplicationDark: Story = {
   ...Application,
   name: 'Application (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };
 
 export const ApplicationSet: Story = {
@@ -202,8 +207,12 @@ export const ApplicationSet: Story = {
 export const ApplicationSetDark: Story = {
   ...ApplicationSet,
   name: 'ApplicationSet (dark)',
-  parameters: { backgrounds: { default: 'dark' } },
   play: undefined,
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };
 
 // Source Drift Examples
@@ -415,9 +424,16 @@ This happens when the Helm chart name differs from the reference specified in th
 export const ApplicationDriftDark: Story = {
   ...ApplicationWithSourceDrift,
   name: 'Application with Source Drift (dark)',
+
   parameters: {
     ...ApplicationWithSourceDrift.parameters,
-    backgrounds: { default: 'dark' },
   },
+
   play: undefined,
+
+  globals: {
+    backgrounds: {
+      value: 'dark',
+    },
+  },
 };

@@ -69,10 +69,8 @@ describe('usePermissions', () => {
     rerender({ namespace: 'namespace2', app: 'app2' });
 
     await waitFor(() => {
-      expect(result.current.isAllowed).not.toBeNull();
+      expect(result.current.isAllowed).toBe(false);
     });
-
-    expect(result.current.isAllowed).toBe(false);
 
     expect(mockCanI).toHaveBeenCalledWith('applications', 'sync', 'namespace1/app1');
     expect(mockCanI).toHaveBeenCalledWith('applications', 'sync', 'namespace2/app2');
