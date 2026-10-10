@@ -1,0 +1,201 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+#
+# =============================================================================
+# Release — Create a versioned release from the GitHub UI
+# =============================================================================
+# Triggered manually (Actions → Release → Run workflow). Set either `bump` or `version`,
+# not both. prepare runs `mise run ci`, computes the version, writes the notes and pushes
+# the tag; the extension job attaches the Argo CD extension bundle, its checksums and provenance to the draft GitHub Release; the npm job stages the package on npm (a maintainer approves it with 2FA).
+# Requires the mise task: ci, ci:build.
+#
+# Jobs:
+#   prepare — run `mise run ci`, compute the version, write the notes, push the tag
+#   extension — build the Argo CD extension bundle, attach it to the draft GitHub Release
+#   npm — build the package and stage it on npm, in this file: npm trusted publishing only
+#             matches a workflow of the repository itself, not a reusable one
+#
+# MANAGED BY TERRAFORM (axnic/.github, terraform/modules/workflows) — do not edit by hand.
+# Reusable workflow: https://github.com/axnic/.github/blob/main/.github/workflows/release.prepare.yaml
+# =============================================================================
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump (choose `manual` to release the exact `version` below)
+        required: false
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+          - manual
+      version:
+        description: Exact version to release, without the leading "v" (only with the `manual` bump)
+        required: false
+        type: string
+      notes:
+        description: Release notes override (leave empty to generate them)
+        required: false
+        type: string
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+# Minimal top-level permissions — each job declares what it needs.
+permissions: {}
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # prepare — run `mise run ci`, compute the version, write the notes, push the tag
+  # ---------------------------------------------------------------------------
+  prepare:
+    name: 🏷️ Prepare
+    # Pinned to the axnic/.github commit that last changed this workflow; Terraform keeps it up to date.
+    uses: axnic/.github/.github/workflows/release.prepare.yaml@a684816739b43d901a9f4659187bf436a77446e5 # main
+    secrets: inherit
+    permissions:
+      contents: write
+      pull-requests: read
+    with:
+      # `manual` is not a bump: the reusable workflow gets an empty bump and the exact `version`.
+      bump: "${{ inputs.bump != 'manual' && inputs.bump || '' }}"
+      notes: "${{ inputs.notes }}"
+      version: "${{ inputs.version }}"
+
+  # ---------------------------------------------------------------------------
+  # extension — Argo CD extension bundle on the draft release, with checksums and provenance
+  # ---------------------------------------------------------------------------
+  extension:
+    name: 🧩 Argo CD extension (${{ needs.prepare.outputs.tag }})
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # uploads to the draft release
+      id-token: write # OIDC token for the build provenance
+      attestations: write # stores the build provenance attestation
+
+    steps:
+      - name: ⬇️ Checkout tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ needs.prepare.outputs.tag }}
+          persist-credentials: false
+
+      - name: 🔧 Install tools via mise
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache: true
+          cache_key: "mise-v1-{{platform}}-{{file_hash}}"
+
+      # `mise run ci:build` must produce the bundle at settings.extension_archive.
+      - name: 🏗️ Build the extension bundle
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: mise run ci:build
+
+      - name: 📄 Create the checksums
+        id: bundle
+        env:
+          ARCHIVE: dist/extension-application-map.tar
+        run: |
+          if [[ ! -f "$ARCHIVE" ]]; then
+            echo "::error::$ARCHIVE not found: \`mise run ci:build\` must produce the extension bundle there."
+            exit 1
+          fi
+          CHECKSUMS="$RUNNER_TEMP/$(basename "$ARCHIVE" .tar)_checksums.txt"
+          # The checksum file lists the bare file name, as argocd-extension-installer expects.
+          (cd "$(dirname "$ARCHIVE")" && sha256sum "$(basename "$ARCHIVE")") > "$CHECKSUMS"
+          cat "$CHECKSUMS"
+          echo "checksums=$CHECKSUMS" >> "$GITHUB_OUTPUT"
+
+      - name: 🛡️ Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: dist/extension-application-map.tar
+
+      # Publishing the draft stays a manual step, as for go.publish.
+      - name: ⬆️ Attach the bundle to the draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.prepare.outputs.tag }}
+          ARCHIVE: dist/extension-application-map.tar
+          CHECKSUMS: ${{ steps.bundle.outputs.checksums }}
+        run: gh release upload "$TAG" "$ARCHIVE" "$CHECKSUMS" --clobber
+
+  # ---------------------------------------------------------------------------
+  # npm — npm package (staged publishing, trusted publishing, NPM_TOKEN fallback)
+  # ---------------------------------------------------------------------------
+  npm:
+    name: 📦 npm package
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm trusted publishing and provenance
+
+    steps:
+      - name: ⬇️ Checkout tag
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: refs/tags/${{ needs.prepare.outputs.tag }}
+          persist-credentials: false
+
+      - name: 🔧 Install tools via mise
+        uses: jdx/mise-action@9149ea85001c7435d5a66bb127d6a1b6227cb0a5 # v5.0.0
+        with:
+          cache: true
+          cache_key: "mise-v1-{{platform}}-{{file_hash}}"
+
+      # The tag is the source of truth for the version: package.json is not bumped by the release.
+      - name: 🏷️ Set the package version
+        env:
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: npm version "$VERSION" --no-git-tag-version --allow-same-version
+
+      - name: 🏗️ Build the package
+        run: mise run ci:build
+
+      # `npm stage` needs npm >= 11.15.0 (the one bundled with the mise node is older).
+      - name: ⬆️ Update npm
+        run: npm install --global npm@^11.15.0
+
+      - name: 🚀 Stage on npm (approval required)
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          if [[ -n "$(npm view "${NAME}@${VERSION}" version 2>/dev/null)" ]]; then
+            echo "::notice::${NAME}@${VERSION} is already on npm - nothing to do."
+            exit 0
+          fi
+          # Without NPM_TOKEN, npm exchanges the OIDC token (trusted publishing).
+          if [[ -n "$NPM_TOKEN" ]]; then
+            export NPM_CONFIG_USERCONFIG="$RUNNER_TEMP/.npmrc"
+            # Single quotes on purpose: npm expands ${NPM_TOKEN} from the environment itself.
+            # shellcheck disable=SC2016
+            echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > "$NPM_CONFIG_USERCONFIG"
+          fi
+          # Already staged and waiting for approval (best effort: the listing may need a login).
+          if npm stage list "$NAME" 2>/dev/null | grep -qF "$VERSION"; then
+            echo "::notice::${NAME}@${VERSION} is already staged - approve it with: npm stage approve <stage-id>"
+            exit 0
+          fi
+          # npm refuses to publish a prerelease to the default `latest` dist-tag.
+          DIST_TAG=latest
+          [[ "$VERSION" == *-* ]] && DIST_TAG=next
+          # Staged publishing: the version waits on npm until a maintainer approves it with 2FA
+          # (npm stage approve, or the "Staged Packages" tab on npmjs.com). It is not public yet.
+          npm stage publish --access public --provenance --tag "$DIST_TAG"
+          {
+            echo "### 📦 ${NAME}@${VERSION} is staged on npm, not published yet"
+            echo
+            echo "Approve it (2FA required): \`npm stage list ${NAME}\` then \`npm stage approve <stage-id>\`,"
+            echo "or use the *Staged Packages* tab on https://www.npmjs.com/package/${NAME}"
+          } >> "$GITHUB_STEP_SUMMARY"
