@@ -12,7 +12,7 @@ pnpm = "latest"
 tilt = "latest"
 
 # Lint and convention tools
-"github:axnic/rtunk" = "latest" # Lint stack driven by .rtunk/rtunk.yaml (`lint`)
+"github:axnic/rtunk" = "latest"  # Lint stack driven by .rtunk/rtunk.yaml (`lint`)
 "npm:@commitlint/cli" = "21.2.3" # Commit convention check, drives .commitlintrc.js (`ci:commitlint`)
 
 # -- Configure MISE environment
